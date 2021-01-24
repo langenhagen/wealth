@@ -1,0 +1,42 @@
+# Put static individual information into this file
+#
+# accounts
+# Accounts listed here can provide additional information for the accounts that Wealth derives
+# from the transaction csv files. You can add other accounts as well. Wealth will treat
+# transactions that involve these accounts as internal transactions.
+#
+# The account names should match the account names that you put into the names for the csv files.
+# Accounts can have several fields:
+#   - iban:  Helps identifying internal transactions.
+#   - offset:  You can add an `offset` that defines the initial total balance for any account. This
+#              allows to adjust the balances if you you lack old csv files for accounts.
+#
+# currency
+# The currency symbol to assume throughout the application
+#
+# inflation_rate
+# The current linear inflation rate.
+#
+# retirement
+# Retirement information specifies personal traits that have effect on pension aspects, such as
+# birthday and retirement_age.
+# Retirement can have the fields:
+#  - birthday: The date of birth in the format DD.MM.YY.
+#  - retirement_age: The age in which the retirement starts.
+#  - government_pension: The monthly pension which the goverment will pay out
+#  - personal_funds: The total amount of personal money put aside for retirement
+---
+
+accounts:
+  example-sparkasse:
+    iban: de01234567890123456789
+    offset: 2000.49
+  example-n26:
+    iban: nn26262626262626262626
+currency: "€"
+inflation_rate: 2.0
+retirement:
+  birthday: 1.3.1990
+  retirement_age: 67
+  government_pension: 1000.00
+  personal_funds: 0.00

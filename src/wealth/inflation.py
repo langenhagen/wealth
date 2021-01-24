@@ -1,0 +1,211 @@
+"""Inflation related functionality."""
+import datetime as dt
+import functools
+
+import ipywidgets as widgets
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+from IPython.core.display import display
+from IPython.display import Markdown
+
+import wealth
+
+
+def calc_inflation_rate(
+    start_cost: float, end_cost: float, start_year: int, end_year: int
+) -> float:
+    """Given the input values, return the according linear inflation rate."""
+    return (end_cost / start_cost) ** (1 / (end_year - start_year)) - 1
+
+
+def _calc_inflation_rate_from_widgets(
+    _,
+    out: widgets.Output,
+    txt_start_cost: widgets.FloatText,
+    txt_start_year: widgets.IntText,
+    txt_end_cost: widgets.FloatText,
+    txt_end_year: widgets.IntText,
+):
+    """Calculate the according linear inflation rate from the given widgets'
+    values."""
+    if txt_start_cost.value == 0 or txt_end_year.value == txt_start_year.value:
+        rate = "n/a"
+    else:
+        rate = calc_inflation_rate(
+            txt_start_cost.value,
+            txt_end_cost.value,
+            txt_start_year.value,
+            txt_end_year.value,
+        )
+        rate = round(rate * 100, 2)
+
+    out.clear_output()
+    with out:
+        display(Markdown(f"<br>The linear inflation rate is {rate}%"))
+
+
+def inflation():
+    """Interactively calculate inflation_rates."""
+    lbl_start = widgets.Label(value="Start cost and year: ")
+    txt_start_cost = widgets.FloatText(value=100, layout=wealth.plot.text_layout)
+    now = dt.datetime.now()
+    txt_start_year = widgets.IntText(value=now.year, layout=wealth.plot.text_layout)
+
+    lbl_end = widgets.Label(value="End cost and year: ")
+    txt_end_cost = widgets.FloatText(value=200, layout=wealth.plot.text_layout)
+    birthday = wealth.config.get("retirement", {})["birthday"]
+    retirement_age = wealth.config.get("retirement", {}).get("retirement_age", 67)
+    txt_end_year = widgets.IntText(
+        value=birthday.year + retirement_age, layout=wealth.plot.text_layout
+    )
+    box = widgets.HBox(
+        [
+            widgets.VBox([lbl_start, lbl_end]),
+            widgets.VBox([txt_start_cost, txt_end_cost]),
+            widgets.VBox([txt_start_year, txt_end_year]),
+        ]
+    )
+    out = widgets.Output()
+
+    update_inflation_rate = functools.partial(
+        _calc_inflation_rate_from_widgets,
+        out=out,
+        txt_start_cost=txt_start_cost,
+        txt_start_year=txt_start_year,
+        txt_end_cost=txt_end_cost,
+        txt_end_year=txt_end_year,
+    )
+    txt_start_cost.observe(update_inflation_rate, "value")
+    txt_start_year.observe(update_inflation_rate, "value")
+    txt_end_cost.observe(update_inflation_rate, "value")
+    txt_end_year.observe(update_inflation_rate, "value")
+
+    display(Markdown("## Calculate Inflation Rates"))
+    display(box)
+    display(out)
+    update_inflation_rate(None)
+
+
+def calc_inflated_value(
+    start_cost: float, start_year: int, end_year: int, inflation_rate: float
+) -> float:
+    """Given the input values, return the according inflated cost."""
+    return start_cost * (1 + inflation_rate / 100) ** (end_year - start_year)
+
+
+def _plot_inflation_impact(
+    start_cost: float, start_year: int, end_year: int, inflation_rate: float
+):
+    """Plot the impact of the inflation over time."""
+    years = [dt.datetime(year, 1, 1) for year in range(start_year, end_year + 1)]
+    values = []
+    for year in range(start_year, end_year + 1):
+        value = calc_inflated_value(start_cost, start_year, year, inflation_rate)
+        values.append(start_cost / value * 100)
+    plt.plot(years, values)
+
+
+def _calc_inflated_cost_from_widgets(
+    _,
+    out: widgets.Output,
+    out_fig: widgets.Output,
+    fig: mpl.figure.Figure,
+    txt_start_cost: widgets.FloatText,
+    txt_start_year: widgets.IntText,
+    txt_end_year: widgets.IntText,
+    txt_inflation: widgets.FloatText,
+):
+    """Calculate the according inflated cost from the given widgets' values and
+    display it."""
+    inflated_cost = calc_inflated_value(
+        txt_start_cost.value,
+        txt_start_year.value,
+        txt_end_year.value,
+        txt_inflation.value,
+    )
+    inflated_cost = round(inflated_cost, 2)
+    ratio = txt_start_cost.value / inflated_cost
+
+    out.clear_output()
+    with out:
+        display(Markdown(f"<br>The inflated cost is {wealth.Money(inflated_cost)}"))
+        display(
+            Markdown(f"Money has {round(ratio*100, 2)}% of the value it had at start")
+        )
+    with out_fig:
+        fig.clear()
+        wealth.plot.setup_yearly_plot_and_axes(
+            fig, "Inflation Impact Over Time", xlabel="Year", ylabel="Value in %"
+        )
+        _plot_inflation_impact(
+            txt_start_cost.value,
+            txt_start_year.value,
+            txt_end_year.value,
+            txt_inflation.value,
+        )
+
+
+def future_worth():
+    """Interactively estimate future costs subject to inflation."""
+    lbl_start_cost = widgets.Label(value="Start cost: ")
+    txt_start_cost = widgets.FloatText(value=100, layout=wealth.plot.text_layout)
+    now = dt.datetime.now()
+    lbl_start_year = widgets.Label(value="Start year: ")
+    txt_start_year = widgets.IntText(value=now.year, layout=wealth.plot.text_layout)
+    lbl_end_year = widgets.Label(value="End year: ")
+    birthday = wealth.config.get("retirement", {})["birthday"]
+    retirement_age = wealth.config.get("retirement", {}).get("retirement_age", 67)
+    txt_end_year = widgets.IntText(
+        value=birthday.year + retirement_age, layout=wealth.plot.text_layout
+    )
+    lbl_inflation = widgets.Label(value="Inflation rate %: ")
+    inflation_rate = wealth.config.get("inflation_rate", 1.5)
+    txt_inflation = widgets.BoundedFloatText(
+        min=0,
+        max=100,
+        step=0.01,
+        value=inflation_rate,
+        layout=wealth.plot.text_layout,
+    )
+    sld_inflation = widgets.FloatSlider(readout=False, min=0, max=100, step=0.01)
+    widgets.jslink((txt_inflation, "value"), (sld_inflation, "value"))
+    box = widgets.VBox(
+        [
+            widgets.HBox(
+                [
+                    lbl_start_cost,
+                    txt_start_cost,
+                    lbl_start_year,
+                    txt_start_year,
+                    lbl_end_year,
+                    txt_end_year,
+                ]
+            ),
+            widgets.HBox([lbl_inflation, txt_inflation, sld_inflation]),
+        ]
+    )
+    out = widgets.Output()
+    out_fig = widgets.Output()
+    with out_fig:
+        fig = plt.figure(figsize=(10, 7), num="Inflation Impact Over Time")
+
+    update_inflated_cost = functools.partial(
+        _calc_inflated_cost_from_widgets,
+        out=out,
+        out_fig=out_fig,
+        fig=fig,
+        txt_start_cost=txt_start_cost,
+        txt_start_year=txt_start_year,
+        txt_end_year=txt_end_year,
+        txt_inflation=txt_inflation,
+    )
+    txt_start_cost.observe(update_inflated_cost, "value")
+    txt_start_year.observe(update_inflated_cost, "value")
+    txt_end_year.observe(update_inflated_cost, "value")
+    txt_inflation.observe(update_inflated_cost, "value")
+
+    display(Markdown("## Calculate Money's Future Worth"))
+    display(box)
+    display(out)
+    display(out_fig)
+    update_inflated_cost(None)

@@ -1,0 +1,78 @@
+# Contains example transaction category labels.
+# The labels may have a hierarchy that you can reflect in a tree structure.
+# Any label representing a leaf in the tree structure may have a field called `regex`. Wealth uses
+# `regex` fields to automatically assign labels to transactions that match the regex. The regexes
+# must match disjoint subsets of transactions. Wealth may consider it an error if any transaction
+# matches more than one label's regex. The notebooks may show an error in that case.
+# If a leaf label lacks a regex-field, automatic labelling may fail for according transactions.
+# However, you may label transactions manually.
+# Feel free add and remove labels, regex-fields and implement own fields.
+---
+
+"Income":
+  "Cash Deposit":
+  "Government Benefit":
+  "Insurance Indemnification":
+  "Interest":
+  "Internal Transfer":
+  "Pocket Money":
+  "Refund":
+  "Rental Income":
+    "Alice":
+    "Bob":
+  "Salary":
+    "Company A":
+    "Company B":
+  "Tax Refund":
+  "Capital Gain":
+    "Venture Capital Returns":
+      "VC Company A":
+      "VC Company B":
+
+"Expense":
+  "Cash Withdrawal":
+  "Cellular Communications":
+  "Clothing":
+  "Cosmetics":
+  "Eating Out":
+    "Delivery":
+      regex: "foodora|deliveroo|lieferando"
+    "Restaurant":
+    "Snack & Coffee":
+  "Entertainment":
+    "Hardware":
+    "Games":
+    "Movies":
+    "Music":
+  "Fees":
+  "Groceries":
+    "Kaufland":
+    "Whole Foods":
+  "Health":
+  "Hobbies":
+  "Household":
+    "Additional Rent Payment":
+    "Commodities":
+    "Electricity":
+    "Internet":
+    "Rent":
+  "Insurance":
+    "Health Insurance":
+    "Householder's Insurance Policy":
+  "Investments":
+    "Venture Capital Investments":
+      "VC Company A":
+      "VC Company B":
+  "Sports":
+    "Gym Club Membership":
+  "Transportation":
+    "Bike":
+    "Car Rental":
+    "Public Transport":
+    "Travel":
+      "Air Travel":
+      "Train Travel":
+    "Vehicle Sharing":
+      "Car Sharing":
+      "Scooter Sharing":
+      "Micro Scooter Sharing":

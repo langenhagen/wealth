@@ -1,0 +1,5 @@
+#!/bin/bash
+# Launch the Wealth workspace.
+
+source .venv/bin/activate
+jupyter lab
