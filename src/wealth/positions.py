@@ -29,7 +29,7 @@ def _show_sums(
     with out, pd.option_context("display.max_rows", None, "display.precision", 2):
         display(Markdown("### Expenses"))
         display(expenses_df)
-        display(Markdown("### Sums"))
+        display(Markdown("### Buckets"))
         display(sums_df)
 
 
