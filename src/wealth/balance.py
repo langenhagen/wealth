@@ -201,16 +201,34 @@ def cumsum():
 def _display_mean_and_median(df: pd.DataFrame):
     """Display mean, median and display mean and median without outliers."""
     filtered = df.dropna()[np.abs(scipy.stats.zscore(df.dropna())) < 2]
-    display(
-        Markdown(
-            '<font size="5">'
-            f"Mean: {round(df.mean(), 2)}<br>"
-            f"Median: {round(df.median(), 2)}<br>"
-            f"Filtered mean: {round(filtered.mean(), 2)}<br>"
-            f"Filtered median: {round(filtered.median(), 2)}"
-            "</font>"
-        )
+
+    out_df = pd.DataFrame(
+        index=["mean", "median", "filtered mean", "filtered median"],
+        data={
+            "values": [
+                round(df.mean(), 2),
+                round(df.median(), 2),
+                round(filtered.mean(), 2),
+                round(filtered.median(), 2),
+            ]
+        },
     )
+    display(out_df)
+
+
+def _display_summary(
+    _, txt_n_periods: widgets.BoundedIntText, out: widgets.Output, df: pd.DataFrame
+):
+    """Display a summary for the given series."""
+    last_periods = txt_n_periods.value
+    out.clear_output()
+    with out:
+        display(Markdown("### Mean Differences"))
+        _display_mean_and_median(df["diff"].tail(last_periods))
+        display(Markdown("### Differences of Minima"))
+        _display_mean_and_median(df["min_diff"].tail(last_periods))
+        display(Markdown("### Differences of Maxima"))
+        _display_mean_and_median(df["max_diff"].tail(last_periods))
 
 
 def _display_mean_balance_dataframes(
@@ -228,7 +246,8 @@ def _display_mean_balance_dataframes(
     out_df = pd.DataFrame()
     accounts = [c.description for c in checkboxes if c.value and c.description != "All"]
     mask = df["account"].isin(accounts)
-    resampler = df[mask]["amount"].resample("D").sum().cumsum().resample(drp_freq.value)
+    daily_cumsum_df = df[mask]["amount"].resample("D").sum().cumsum()
+    resampler = daily_cumsum_df.resample(drp_freq.value)
     out_df["mean"] = resampler.mean()
     out_df["diff"] = out_df["mean"].diff()
     out_df["min"] = resampler.min()
@@ -247,12 +266,27 @@ def _display_mean_balance_dataframes(
         if len(out_df) <= 1:
             return
 
-        display(Markdown('<br><font size="6">Mean Differences:</font>'))
-        _display_mean_and_median(out_df["diff"])
-        display(Markdown('<font size="6"><br>Differences of Minima:</font>'))
-        _display_mean_and_median(out_df["min_diff"])
-        display(Markdown('<font size="6"><br>Differences of Maxima:</font>'))
-        _display_mean_and_median(out_df["max_diff"])
+        inner_out = widgets.Output()
+        lbl_n_periods = widgets.Label("Consider recent Periods:")
+        txt_n_periods = widgets.BoundedIntText(
+            12,
+            min=1,
+            max=10000,
+            layout=wealth.plot.text_layout,
+        )
+        update_out = functools.partial(
+            _display_summary,
+            txt_n_periods=txt_n_periods,
+            out=inner_out,
+            df=out_df,
+        )
+        txt_n_periods.observe(update_out, "value")
+        display(Markdown("## Summary"))
+        display(
+            widgets.Box([lbl_n_periods, txt_n_periods], layout=wealth.plot.box_layout)
+        )
+        display(inner_out)
+        update_out(None)
 
 
 def means():
@@ -278,7 +312,13 @@ def means():
     display(Markdown("# Mean Balances"))
     display(
         widgets.VBox(
-            [drp_freq, widgets.HBox([widgets.Label("Accounts: "), *checkboxes])]
+            [
+                widgets.HBox([drp_freq], layout=wealth.plot.box_layout),
+                widgets.HBox(
+                    [widgets.Label("Accounts: "), *checkboxes],
+                    layout=wealth.plot.box_layout,
+                ),
+            ]
         )
     )
     display(out)
