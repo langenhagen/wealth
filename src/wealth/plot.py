@@ -20,6 +20,7 @@ frequency_options = [
     ("Quarter", "QS"),
     ("Year", "AS"),
 ]
+box_layout = widgets.Layout(margin="20px 0px 20px 0px")
 
 
 def create_account_checkboxes(

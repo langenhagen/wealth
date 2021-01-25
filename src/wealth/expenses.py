@@ -195,7 +195,10 @@ def expense_dataframes():
         widgets.VBox(
             [
                 widgets.HBox([drp_freq, drp_date, txt_n_periods, txt_n_rows]),
-                widgets.HBox([widgets.Label("Accounts: "), *checkboxes]),
+                widgets.HBox(
+                    [widgets.Label("Accounts: "), *checkboxes],
+                    layout=wealth.plot.box_layout,
+                ),
                 chk_show_internal,
             ]
         )

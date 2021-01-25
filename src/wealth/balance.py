@@ -63,7 +63,11 @@ def balance():
     drp_date.observe(update_balance, "value")
 
     display(Markdown("# Balance"))
-    display(widgets.Box([widgets.Label("Accounts: "), *checkboxes]))
+    display(
+        widgets.Box(
+            [widgets.Label("Accounts: "), *checkboxes], layout=wealth.plot.box_layout
+        )
+    )
     display(drp_date)
     display(out)
     update_balance(None)
@@ -184,7 +188,8 @@ def cumsum():
                                 widgets.Box(single_accs_checkboxes),
                             ]
                         ),
-                    ]
+                    ],
+                    layout=wealth.plot.box_layout,
                 ),
             ]
         )
