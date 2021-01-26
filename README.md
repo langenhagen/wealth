@@ -1,9 +1,10 @@
 # Wealth
 A suite of code and Jupyter notebooks to obtain insights into personal finances.
 
-`Wealth` contains code and `Jupyter` notebook templates, that help to get insights into all things
+`Wealth` contains code and `Jupyter` notebook templates that help to get insights into all things
 finance, e.g. transactions, savings, compound interest, inflation and pension.
-Simply export your bank transaction data as CSV into your `Wealth` project.
+Export your bank transaction data as CSV into your `Wealth` workspace and experiment via interactive
+widgets.
 
 The project has following structure:
 ```
@@ -35,6 +36,9 @@ The project has following structure:
 
 
 ## Setup
+Wealth distinguishes between the actual `Wealth` project/repository and `workspaces` that you can
+set up in order to avoid accidentally uploading private data to the internet.
+
 To setup a `Wealth` workspace, go to the root directory of the project and run:
 ```bash
 scripts/create-workspace.sh [--dev] [<path/to/new/workspace>]
@@ -79,7 +83,7 @@ You can download these `*.csv` files and feed them to `Wealth`.
 `Wealth` contains parsers for data of the following banks:
 - `DKB - Deutsche Kreditbank Giro`
 - `DKB Visa - Deutsche Kreditbank Visa`
-- `N26`
+- `N26 - with support for Spaces`
 - `Sparkasse`
 
 Each bank has their own CSV way to define the CSVs. Rename the `*.csv` files so that `Wealth` is
