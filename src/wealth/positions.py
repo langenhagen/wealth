@@ -113,7 +113,7 @@ def sums(
     display(txt_multiplier)
     display(out)
     show_sums(None)
-    display(Markdown("## Rations of Expenses"))
+    display(Markdown("## Ratios of Expenses"))
     _plot_piechart_of_position_groups(
         sum_fixed_costs=sum_fixed_costs,
         sum_variable_costs=sum_variable_costs,
