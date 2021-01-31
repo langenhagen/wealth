@@ -1,5 +1,6 @@
-"""Functionality to inspect regular income and expense posts."""
+"""Functionality to inspect regular income and expense postitions."""
 import functools
+import operator
 from typing import Dict
 
 import ipywidgets as widgets
@@ -12,98 +13,106 @@ import wealth.util.util
 
 Money = wealth.util.util.Money
 
-Positions = Dict[str, float]
+Positions = Dict[str, Dict[str, float]]
 
 
 def _show_sums(
     _,
     out: widgets.Output,
-    expenses_df: pd.DataFrame,
+    df: pd.DataFrame,
     sums_df: pd.DataFrame,
     txt_multiplier: widgets.BoundedIntText,
 ):
     """Display the sums of all the Position groups."""
-    expenses_df = expenses_df * txt_multiplier.value
-    sums_df = sums_df * txt_multiplier.value
+    df = df.copy()
+    df["cost"] *= txt_multiplier.value
+    sums_df = sums_df.copy()
+    sums_df["cost"] *= txt_multiplier.value
     out.clear_output()
     with out, pd.option_context("display.max_rows", None, "display.precision", 2):
+
+        display(Markdown("### Incomes"))
+        incomes = df.loc[df["cost"] > 0].sort_values(by="cost", ascending=False)
+        incomes["percent"] = (incomes["cost"] / incomes["cost"].sum()) * 100
+        display(incomes)
+
         display(Markdown("### Expenses"))
-        display(expenses_df)
+        expenses = df.loc[df["cost"] <= 0].sort_values(by="cost")
+        expenses["percent"] = (expenses["cost"] / expenses["cost"].sum()) * 100
+        display(expenses)
+
         display(Markdown("### Buckets"))
-        display(sums_df)
+
+        display(Markdown("#### Incomes"))
+        income_sums = sums_df.loc[sums_df["cost"] > 0].sort_values(
+            by="cost", ascending=False
+        )
+        income_sums["percent"] = (income_sums["cost"] / income_sums["cost"].sum()) * 100
+        display(income_sums.sort_values(by="cost"))
+
+        display(Markdown("#### Expenses"))
+        expense_sums = sums_df.loc[sums_df["cost"] <= 0].sort_values(by="cost")
+        expense_sums["percent"] = (
+            expense_sums["cost"] / expense_sums["cost"].sum()
+        ) * 100
+        display(expense_sums.sort_values(by="cost"))
 
 
-def _plot_piechart_of_position_groups(
-    sum_fixed_costs: float,
-    sum_variable_costs: float,
-    sum_safety_costs: float,
-    sum_savings: float,
-):
-    """Plot a pie chart that shows the relations of the expene-related position
-    groups."""
-    labels = ["fixed_costs", "variable_costs", "safety_costs", "savings"]
-    values = [sum_fixed_costs, sum_variable_costs, sum_safety_costs, sum_savings]
+def _plot_piechart_of_expense_bucket_sums(bucket_sums: Dict[str, float]):
+    """Plot a pie chart that shows the relations of expense-related buckets."""
+    bucket_sums = dict(filter(lambda item: item[1] < 0, bucket_sums.items()))
+    bucket_sum_items = sorted(bucket_sums.items(), key=operator.itemgetter(1))
+    labels = [item[0] for item in bucket_sum_items]
+    values = [abs(item[1]) for item in bucket_sum_items]
     fig = plt.figure(figsize=(8, 8), num="Ratios of Expense Post Groups")
     fig.set_facecolor("white")
     plt.grid()
-    plt.pie(values, labels=labels, autopct="%1.1f%%", startangle=90)
+    plt.pie(values, labels=labels, autopct="%1.1f%%")
     plt.show()
 
 
-def sums(
-    incomes: Positions,
-    fixed_costs: Positions,
-    variable_costs: Positions,
-    safety_costs: Positions,
-    savings: Positions,
-):
-    """Show the sums of posts and relations of posts."""
-    expenses_dict = dict(**fixed_costs, **variable_costs, **safety_costs, **savings)
-    expenses_df = pd.DataFrame.from_dict(
-        expenses_dict, orient="index", columns=["cost"]
+def _plot_piechart_of_expense_positons(posts: Dict[str, float]):
+    """Plot a pie chart that shows the relations of expense-positions."""
+    posts = dict(filter(lambda item: item[1] < 0, posts.items()))
+    post_items = sorted(posts.items(), key=operator.itemgetter(1))
+    labels = [item[0] for item in post_items]
+    values = [abs(item[1]) for item in post_items]
+    fig = plt.figure(figsize=(10, 10), num="Ratios of Expense Posts")
+    fig.set_facecolor("white")
+    plt.grid()
+    plt.pie(values, labels=labels, autopct="%1.1f%%")
+    plt.show()
+
+
+def info(buckets: Positions):
+    """Show the sums of positions and relations of positions."""
+    bucket_sums = {}
+    posts = {}
+    for bucket_name, bucket in buckets.items():
+        bucket_sums[bucket_name] = sum(bucket.values())
+        for post, value in bucket.items():
+            posts[post] = (value, bucket_name)
+
+    bucket_sums["rest"] = sum([v[0] for v in posts.values()])
+    posts["rest"] = (sum([v[0] for v in posts.values()]), "")
+    df = pd.DataFrame.from_dict(posts, orient="index", columns=["cost", "bucket"])
+
+    sums_df = pd.DataFrame(
+        {"cost": list(bucket_sums.values())}, index=list(bucket_sums.keys())
     )
 
-    sum_incomes = sum(incomes.values())
-    sum_fixed_costs = sum(fixed_costs.values())
-    sum_variable_costs = sum(variable_costs.values())
-    sum_safety_costs = sum(safety_costs.values())
-    sum_costs = sum_fixed_costs + sum_variable_costs + sum_safety_costs
-    sum_savings = sum(savings.values())
-    rest = sum_incomes - sum_costs - sum_savings
     txt_multiplier = widgets.BoundedIntText(
         value=1,
         min=1,
-        max=9990,
+        max=9999,
         description="Multiplier:",
     )
     out = widgets.Output()
 
-    sums_df = pd.DataFrame(
-        {
-            "cost": [
-                sum_incomes,
-                sum_fixed_costs,
-                sum_variable_costs,
-                sum_safety_costs,
-                sum_costs,
-                sum_savings,
-                rest,
-            ]
-        },
-        index=[
-            "incomes",
-            "fixed costs",
-            "variable costs",
-            "safety costs",
-            "all costs",
-            "savings",
-            "rest",
-        ],
-    )
     show_sums = functools.partial(
         _show_sums,
         out=out,
-        expenses_df=expenses_df,
+        df=df,
         sums_df=sums_df,
         txt_multiplier=txt_multiplier,
     )
@@ -114,29 +123,5 @@ def sums(
     display(out)
     show_sums(None)
     display(Markdown("## Ratios of Expenses"))
-    _plot_piechart_of_position_groups(
-        sum_fixed_costs=sum_fixed_costs,
-        sum_variable_costs=sum_variable_costs,
-        sum_safety_costs=sum_safety_costs,
-        sum_savings=sum_savings,
-    )
-
-
-def expenses(
-    fixed_costs: Positions,
-    variable_costs: Positions,
-    safety_costs: Positions,
-    savings: Positions,
-):
-    """Plot a pie chart that shows the relations of all expense positions."""
-    all_expenses = dict(**fixed_costs, **variable_costs, **safety_costs, **savings)
-    fig = plt.figure(figsize=(10, 10), num="Ratios of Expense Posts")
-    fig.set_facecolor("white")
-    plt.grid()
-    plt.pie(
-        all_expenses.values(),
-        labels=all_expenses.keys(),
-        autopct="%1.1f%%",
-        startangle=90,
-    )
-    plt.show()
+    _plot_piechart_of_expense_bucket_sums(bucket_sums)
+    _plot_piechart_of_expense_positons({k: v[0] for k, v in posts.items()})
