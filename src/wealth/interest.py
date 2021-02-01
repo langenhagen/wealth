@@ -171,7 +171,7 @@ def _calc_interest_from_widgets(
     btn_deposit_time: widgets.ToggleButton,
     additional_events: List[Event],
 ):
-    """Calculate the according account balances from the given widgets'
+    """Calculate the according account balances from the given widget's
     values and plot it."""
     events = _build_account_history(
         txt_start_amount.value,
@@ -217,37 +217,50 @@ def _calc_interest_from_widgets(
         wealth.plot.display_dataframe(df)
 
 
-def interest(additional_events: List[Event] = None):
+def interest(**kwargs):
     """Interactively estimate compound interest and plot an according graph.
     Also consider an optionally given list of Events into the calculation."""
-    if additional_events is None:
-        additional_events = []
+    # import matplotlib.pyplot as plt
+    plt.close("all")
+    initial_amount = kwargs.get("initial_amount", 1000)
+    regular_deposit = kwargs.get("regular_deposit", 100)
+    interest_rate = kwargs.get("interest_rate", 4)
+    periods = kwargs.get("periods", 10)
+    deposits_per_period = kwargs.get("deposits_per_period", 12)
+    compounds_per_period = kwargs.get("compounds_per_period", 12)
+    deposit_at_period_start = kwargs.get("deposit_at_period_start", DepositTime.START)
+    additional_events = kwargs.get("additional_events", [])
+    show_transaction_table = kwargs.get("show_transaction_table", True)
+
     lbl_placeholder = widgets.Label("")
     lbl_start_amount = widgets.Label(value="Initial amount: ")
     txt_start_amount = widgets.BoundedFloatText(
-        value=1000, min=0, max=999999999, layout=wealth.plot.text_layout
+        value=initial_amount, min=0.01, max=999999999, layout=wealth.plot.text_layout
     )
     lbl_regular_deposit = widgets.Label(value="Regular deposit: ")
     txt_regular_deposit = widgets.BoundedFloatText(
-        value=100, min=0, max=999999999, layout=wealth.plot.text_layout
+        value=regular_deposit, min=0, max=999999999, layout=wealth.plot.text_layout
     )
     lbl_regular_deposit_freq = widgets.Label(value="Deposits per period: ")
     txt_deposit_freq = widgets.BoundedIntText(
-        value=12, min=1, max=999999999, layout=wealth.plot.text_layout
+        value=deposits_per_period, min=1, max=999999999, layout=wealth.plot.text_layout
     )
     lbl_interest_rate = widgets.Label(value="Interest rate %: ")
     txt_interest_rate = widgets.BoundedFloatText(
-        value=1, min=0, max=100, step=0.1, layout=wealth.plot.text_layout
+        value=interest_rate, min=0, max=100, step=0.1, layout=wealth.plot.text_layout
     )
     lbl_compounds_freq = widgets.Label(value="Compounds per period: ")
     txt_compound_freq = widgets.BoundedIntText(
-        value=12, min=1, max=999999999, layout=wealth.plot.text_layout
+        value=compounds_per_period, min=1, max=999999999, layout=wealth.plot.text_layout
     )
     lbl_periods = widgets.Label(value="Periods: ")
-    txt_periods = widgets.BoundedIntText(value=1, min=0, layout=wealth.plot.text_layout)
+    txt_periods = widgets.BoundedIntText(
+        value=periods, min=0, layout=wealth.plot.text_layout
+    )
     lbl_deposit_time = widgets.Label(value="Deposit at: ")
     btn_deposit_time = widgets.ToggleButtons(
-        options={"Period Start": DepositTime.START, "Period End": DepositTime.END}
+        options={"Period Start": DepositTime.START, "Period End": DepositTime.END},
+        value=deposit_at_period_start,
     )
     box = widgets.HBox(
         [
@@ -312,6 +325,7 @@ def interest(additional_events: List[Event] = None):
     display(out_summary)
     display(Markdown("# Account Development"))
     display(out_fig)
-    display(Markdown("# Account Table"))
-    display(out_df)
+    if show_transaction_table:
+        display(Markdown("# Transaction Table"))
+        display(out_df)
     update_interest(None)
