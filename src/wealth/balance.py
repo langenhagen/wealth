@@ -198,7 +198,7 @@ def cumsum():
     display(out)
 
 
-def _display_mean_and_median(df: pd.DataFrame):
+def _display_mean_and_median(df: pd.DataFrame, caption: str):
     """Display mean, median and display mean and median without outliers."""
     filtered = df.dropna()[np.abs(scipy.stats.zscore(df.dropna())) < 2]
 
@@ -213,22 +213,36 @@ def _display_mean_and_median(df: pd.DataFrame):
             ]
         },
     )
-    display(out_df)
+
+    out = widgets.Output()
+    with out:
+        display(Markdown(f"### {caption}"))
+        display(out_df)
+    return out
 
 
 def _display_summary(
     _, txt_n_periods: widgets.BoundedIntText, out: widgets.Output, df: pd.DataFrame
 ):
     """Display a summary for the given series."""
-    last_periods = txt_n_periods.value
+    n_periods = txt_n_periods.value
     out.clear_output()
     with out:
-        display(Markdown("### Mean Differences"))
-        _display_mean_and_median(df["diff"].tail(last_periods))
-        display(Markdown("### Differences of Minima"))
-        _display_mean_and_median(df["min_diff"].tail(last_periods))
-        display(Markdown("### Differences of Maxima"))
-        _display_mean_and_median(df["max_diff"].tail(last_periods))
+        display(
+            widgets.HBox(
+                [
+                    _display_mean_and_median(
+                        df["diff"].tail(n_periods), "Mean Differences"
+                    ),
+                    _display_mean_and_median(
+                        df["min_diff"].tail(n_periods), "Differences of Minima"
+                    ),
+                    _display_mean_and_median(
+                        df["max_diff"].tail(n_periods), "Differences of Maxima"
+                    ),
+                ]
+            )
+        )
 
 
 def _display_mean_balance_dataframes(
