@@ -9,6 +9,7 @@ install_requires = [
     "ipywidgets",
     "matplotlib",
     "pandas",
+    "python-dateutil",
     "pyyaml",
     "scipy",
 ]

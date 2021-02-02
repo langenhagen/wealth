@@ -5,6 +5,3 @@ jupyterlab
 matplotlib
 pandas
 pip
-python-dateutil
-pyyaml
-scipy
