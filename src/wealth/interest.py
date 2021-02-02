@@ -46,7 +46,7 @@ class Event:
 
     timestamp: float
     action: EventType
-    values: Dict[Any, Any]
+    values: Dict[str, Any]
 
 
 def calc_compound_interest(
