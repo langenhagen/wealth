@@ -26,7 +26,7 @@ VBox = widgets.VBox
 
 
 class DepositTime(enum.Enum):
-    """Specifies the the regular deposit time in a period."""
+    """Defines the the possible regular deposit times in a year."""
 
     START = enum.auto()
     END = enum.auto()
@@ -52,13 +52,13 @@ class Event:
 def calc_compound_interest(
     initial_amount: float,
     interest_rate: float,
-    n_periods: int,
-    n_interest_compounds_per_period: int = 1,
+    n_years: int,
+    n_interest_compounds_per_year: int = 1,
 ) -> float:
     """Calculate an amount with compoound interest given the input values."""
     final_amount = initial_amount * (
-        1 + interest_rate / n_interest_compounds_per_period
-    ) ** (n_periods * n_interest_compounds_per_period)
+        1 + interest_rate / n_interest_compounds_per_year
+    ) ** (n_years * n_interest_compounds_per_year)
     return final_amount
 
 
@@ -68,7 +68,7 @@ def _build_account_history(
     deposit_freq: int,
     interest_rate: float,
     compound_freq: int,
-    n_periods: int,
+    n_years: int,
     regular_deposit_time: DepositTime,
     additional_events: List[Event],
 ) -> List[Event]:
@@ -82,18 +82,14 @@ def _build_account_history(
 
     # regular deposits
     if regular_deposit_time == DepositTime.START:
-        deposit_times = np.linspace(
-            1 / deposit_freq, n_periods, n_periods * deposit_freq
-        )
+        deposit_times = np.linspace(1 / deposit_freq, n_years, n_years * deposit_freq)
         for ts in deposit_times:
             events.append(
                 Event(ts, EventType.REGULAR_DEPOSIT, {"amount": regular_deposit})
             )
 
     # interest compounds
-    compound_times = np.linspace(
-        1 / compound_freq, n_periods, n_periods * compound_freq
-    )
+    compound_times = np.linspace(1 / compound_freq, n_years, n_years * compound_freq)
     for ts in compound_times:
         events.append(
             Event(
@@ -105,9 +101,7 @@ def _build_account_history(
 
     # regular deposits
     if regular_deposit_time == DepositTime.END:
-        deposit_times = np.linspace(
-            1 / deposit_freq, n_periods, n_periods * deposit_freq
-        )
+        deposit_times = np.linspace(1 / deposit_freq, n_years, n_years * deposit_freq)
         for ts in deposit_times:
             events.append(
                 Event(ts, EventType.REGULAR_DEPOSIT, {"amount": regular_deposit})
@@ -177,7 +171,7 @@ def _calc_interest_from_widgets(
     txt_deposit_freq: IntText,
     txt_interest_rate: FloatText,
     txt_compound_freq: IntText,
-    txt_periods: IntText,
+    txt_years: IntText,
     btn_deposit_time: ToggleButtons,
     additional_events: List[Event],
 ):
@@ -189,7 +183,7 @@ def _calc_interest_from_widgets(
         txt_deposit_freq.value,
         txt_interest_rate.value / 100,
         txt_compound_freq.value,
-        txt_periods.value,
+        txt_years.value,
         btn_deposit_time.value,
         additional_events,
     )
@@ -205,7 +199,7 @@ def _calc_interest_from_widgets(
     with out_summary:
         display(
             Markdown(
-                f"<br>The accumulated amount after {txt_periods.value} periods "
+                f"<br>The accumulated amount after {txt_years.value} years "
                 f"is {wealth.Money(final_balance)}."
             )
         )
@@ -235,9 +229,9 @@ def interest(**kwargs):
     initial_amount = kwargs.get("initial_amount", 1000)
     regular_deposit = kwargs.get("regular_deposit", 100)
     interest_rate = kwargs.get("interest_rate", 4)
-    periods = kwargs.get("periods", 10)
-    deposits_per_period = kwargs.get("deposits_per_period", 12)
-    compounds_per_period = kwargs.get("compounds_per_period", 12)
+    years = kwargs.get("years", 10)
+    deposits_per_year = kwargs.get("deposits_per_year", 12)
+    compounds_per_year = kwargs.get("compounds_per_year", 12)
     deposit_at_period_start = kwargs.get("deposit_at_period_start", DepositTime.START)
     additional_events = kwargs.get("additional_events", [])
     show_transaction_table = kwargs.get("show_transaction_table", True)
@@ -251,20 +245,20 @@ def interest(**kwargs):
     txt_regular_deposit = BoundedFloatText(
         value=regular_deposit, min=0, max=999999999, layout=wealth.plot.text_layout
     )
-    lbl_regular_deposit_freq = Label(value="Deposits per period: ")
+    lbl_regular_deposit_freq = Label(value="Deposits per year: ")
     txt_deposit_freq = BoundedIntText(
-        value=deposits_per_period, min=1, max=999999999, layout=wealth.plot.text_layout
+        value=deposits_per_year, min=1, max=999999999, layout=wealth.plot.text_layout
     )
     lbl_interest_rate = Label(value="Interest rate %: ")
     txt_interest_rate = BoundedFloatText(
         value=interest_rate, min=0, max=100, step=0.1, layout=wealth.plot.text_layout
     )
-    lbl_compounds_freq = Label(value="Compounds per period: ")
+    lbl_compounds_freq = Label(value="Compounds per year: ")
     txt_compound_freq = BoundedIntText(
-        value=compounds_per_period, min=1, max=999999999, layout=wealth.plot.text_layout
+        value=compounds_per_year, min=1, max=999999999, layout=wealth.plot.text_layout
     )
-    lbl_periods = Label(value="Periods: ")
-    txt_periods = BoundedIntText(value=periods, min=0, layout=wealth.plot.text_layout)
+    lbl_years = Label(value="Years: ")
+    txt_years = BoundedIntText(value=years, min=0, layout=wealth.plot.text_layout)
     lbl_deposit_time = Label(value="Deposit at: ")
     btn_deposit_time = ToggleButtons(
         options={"Period Start": DepositTime.START, "Period End": DepositTime.END},
@@ -272,12 +266,8 @@ def interest(**kwargs):
     )
     box = HBox(
         [
-            VBox(
-                [lbl_start_amount, lbl_regular_deposit, lbl_interest_rate, lbl_periods]
-            ),
-            VBox(
-                [txt_start_amount, txt_regular_deposit, txt_interest_rate, txt_periods]
-            ),
+            VBox([lbl_start_amount, lbl_regular_deposit, lbl_interest_rate, lbl_years]),
+            VBox([txt_start_amount, txt_regular_deposit, txt_interest_rate, txt_years]),
             VBox(
                 [
                     lbl_placeholder,
@@ -315,7 +305,7 @@ def interest(**kwargs):
         txt_deposit_freq=txt_deposit_freq,
         txt_interest_rate=txt_interest_rate,
         txt_compound_freq=txt_compound_freq,
-        txt_periods=txt_periods,
+        txt_years=txt_years,
         btn_deposit_time=btn_deposit_time,
         additional_events=additional_events,
     )
@@ -324,7 +314,7 @@ def interest(**kwargs):
     txt_deposit_freq.observe(update_interest, "value")
     txt_interest_rate.observe(update_interest, "value")
     txt_compound_freq.observe(update_interest, "value")
-    txt_periods.observe(update_interest, "value")
+    txt_years.observe(update_interest, "value")
     btn_deposit_time.observe(update_interest, "value")
 
     display(Markdown("## Calculate Compound Interest"))
