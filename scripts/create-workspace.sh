@@ -26,6 +26,7 @@ show_help() {
     msg+="Examples:\n"
     msg+="  ${script_name}                      # Create a project under ${default_workspace_dir}\n"
     msg+="  ${script_name} ~/stuff/finance      # Create a project under ~/stuff/finance\n"
+    # shellcheck disable=SC2059
     printf "$msg"
 }
 
