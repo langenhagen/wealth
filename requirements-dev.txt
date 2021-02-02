@@ -1,5 +1,4 @@
 black
 bpython
 flake8
-mypy
 pylint

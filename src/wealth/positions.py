@@ -15,13 +15,16 @@ Money = wealth.util.util.Money
 
 Positions = Dict[str, Dict[str, float]]
 
+BoundedIntText = widgets.BoundedIntText
+Output = widgets.Output
+
 
 def _show_sums(
     _,
-    out: widgets.Output,
+    out: Output,
     df: pd.DataFrame,
     sums_df: pd.DataFrame,
-    txt_multiplier: widgets.BoundedIntText,
+    txt_multiplier: BoundedIntText,
 ):
     """Display the sums of all the Position groups."""
     df = df.copy()
@@ -103,13 +106,13 @@ def info(buckets: Positions):
         {"cost": list(bucket_sums.values())}, index=list(bucket_sums.keys())
     )
 
-    txt_multiplier = widgets.BoundedIntText(
+    txt_multiplier = BoundedIntText(
         value=1,
         min=1,
         max=9999,
         description="Multiplier:",
     )
-    out = widgets.Output()
+    out = Output()
 
     show_sums = functools.partial(
         _show_sums,

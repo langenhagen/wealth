@@ -4,12 +4,16 @@ from IPython.core.display import display
 
 import wealth
 
+HBox = widgets.HBox
+Label = widgets.Label
+Output = widgets.Output
+
 
 def transactions():
     """Plot some columns of the dataframe sorted in descending order and allow
     to filter accounts via checkboxes."""
     reversed_df = wealth.df.iloc[::-1]
-    out = widgets.Output()
+    out = Output()
     checkboxes = []
 
     def _update_out(_):
@@ -24,10 +28,6 @@ def transactions():
             display(wealth.df["amount"].describe())
 
     wealth.plot.create_account_checkboxes(checkboxes, reversed_df, True, _update_out)
-    display(
-        widgets.HBox(
-            [widgets.Label("Accounts: "), *checkboxes], layout=wealth.plot.box_layout
-        )
-    )
+    display(HBox([Label("Accounts: "), *checkboxes], layout=wealth.plot.box_layout))
     display(out)
     _update_out(None)

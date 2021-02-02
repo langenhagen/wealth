@@ -14,6 +14,14 @@ import wealth.util.transaction_type
 
 TransactionType = wealth.util.transaction_type.TransactionType
 
+BoundedIntText = widgets.BoundedIntText
+Checkbox = widgets.Checkbox
+Dropdown = widgets.Dropdown
+HBox = widgets.HBox
+Label = widgets.Label
+Output = widgets.Output
+VBox = widgets.VBox
+
 
 def _get_width(series: pd.Series, freq: str) -> List[int]:
     """Calculate the width of the bars for the according series values."""
@@ -47,13 +55,13 @@ def _barplot(series: pd.Series, freq: str, label: str):
 
 def _plot_incomes_and_expenses(
     _,
-    sum_accs_checkboxes: List[widgets.Checkbox],
-    single_accs_checkboxes: List[widgets.Checkbox],
-    out: widgets.Output,
+    sum_accs_checkboxes: List[Checkbox],
+    single_accs_checkboxes: List[Checkbox],
+    out: Output,
     fig: mpl.figure.Figure,
     df: pd.DataFrame,
-    drp_freq: widgets.Dropdown,
-    chk_show_internal: widgets.Checkbox,
+    drp_freq: Dropdown,
+    chk_show_internal: Checkbox,
 ):
     """Plot bar plots with the given params."""
     sum_accs = [chk.description for chk in sum_accs_checkboxes if chk.value]
@@ -89,13 +97,13 @@ def _plot_incomes_and_expenses(
 
 def _display_expense_dataframes(
     _,
-    drp_freq: widgets.Dropdown,
-    drp_date: widgets.Dropdown,
-    txt_n_periods: widgets.BoundedIntText,
-    txt_n_rows: widgets.BoundedIntText,
-    checkboxes: List[widgets.Checkbox],
-    chk_show_internal: widgets.Checkbox,
-    out: widgets.Output,
+    drp_freq: Dropdown,
+    drp_date: Dropdown,
+    txt_n_periods: BoundedIntText,
+    txt_n_rows: BoundedIntText,
+    checkboxes: List[Checkbox],
+    chk_show_internal: Checkbox,
+    out: Output,
     df: pd.DataFrame,
 ):
     """List the biggest expenses per timeframes with the given frequency."""
@@ -145,28 +153,28 @@ def _display_expense_dataframes(
 
 def biggest_expenses():
     """Display dataframes containing the biggest expenses."""
-    out = widgets.Output()
-    drp_freq = widgets.Dropdown(
+    out = Output()
+    drp_freq = Dropdown(
         description="Frequency:",
         options=wealth.plot.frequency_options,
         value="MS",
         layout=wealth.plot.dropdown_layout,
     )
-    drp_date = widgets.Dropdown(
+    drp_date = Dropdown(
         description="Date:", options=[], layout=wealth.plot.dropdown_layout
     )
-    txt_n_periods = widgets.BoundedIntText(
+    txt_n_periods = BoundedIntText(
         1,
         description="Periods:",
         min=1,
         max=10000,
         layout=wealth.plot.text_layout,
     )
-    txt_n_rows = widgets.BoundedIntText(
+    txt_n_rows = BoundedIntText(
         5, description="Rows:", min=1, layout=wealth.plot.text_layout
     )
     checkboxes = []
-    chk_show_internal = widgets.Checkbox(
+    chk_show_internal = Checkbox(
         value=True,
         description="Show Internal Transactions",
         indent=False,
@@ -192,11 +200,11 @@ def biggest_expenses():
 
     display(Markdown("## Biggest Expenses"))
     display(
-        widgets.VBox(
+        VBox(
             [
-                widgets.HBox([drp_freq, drp_date, txt_n_periods, txt_n_rows]),
-                widgets.HBox(
-                    [widgets.Label("Accounts: "), *checkboxes],
+                HBox([drp_freq, drp_date, txt_n_periods, txt_n_rows]),
+                HBox(
+                    [Label("Accounts: "), *checkboxes],
                     layout=wealth.plot.box_layout,
                 ),
                 chk_show_internal,

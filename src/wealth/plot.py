@@ -8,10 +8,13 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from IPython.core.display import display
 
-checkbox_layout = widgets.Layout(width="100px")
-wide_checkbox_layout = widgets.Layout(width="250px")
-dropdown_layout = widgets.Layout(width="250px")
-text_layout = widgets.Layout(width="150px")
+Checkbox = widgets.Checkbox
+Layout = widgets.Layout
+
+checkbox_layout = Layout(width="100px")
+wide_checkbox_layout = Layout(width="250px")
+dropdown_layout = Layout(width="250px")
+text_layout = Layout(width="150px")
 frequency_options = [
     ("Day", "D"),
     ("Week", "W-MON"),
@@ -20,23 +23,23 @@ frequency_options = [
     ("Quarter", "QS"),
     ("Year", "AS"),
 ]
-box_layout = widgets.Layout(margin="20px 0px 20px 0px")
+box_layout = Layout(margin="20px 0px 20px 0px")
 
 
 def create_account_checkboxes(
-    out_checkboxes: List[widgets.Checkbox],
+    out_checkboxes: List[Checkbox],
     df: pd.DataFrame,
     value: bool,
     callback: Callable,
-) -> List[widgets.Checkbox]:
+) -> List[Checkbox]:
     """Create checkboxes for every account in the given dataframe, assign the
     given callback to these checkboxes and add them to the given list."""
-    chk_all = widgets.Checkbox(
+    chk_all = Checkbox(
         value=value, description="All", indent=False, layout=checkbox_layout
     )
     out_checkboxes.append(chk_all)
     for account in df["account"].unique():
-        chk = widgets.Checkbox(
+        chk = Checkbox(
             value=value, description=account, indent=False, layout=checkbox_layout
         )
         chk.observe(callback, "value")

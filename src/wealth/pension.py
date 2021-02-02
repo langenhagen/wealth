@@ -5,14 +5,19 @@ import ipywidgets as widgets
 
 import wealth
 
+BoundedFloatText = widgets.BoundedFloatText
+FloatSlider = widgets.FloatSlider
+HBox = widgets.HBox
+Label = widgets.Label
 
-def _numeric_adjust_widgets(caption: str, min: float, max: float) -> widgets.HBox:
+
+def _numeric_adjust_widgets(caption: str, min: float, max: float) -> HBox:
     """Return a HBox with a label, a text box and a linked slider."""
-    label = widgets.Label(value=caption)
-    text = widgets.BoundedFloatText(min=min, max=max, layout=wealth.plot.text_layout)
-    slider = widgets.FloatSlider(readout=False, min=min, max=max)
+    label = Label(value=caption)
+    text = BoundedFloatText(min=min, max=max, layout=wealth.plot.text_layout)
+    slider = FloatSlider(readout=False, min=min, max=max)
     widgets.jslink((text, "value"), (slider, "value"))
-    box = widgets.HBox([label, text, slider])
+    box = HBox([label, text, slider])
     return box
 
 
@@ -49,4 +54,5 @@ def pension_info():
 
     # calculate how much you should put aside per day/week/month/year
 
-    # addable options: interactively adjust how much you you should put aside - would receive - whats the difference from required would be
+    # addable options: interactively adjust how much you you should put aside
+    # .. - would receive - whats the difference from required would be

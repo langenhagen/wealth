@@ -15,6 +15,15 @@ from IPython.display import Markdown
 import wealth
 import wealth.plot
 
+Box = widgets.Box
+BoundedIntText = widgets.BoundedIntText
+Checkbox = widgets.Checkbox
+Dropdown = widgets.Dropdown
+HBox = widgets.HBox
+Label = widgets.Label
+Output = widgets.Output
+VBox = widgets.VBox
+
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
     """Yield dates between, inclunding, given start and end dates."""
@@ -24,9 +33,9 @@ def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
 
 def _display_balance(
     _,
-    checkboxes: List[widgets.Checkbox],
-    drp_date: widgets.Dropdown,
-    out: widgets.Output,
+    checkboxes: List[Checkbox],
+    drp_date: Dropdown,
+    out: Output,
     df: pd.DataFrame,
 ):
     """Plot the balance, i.e. the cumulative sum, of the given dataframe's
@@ -45,13 +54,11 @@ def _display_balance(
 def balance():
     """Show account-related cumulative sum of the dataframe's column `amount` at
     a specified date."""
-    out = widgets.Output()
+    out = Output()
     checkboxes = []
     df = wealth.df
     dates = list(_daterange(df.index.date.min(), df.index.date.max()))
-    drp_date = widgets.Dropdown(
-        description="Date: ", options=dates, value=df.index.date.max()
-    )
+    drp_date = Dropdown(description="Date: ", options=dates, value=df.index.date.max())
     update_balance = functools.partial(
         _display_balance,
         checkboxes=checkboxes,
@@ -63,11 +70,7 @@ def balance():
     drp_date.observe(update_balance, "value")
 
     display(Markdown("# Balance"))
-    display(
-        widgets.Box(
-            [widgets.Label("Accounts: "), *checkboxes], layout=wealth.plot.box_layout
-        )
-    )
+    display(Box([Label("Accounts: "), *checkboxes], layout=wealth.plot.box_layout))
     display(drp_date)
     display(out)
     update_balance(None)
@@ -101,12 +104,12 @@ def _plot_df(df: pd.DataFrame, freq: str, label: str):
 
 def _plot_cumsum(
     _,
-    sum_accs_checkboxes: List[widgets.Checkbox],
-    single_accs_checkboxes: List[widgets.Checkbox],
-    out: widgets.Output,
+    sum_accs_checkboxes: List[Checkbox],
+    single_accs_checkboxes: List[Checkbox],
+    out: Output,
     fig: mpl.figure.Figure,
     df: pd.DataFrame,
-    drp_freq: widgets.Dropdown,
+    drp_freq: Dropdown,
 ):
     """Plot cumsum graphs with the given params."""
     sum_accs = [chk.description for chk in sum_accs_checkboxes if chk.value]
@@ -135,7 +138,7 @@ def _plot_cumsum(
 def cumsum():
     """Show an account-related cumulative sum graph of the dataframe's column
     `amount`."""
-    drp_freq = widgets.Dropdown(
+    drp_freq = Dropdown(
         description="Frequency:",
         options=[
             ("Atomic", "<atomic>"),
@@ -152,7 +155,7 @@ def cumsum():
     )
     sum_accs_checkboxes, single_accs_checkboxes = [], []
 
-    out = widgets.Output()
+    out = Output()
     with out:
         fig = plt.figure(figsize=(12, 10), num="Cumulative Sum of All Transaction")
 
@@ -171,21 +174,21 @@ def cumsum():
 
     display(Markdown("# Plot"))
     display(
-        widgets.VBox(
+        VBox(
             [
                 drp_freq,
-                widgets.HBox(
+                HBox(
                     [
-                        widgets.VBox(
+                        VBox(
                             [
-                                widgets.Label("Accounts for combined plot: "),
-                                widgets.Label("Accounts for individual plots: "),
+                                Label("Accounts for combined plot: "),
+                                Label("Accounts for individual plots: "),
                             ]
                         ),
-                        widgets.VBox(
+                        VBox(
                             [
-                                widgets.Box(sum_accs_checkboxes),
-                                widgets.Box(single_accs_checkboxes),
+                                Box(sum_accs_checkboxes),
+                                Box(single_accs_checkboxes),
                             ]
                         ),
                     ],
@@ -214,22 +217,20 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
         },
     )
 
-    out = widgets.Output()
+    out = Output()
     with out:
         display(Markdown(f"### {caption}"))
         display(out_df)
     return out
 
 
-def _display_summary(
-    _, txt_n_periods: widgets.BoundedIntText, out: widgets.Output, df: pd.DataFrame
-):
+def _display_summary(_, txt_n_periods: BoundedIntText, out: Output, df: pd.DataFrame):
     """Display a summary for the given series."""
     n_periods = txt_n_periods.value
     out.clear_output()
     with out:
         display(
-            widgets.HBox(
+            HBox(
                 [
                     _display_mean_and_median(
                         df["diff"].tail(n_periods), "Mean Differences"
@@ -247,9 +248,9 @@ def _display_summary(
 
 def _display_mean_balance_dataframes(
     _,
-    drp_freq: widgets.Dropdown,
-    checkboxes: List[widgets.Checkbox],
-    out: widgets.Output,
+    drp_freq: Dropdown,
+    checkboxes: List[Checkbox],
+    out: Output,
     df: pd.DataFrame,
 ):
     """List the balances per timeframes with the given frequency."""
@@ -280,9 +281,9 @@ def _display_mean_balance_dataframes(
         if len(out_df) <= 1:
             return
 
-        inner_out = widgets.Output()
-        lbl_n_periods = widgets.Label("Consider recent Periods:")
-        txt_n_periods = widgets.BoundedIntText(
+        inner_out = Output()
+        lbl_n_periods = Label("Consider recent Periods:")
+        txt_n_periods = BoundedIntText(
             12,
             min=1,
             max=10000,
@@ -296,17 +297,15 @@ def _display_mean_balance_dataframes(
         )
         txt_n_periods.observe(update_out, "value")
         display(Markdown("## Summary"))
-        display(
-            widgets.Box([lbl_n_periods, txt_n_periods], layout=wealth.plot.box_layout)
-        )
+        display(Box([lbl_n_periods, txt_n_periods], layout=wealth.plot.box_layout))
         display(inner_out)
         update_out(None)
 
 
 def means():
     """Display dataframes containing balances for a given frequency."""
-    out = widgets.Output()
-    drp_freq = widgets.Dropdown(
+    out = Output()
+    drp_freq = Dropdown(
         description="Frequency:",
         options=wealth.plot.frequency_options,
         value="MS",
@@ -325,11 +324,11 @@ def means():
 
     display(Markdown("# Mean Balances"))
     display(
-        widgets.VBox(
+        VBox(
             [
-                widgets.HBox([drp_freq], layout=wealth.plot.box_layout),
-                widgets.HBox(
-                    [widgets.Label("Accounts: "), *checkboxes],
+                HBox([drp_freq], layout=wealth.plot.box_layout),
+                HBox(
+                    [Label("Accounts: "), *checkboxes],
                     layout=wealth.plot.box_layout,
                 ),
             ]

@@ -38,10 +38,6 @@ find "$root_path" -iname "*.py" -exec \
         --msg-template='{msg_id} {path}:{line}: {msg}' '{}' \
         --score no \;
 
-printf -- '\e[1mmypy...\e[0m\n'
-find "$root_path" -iname "*.py" -exec \
-    mypy --ignore-missing-imports --follow-imports=skip --no-color-output --no-error-summary '{}' \;
-
 printf -- '\e[1mShellcheck...\e[0m\n'
 shellcheck_exclude_codes_array=(
     'SC1090'  # Can't follow non-constant source

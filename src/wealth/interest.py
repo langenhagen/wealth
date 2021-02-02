@@ -14,6 +14,16 @@ from IPython.display import Markdown
 
 import wealth
 
+BoundedFloatText = widgets.BoundedFloatText
+BoundedIntText = widgets.BoundedIntText
+FloatText = widgets.FloatText
+Label = widgets.Label
+HBox = widgets.HBox
+IntText = widgets.IntText
+Output = widgets.Output
+ToggleButtons = widgets.ToggleButtons
+VBox = widgets.VBox
+
 
 class DepositTime(enum.Enum):
     """Specifies the the regular deposit time in a period."""
@@ -158,17 +168,17 @@ def _plot_account_development(df: pd.DataFrame):
 
 def _calc_interest_from_widgets(
     _,
-    out_summary: widgets.Output,
-    out_fig: widgets.Output,
-    out_df: widgets.Output,
+    out_summary: Output,
+    out_fig: Output,
+    out_df: Output,
     fig: mpl.figure.Figure,
-    txt_start_amount: widgets.FloatText,
-    txt_regular_deposit: widgets.FloatText,
-    txt_deposit_freq: widgets.IntText,
-    txt_interest_rate: widgets.FloatText,
-    txt_compound_freq: widgets.IntText,
-    txt_periods: widgets.IntText,
-    btn_deposit_time: widgets.ToggleButton,
+    txt_start_amount: FloatText,
+    txt_regular_deposit: FloatText,
+    txt_deposit_freq: IntText,
+    txt_interest_rate: FloatText,
+    txt_compound_freq: IntText,
+    txt_periods: IntText,
+    btn_deposit_time: ToggleButtons,
     additional_events: List[Event],
 ):
     """Calculate the according account balances from the given widget's
@@ -232,45 +242,43 @@ def interest(**kwargs):
     additional_events = kwargs.get("additional_events", [])
     show_transaction_table = kwargs.get("show_transaction_table", True)
 
-    lbl_placeholder = widgets.Label("")
-    lbl_start_amount = widgets.Label(value="Initial amount: ")
-    txt_start_amount = widgets.BoundedFloatText(
+    lbl_placeholder = Label("")
+    lbl_start_amount = Label(value="Initial amount: ")
+    txt_start_amount = BoundedFloatText(
         value=initial_amount, min=0.01, max=999999999, layout=wealth.plot.text_layout
     )
-    lbl_regular_deposit = widgets.Label(value="Regular deposit: ")
-    txt_regular_deposit = widgets.BoundedFloatText(
+    lbl_regular_deposit = Label(value="Regular deposit: ")
+    txt_regular_deposit = BoundedFloatText(
         value=regular_deposit, min=0, max=999999999, layout=wealth.plot.text_layout
     )
-    lbl_regular_deposit_freq = widgets.Label(value="Deposits per period: ")
-    txt_deposit_freq = widgets.BoundedIntText(
+    lbl_regular_deposit_freq = Label(value="Deposits per period: ")
+    txt_deposit_freq = BoundedIntText(
         value=deposits_per_period, min=1, max=999999999, layout=wealth.plot.text_layout
     )
-    lbl_interest_rate = widgets.Label(value="Interest rate %: ")
-    txt_interest_rate = widgets.BoundedFloatText(
+    lbl_interest_rate = Label(value="Interest rate %: ")
+    txt_interest_rate = BoundedFloatText(
         value=interest_rate, min=0, max=100, step=0.1, layout=wealth.plot.text_layout
     )
-    lbl_compounds_freq = widgets.Label(value="Compounds per period: ")
-    txt_compound_freq = widgets.BoundedIntText(
+    lbl_compounds_freq = Label(value="Compounds per period: ")
+    txt_compound_freq = BoundedIntText(
         value=compounds_per_period, min=1, max=999999999, layout=wealth.plot.text_layout
     )
-    lbl_periods = widgets.Label(value="Periods: ")
-    txt_periods = widgets.BoundedIntText(
-        value=periods, min=0, layout=wealth.plot.text_layout
-    )
-    lbl_deposit_time = widgets.Label(value="Deposit at: ")
-    btn_deposit_time = widgets.ToggleButtons(
+    lbl_periods = Label(value="Periods: ")
+    txt_periods = BoundedIntText(value=periods, min=0, layout=wealth.plot.text_layout)
+    lbl_deposit_time = Label(value="Deposit at: ")
+    btn_deposit_time = ToggleButtons(
         options={"Period Start": DepositTime.START, "Period End": DepositTime.END},
         value=deposit_at_period_start,
     )
-    box = widgets.HBox(
+    box = HBox(
         [
-            widgets.VBox(
+            VBox(
                 [lbl_start_amount, lbl_regular_deposit, lbl_interest_rate, lbl_periods]
             ),
-            widgets.VBox(
+            VBox(
                 [txt_start_amount, txt_regular_deposit, txt_interest_rate, txt_periods]
             ),
-            widgets.VBox(
+            VBox(
                 [
                     lbl_placeholder,
                     lbl_regular_deposit_freq,
@@ -278,7 +286,7 @@ def interest(**kwargs):
                     lbl_deposit_time,
                 ]
             ),
-            widgets.VBox(
+            VBox(
                 [
                     lbl_placeholder,
                     txt_deposit_freq,
@@ -288,13 +296,13 @@ def interest(**kwargs):
             ),
         ]
     )
-    out_summary = widgets.Output()
-    out_fig = widgets.Output()
+    out_summary = Output()
+    out_fig = Output()
 
     with out_fig:
         fig = plt.figure(figsize=(10, 7), num="Account Development")
 
-    out_df = widgets.Output()
+    out_df = Output()
 
     update_interest = functools.partial(
         _calc_interest_from_widgets,
