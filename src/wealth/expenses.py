@@ -143,7 +143,7 @@ def _display_expense_dataframes(
             )
 
 
-def expense_dataframes():
+def biggest_expenses():
     """Display dataframes containing the biggest expenses."""
     out = widgets.Output()
     drp_freq = widgets.Dropdown(
