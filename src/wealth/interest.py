@@ -1,9 +1,11 @@
 """Functionality to calculate interest."""
 import enum
 import dataclasses
+import datetime as dt
 import functools
 from typing import Any, List, Dict
 
+import dateutil.relativedelta
 import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -16,6 +18,7 @@ import wealth
 
 BoundedFloatText = widgets.BoundedFloatText
 BoundedIntText = widgets.BoundedIntText
+DatePicker = widgets.DatePicker
 FloatText = widgets.FloatText
 Label = widgets.Label
 HBox = widgets.HBox
@@ -64,6 +67,7 @@ def calc_compound_interest(
 
 def _build_account_history(
     start_amount: float,
+    start_date: dt.date,
     regular_deposit: float,
     deposit_freq: int,
     interest_rate: float,
@@ -78,34 +82,40 @@ def _build_account_history(
     first event."""
 
     # initial and client specified events
-    events = [Event(0, EventType.DEPOSIT, {"amount": start_amount}), *additional_events]
+    events = [
+        Event(start_date, EventType.DEPOSIT, {"amount": start_amount}),
+        *additional_events,
+    ]
+
+    end_date = start_date + dateutil.relativedelta.relativedelta(years=n_years)
+    one_year = start_date + dateutil.relativedelta.relativedelta(years=1)
+    first_deposit_date = start_date + (one_year - start_date) / deposit_freq
 
     # regular deposits
     if regular_deposit_time == DepositTime.START:
-        deposit_times = np.linspace(1 / deposit_freq, n_years, n_years * deposit_freq)
-        for ts in deposit_times:
-            events.append(
-                Event(ts, EventType.REGULAR_DEPOSIT, {"amount": regular_deposit})
-            )
+        periods = n_years * deposit_freq
+        for ts in pd.date_range(first_deposit_date, end_date, periods=periods):
+            date = ts.to_pydatetime(warn=False).date()
+            event = Event(date, EventType.REGULAR_DEPOSIT, {"amount": regular_deposit})
+            events.append(event)
 
     # interest compounds
-    compound_times = np.linspace(1 / compound_freq, n_years, n_years * compound_freq)
-    for ts in compound_times:
-        events.append(
-            Event(
-                ts,
-                EventType.INTEREST_PAYMENT,
-                {"rate": interest_rate / compound_freq},
-            )
+    first_compound_date = start_date + (one_year - start_date) / compound_freq
+    periods = n_years * compound_freq
+    for ts in pd.date_range(first_compound_date, end_date, periods=periods):
+        date = ts.to_pydatetime(warn=False).date()
+        event = Event(
+            date, EventType.INTEREST_PAYMENT, {"rate": interest_rate / compound_freq}
         )
+        events.append(event)
 
     # regular deposits
     if regular_deposit_time == DepositTime.END:
-        deposit_times = np.linspace(1 / deposit_freq, n_years, n_years * deposit_freq)
-        for ts in deposit_times:
-            events.append(
-                Event(ts, EventType.REGULAR_DEPOSIT, {"amount": regular_deposit})
-            )
+        periods = n_years * deposit_freq
+        for ts in pd.date_range(first_deposit_date, end_date, periods=periods):
+            date = ts.to_pydatetime(warn=False).date()
+            event = Event(date, EventType.REGULAR_DEPOSIT, {"amount": regular_deposit})
+            events.append(event)
 
     events.sort(key=lambda event: event.timestamp)
     return events
@@ -167,6 +177,7 @@ def _calc_interest_from_widgets(
     out_df: Output,
     fig: mpl.figure.Figure,
     txt_start_amount: FloatText,
+    txt_start_date: DatePicker,
     txt_regular_deposit: FloatText,
     txt_deposit_freq: IntText,
     txt_interest_rate: FloatText,
@@ -179,6 +190,7 @@ def _calc_interest_from_widgets(
     values and plot it."""
     events = _build_account_history(
         txt_start_amount.value,
+        txt_start_date.value,
         txt_regular_deposit.value,
         txt_deposit_freq.value,
         txt_interest_rate.value / 100,
@@ -213,7 +225,7 @@ def _calc_interest_from_widgets(
         )
     with out_fig:
         fig.clear()
-        wealth.plot.setup_plot_and_axes(fig, "Account Development")
+        wealth.plot.setup_yearly_plot_and_axes(fig, "Account Development")
         _plot_account_development(df)
         plt.legend(loc="best", borderaxespad=0.1)
     out_df.clear_output()
@@ -227,6 +239,7 @@ def interest(**kwargs):
     # import matplotlib.pyplot as plt
     plt.close("all")
     initial_amount = kwargs.get("initial_amount", 1000)
+    start_date = kwargs.get("start_date", dt.datetime.now().date())
     regular_deposit = kwargs.get("regular_deposit", 100)
     interest_rate = kwargs.get("interest_rate", 4)
     years = kwargs.get("years", 10)
@@ -236,11 +249,12 @@ def interest(**kwargs):
     additional_events = kwargs.get("additional_events", [])
     show_transaction_table = kwargs.get("show_transaction_table", True)
 
-    lbl_placeholder = Label("")
     lbl_start_amount = Label(value="Initial amount: ")
     txt_start_amount = BoundedFloatText(
         value=initial_amount, min=0.01, max=999999999, layout=wealth.plot.text_layout
     )
+    lbl_start_date = Label(value="Start date: ")
+    txt_start_date = DatePicker(value=start_date, layout=wealth.plot.text_layout)
     lbl_regular_deposit = Label(value="Regular deposit: ")
     txt_regular_deposit = BoundedFloatText(
         value=regular_deposit, min=0, max=999999999, layout=wealth.plot.text_layout
@@ -270,7 +284,7 @@ def interest(**kwargs):
             VBox([txt_start_amount, txt_regular_deposit, txt_interest_rate, txt_years]),
             VBox(
                 [
-                    lbl_placeholder,
+                    lbl_start_date,
                     lbl_regular_deposit_freq,
                     lbl_compounds_freq,
                     lbl_deposit_time,
@@ -278,7 +292,7 @@ def interest(**kwargs):
             ),
             VBox(
                 [
-                    lbl_placeholder,
+                    txt_start_date,
                     txt_deposit_freq,
                     txt_compound_freq,
                     btn_deposit_time,
@@ -301,6 +315,7 @@ def interest(**kwargs):
         out_df=out_df,
         fig=fig,
         txt_start_amount=txt_start_amount,
+        txt_start_date=txt_start_date,
         txt_regular_deposit=txt_regular_deposit,
         txt_deposit_freq=txt_deposit_freq,
         txt_interest_rate=txt_interest_rate,
@@ -310,6 +325,7 @@ def interest(**kwargs):
         additional_events=additional_events,
     )
     txt_start_amount.observe(update_interest, "value")
+    txt_start_date.observe(update_interest, "value")
     txt_regular_deposit.observe(update_interest, "value")
     txt_deposit_freq.observe(update_interest, "value")
     txt_interest_rate.observe(update_interest, "value")
