@@ -236,7 +236,6 @@ def _calc_interest_from_widgets(
 def interest(**kwargs):
     """Interactively estimate compound interest and plot an according graph.
     Also consider an optionally given list of Events into the calculation."""
-    # import matplotlib.pyplot as plt
     plt.close("all")
     initial_amount = kwargs.get("initial_amount", 1000)
     start_date = kwargs.get("start_date", dt.datetime.now().date())
