@@ -37,11 +37,15 @@ def _show_sums(
         display(Markdown("### Incomes"))
         incomes = df.loc[df["cost"] > 0].sort_values(by="cost", ascending=False)
         incomes["percent"] = (incomes["cost"] / incomes["cost"].sum()) * 100
+        incomes["cost"] = incomes["cost"].map(wealth.money_fmt())
+        incomes["percent"] = incomes["percent"].map(wealth.percent_fmt)
         display(incomes)
 
         display(Markdown("### Expenses"))
         expenses = df.loc[df["cost"] <= 0].sort_values(by="cost")
         expenses["percent"] = (expenses["cost"] / expenses["cost"].sum()) * 100
+        expenses["cost"] = expenses["cost"].map(wealth.money_fmt())
+        expenses["percent"] = expenses["percent"].map(wealth.percent_fmt)
         display(expenses)
 
         display(Markdown("### Buckets"))
@@ -51,14 +55,18 @@ def _show_sums(
             by="cost", ascending=False
         )
         income_sums["percent"] = (income_sums["cost"] / income_sums["cost"].sum()) * 100
-        display(income_sums.sort_values(by="cost"))
+        income_sums["cost"] = income_sums["cost"].map(wealth.money_fmt())
+        income_sums["percent"] = income_sums["percent"].map(wealth.percent_fmt)
+        display(income_sums)
 
         display(Markdown("#### Expenses"))
         expense_sums = sums_df.loc[sums_df["cost"] <= 0].sort_values(by="cost")
         expense_sums["percent"] = (
             expense_sums["cost"] / expense_sums["cost"].sum()
         ) * 100
-        display(expense_sums.sort_values(by="cost"))
+        expense_sums["cost"] = expense_sums["cost"].map(wealth.money_fmt())
+        expense_sums["percent"] = expense_sums["percent"].map(wealth.percent_fmt)
+        display(expense_sums)
 
 
 def _plot_piechart_of_expense_bucket_sums(bucket_sums: Dict[str, float]):
@@ -112,8 +120,8 @@ def info(buckets: Positions):
         max=9999,
         description="Multiplier:",
     )
-    out = Output()
 
+    out = Output()
     show_sums = functools.partial(
         _show_sums,
         out=out,

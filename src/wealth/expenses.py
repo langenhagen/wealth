@@ -143,12 +143,13 @@ def _display_expense_dataframes(
             start = rng[i - 1].strftime(fmt)
             end = (rng[i] - day_off).strftime(fmt)
             display(Markdown(f"## {start} – {end}"))
-            wealth.plot.display_dataframe(
+            out_df = (
                 df[mask]
                 .sort_values(by="amount")
-                .drop(["date", "year", "month", "day_of_month"], axis=1),
-                txt_n_rows.value,
+                .drop(["date", "year", "month", "day_of_month"], axis=1)
             )
+            out_df["amount"] = out_df["amount"].map(wealth.money_fmt())
+            wealth.plot.display_dataframe(out_df, txt_n_rows.value)
 
 
 def biggest_expenses():

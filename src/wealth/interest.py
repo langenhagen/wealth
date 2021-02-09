@@ -215,12 +215,18 @@ def _calc_interest_from_widgets(
                 f"is {wealth.Money(final_balance)}."
             )
         )
-        display(Markdown(f"Money increased by {increase_percent}% from start."))
+        display(
+            Markdown(
+                f"Money increased by {wealth.percent_fmt(increase_percent)} "
+                "from start."
+            )
+        )
         display(Markdown(f"You invested {wealth.Money(invested)}."))
         display(Markdown(f"You received {wealth.Money(interest_sum)} interest."))
         display(
             Markdown(
-                f"Interest-Investment ratio: {round(interest_sum/invested * 100, 2)}%."
+                "Interest-Investment ratio: "
+                f"{wealth.percent_fmt(interest_sum/invested * 100)}."
             )
         )
     with out_fig:

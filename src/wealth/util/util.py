@@ -28,6 +28,19 @@ def add_all_data_column(df: pd.DataFrame, delimiter: str = "; ") -> pd.DataFrame
     return df
 
 
+percent_fmt = "{:,.2f} %".format
+
+
+def money_fmt(currency: str = None):
+    """Return a currency string format function with given currency symbol.
+    If no currency symbol is given, use the symbol from the config.
+    If the config symbol is also missing, use the sign for euro `€`."""
+    if currency is None:
+        currency = wealth.config.get("currency", "€")
+
+    return ("{:,.2f}" + f" {currency}").format
+
+
 def Money(value: float, currency: str = None) -> str:
     """Return the given value as a string with given amount and currency
     symbol. If no currency symbol is given, use the symbol from the config. If
@@ -35,4 +48,4 @@ def Money(value: float, currency: str = None) -> str:
     if currency is None:
         currency = wealth.config.get("currency", "€")
 
-    return "{:.2f} {}".format(value, currency)
+    return money_fmt(currency)(value)

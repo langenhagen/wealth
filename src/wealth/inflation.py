@@ -139,7 +139,9 @@ def _calc_inflated_cost_from_widgets(
     with out:
         display(Markdown(f"<br>The inflated cost is {wealth.Money(inflated_cost)}"))
         display(
-            Markdown(f"Money has {round(ratio*100, 2)}% of the value it had at start")
+            Markdown(
+                f"Money has {wealth.percent_fmt(ratio * 100)} of the value it had at start"
+            )
         )
     with out_fig:
         fig.clear()

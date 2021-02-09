@@ -207,15 +207,9 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
 
     out_df = pd.DataFrame(
         index=["mean", "median", "filtered mean", "filtered median"],
-        data={
-            "values": [
-                round(df.mean(), 2),
-                round(df.median(), 2),
-                round(filtered.mean(), 2),
-                round(filtered.median(), 2),
-            ]
-        },
+        data={"values": [df.mean(), df.median(), filtered.mean(), filtered.median()]},
     )
+    out_df = out_df.applymap(wealth.money_fmt())
 
     out = Output()
     with out:

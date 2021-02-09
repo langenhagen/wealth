@@ -19,12 +19,12 @@ def transactions():
     def _update_out(_):
         out.clear_output()
         accs = [chk.description for chk in checkboxes if chk.value]
+        reversed_df[reversed_df["account"].isin(accs)].drop(
+            ["date", "year", "month", "day_of_month"], axis=1, inplace=True
+        )
+        reversed_df["amount"] = reversed_df["amount"].map(wealth.money_fmt())
         with out:
-            wealth.plot.display_dataframe(
-                reversed_df[reversed_df["account"].isin(accs)].drop(
-                    ["date", "year", "month", "day_of_month"], axis=1
-                )
-            )
+            wealth.plot.display_dataframe(reversed_df)
             display(wealth.df["amount"].describe())
 
     wealth.plot.create_account_checkboxes(checkboxes, reversed_df, True, _update_out)
