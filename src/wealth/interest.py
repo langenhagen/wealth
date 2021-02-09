@@ -9,7 +9,6 @@ import dateutil.relativedelta
 import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 from IPython.core.display import display
 from IPython.display import Markdown
@@ -18,6 +17,7 @@ import wealth
 
 BoundedFloatText = widgets.BoundedFloatText
 BoundedIntText = widgets.BoundedIntText
+Checkbox = widgets.Checkbox
 DatePicker = widgets.DatePicker
 FloatText = widgets.FloatText
 Label = widgets.Label
@@ -240,6 +240,21 @@ def _calc_interest_from_widgets(
         wealth.plot.display_dataframe(df)
 
 
+def _change_transaction_table_visibility(
+    _,
+    out_table: Output,
+    out_df: pd.DataFrame,
+    chk_show_transaction_table: Checkbox,
+):
+    """Display or hide the transaction table in the given output depending on
+    the value of the given checkbox."""
+    out_table.clear_output()
+    if chk_show_transaction_table.value:
+        with out_table:
+            display(Markdown("# Transaction Table"))
+            display(out_df)
+
+
 def interest(**kwargs):
     """Interactively estimate compound interest and plot an according graph.
     Also consider an optionally given list of Events into the calculation."""
@@ -306,14 +321,12 @@ def interest(**kwargs):
             ),
         ]
     )
-    out_summary = Output()
     out_fig = Output()
-
     with out_fig:
         fig = plt.figure(figsize=(10, 7), num="Account Development")
 
+    out_summary = Output()
     out_df = Output()
-
     update_interest = functools.partial(
         _calc_interest_from_widgets,
         out_summary=out_summary,
@@ -339,13 +352,28 @@ def interest(**kwargs):
     txt_years.observe(update_interest, "value")
     btn_deposit_time.observe(update_interest, "value")
 
+    out_table = Output()
+    chk_show_transaction_table = Checkbox(
+        value=show_transaction_table,
+        description="Show Transaction Table",
+        indent=False,
+        layout=wealth.plot.wide_checkbox_layout,
+    )
+    change_transaction_table_visibility = functools.partial(
+        _change_transaction_table_visibility,
+        out_table=out_table,
+        out_df=out_df,
+        chk_show_transaction_table=chk_show_transaction_table,
+    )
+    chk_show_transaction_table.observe(change_transaction_table_visibility, "value")
+
     display(Markdown("## Calculate Compound Interest"))
     display(box)
     display(Markdown("# Summary"))
     display(out_summary)
     display(Markdown("# Account Development"))
     display(out_fig)
-    if show_transaction_table:
-        display(Markdown("# Transaction Table"))
-        display(out_df)
+    display(chk_show_transaction_table)
+    display(out_table)
     update_interest(None)
+    change_transaction_table_visibility(None)
