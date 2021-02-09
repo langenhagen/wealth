@@ -204,10 +204,7 @@ def biggest_expenses():
         VBox(
             [
                 HBox([drp_freq, drp_date, txt_n_periods, txt_n_rows]),
-                HBox(
-                    [Label("Accounts: "), *checkboxes],
-                    layout=wealth.plot.box_layout,
-                ),
+                wealth.plot.account_checkboxes(checkboxes),
                 chk_show_internal,
             ]
         )

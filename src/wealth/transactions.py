@@ -28,6 +28,6 @@ def transactions():
             display(wealth.df["amount"].describe())
 
     wealth.plot.create_account_checkboxes(checkboxes, reversed_df, True, _update_out)
-    display(HBox([Label("Accounts: "), *checkboxes], layout=wealth.plot.box_layout))
+    display(wealth.plot.account_checkboxes(checkboxes))
     display(out)
     _update_out(None)

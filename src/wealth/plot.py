@@ -9,6 +9,8 @@ import pandas as pd
 from IPython.core.display import display
 
 Checkbox = widgets.Checkbox
+HBox = widgets.HBox
+Label = widgets.Label
 Layout = widgets.Layout
 
 checkbox_layout = Layout(width="100px")
@@ -47,6 +49,14 @@ def create_account_checkboxes(
         out_checkboxes.append(chk)
         out_checkboxes.sort(key=lambda chk: chk.description)
     return out_checkboxes
+
+
+def account_checkboxes(checkboxes: List[Checkbox]):
+    """Return a HBox containing all given account checkboxes."""
+    return HBox(
+        [Label("Accounts: ", layout=Layout(width="80px")), *checkboxes],
+        layout=box_layout,
+    )
 
 
 def display_dataframe(

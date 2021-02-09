@@ -70,7 +70,7 @@ def balance():
     drp_date.observe(update_balance, "value")
 
     display(Markdown("# Balance"))
-    display(Box([Label("Accounts: "), *checkboxes], layout=wealth.plot.box_layout))
+    display(wealth.plot.account_checkboxes(checkboxes))
     display(drp_date)
     display(out)
     update_balance(None)
@@ -321,10 +321,7 @@ def means():
         VBox(
             [
                 HBox([drp_freq], layout=wealth.plot.box_layout),
-                HBox(
-                    [Label("Accounts: "), *checkboxes],
-                    layout=wealth.plot.box_layout,
-                ),
+                wealth.plot.account_checkboxes(checkboxes),
             ]
         )
     )
