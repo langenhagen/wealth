@@ -207,28 +207,29 @@ def _calc_interest_from_widgets(
         "change"
     ].sum()
     interest_sum = df[df["type"] == "interest"]["change"].sum()
+
+    summary_df = pd.DataFrame(
+        index=[
+            "accumulated value",
+            "increase since start",
+            "invested",
+            "interest received",
+            "interest-investment ratio",
+        ],
+        data={
+            "value": [
+                wealth.Money(final_balance),
+                wealth.percent_fmt(increase_percent),
+                wealth.Money(invested),
+                wealth.Money(interest_sum),
+                wealth.percent_fmt(interest_sum / invested * 100),
+            ]
+        },
+    )
     out_summary.clear_output()
     with out_summary:
-        display(
-            Markdown(
-                f"<br>The accumulated amount after {txt_years.value} years "
-                f"is {wealth.Money(final_balance)}."
-            )
-        )
-        display(
-            Markdown(
-                f"Money increased by {wealth.percent_fmt(increase_percent)} "
-                "from start."
-            )
-        )
-        display(Markdown(f"You invested {wealth.Money(invested)}."))
-        display(Markdown(f"You received {wealth.Money(interest_sum)} interest."))
-        display(
-            Markdown(
-                "Interest-Investment ratio: "
-                f"{wealth.percent_fmt(interest_sum/invested * 100)}."
-            )
-        )
+        display(Markdown(f"After {txt_years.value} years:"))
+        display(summary_df)
     with out_fig:
         fig.clear()
         wealth.plot.setup_yearly_plot_and_axes(fig, "Account Development")
