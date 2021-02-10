@@ -132,7 +132,6 @@ def _plot_cumsum(
             show_legend = True
         if show_legend:
             plt.legend(loc="best", borderaxespad=0.1)
-        fig.autofmt_xdate()
 
 
 def cumsum():
