@@ -3,8 +3,6 @@ import functools
 from typing import List
 
 import ipywidgets as widgets
-import matplotlib as mpl
-import matplotlib.pyplot as plt
 import pandas as pd
 from IPython.core.display import display
 from IPython.display import Markdown
@@ -21,78 +19,6 @@ HBox = widgets.HBox
 Label = widgets.Label
 Output = widgets.Output
 VBox = widgets.VBox
-
-
-def _get_width(series: pd.Series, freq: str) -> List[int]:
-    """Calculate the width of the bars for the according series values."""
-    ts = series.index.to_list()
-    if not ts:
-        return [1]
-    ts.append(ts[-1] + pd.tseries.frequencies.to_offset(freq))
-    return [(ts[i] - ts[i - 1]).total_seconds() / 86400 for i in range(1, len(ts))]
-
-
-def _barplot(series: pd.Series, freq: str, label: str):
-    """Plot the given series with the given frequency and label as bar plots."""
-    style = {"align": "edge", "alpha": 0.5}
-    incomes = series[series > 0].resample(freq, label="left", closed="left").sum()
-    plt.bar(
-        incomes.index,
-        incomes,
-        label=f"{label} incomes",
-        width=_get_width(incomes, freq),
-        **style,
-    )
-    expenses = series[series <= 0].resample(freq, label="left", closed="left").sum()
-    plt.bar(
-        expenses.index,
-        expenses,
-        label=f"{label} expenses",
-        width=_get_width(expenses, freq),
-        **style,
-    )
-
-
-def _plot_incomes_and_expenses(
-    _,
-    sum_accs_checkboxes: List[Checkbox],
-    single_accs_checkboxes: List[Checkbox],
-    out: Output,
-    fig: mpl.figure.Figure,
-    df: pd.DataFrame,
-    drp_freq: Dropdown,
-    chk_show_internal: Checkbox,
-):
-    """Plot bar plots with the given params."""
-    sum_accs = [chk.description for chk in sum_accs_checkboxes if chk.value]
-    single_accounts = [
-        chk.description
-        for chk in single_accs_checkboxes
-        if chk.value and chk.description != "All"
-    ]
-    if chk_show_internal.value is False and not df.empty:
-        df = df[
-            df["transaction_type"]
-            .astype("category")
-            .isin([TransactionType.IN, TransactionType.OUT])
-        ]
-    show_legend = False
-    with out:
-        fig.clear()
-        wealth.plot.setup_plot_and_axes(fig, "Incomes and Expenses")
-        if not df.empty:
-            sum_series = df[df["account"].isin(sum_accs)].get("amount")
-            if not sum_series.empty:
-                _barplot(sum_series, drp_freq.value, "combined")
-                show_legend = True
-            for account in single_accounts:
-                single_series = df[df["account"] == account].get("amount")
-                if not single_series.empty:
-                    _barplot(single_series, drp_freq.value, account)
-                    show_legend = True
-        if show_legend:
-            plt.legend(loc="best", borderaxespad=0.1)
-        fig.autofmt_xdate()
 
 
 def _display_expense_dataframes(
