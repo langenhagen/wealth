@@ -1,6 +1,7 @@
 """Inflation related functionality."""
 import datetime as dt
 import functools
+from typing import List
 
 import ipywidgets as widgets
 import matplotlib as mpl
@@ -28,17 +29,17 @@ def _calc_inflation_rate(
     return (end_cost / start_cost) ** (1 / (end_year - start_year)) - 1
 
 
-def _get_birthday():
+def _get_birthday() -> dt.datetime:
     """Return the user's birthday."""
     return wealth.config.config.get("retirement", {})["birthday"]
 
 
-def _get_retirement_age():
+def _get_retirement_age() -> int:
     """Return the user's retirement age."""
     return wealth.config.config.get("retirement", {}).get("retirement_age", 67)
 
 
-def _get_inflation_rate():
+def _get_inflation_rate() -> float:
     """Get the user-configured intlation rate."""
     return wealth.config.config.get("inflation_rate", 2)
 
@@ -118,16 +119,25 @@ def _calc_inflated_value(
     return start_cost * (1 + inflation_rate / 100) ** (end_year - start_year)
 
 
+def calc_remaining_percents(
+    start_year: int, end_year: int, inflation_rate: float
+) -> List[float]:
+    """Given the input values, return a list of percents of the remaining value
+    per year."""
+    results = []
+    for year in range(start_year, end_year + 1):
+        value = _calc_inflated_value(1, start_year, year, inflation_rate)
+        results.append(100 / value)
+    return results
+
+
 def _plot_inflation_impact(
     start_cost: float, start_year: int, end_year: int, inflation_rate: float
 ):
     """Plot the impact of the inflation over time."""
     years = [dt.datetime(year, 1, 1) for year in range(start_year, end_year + 1)]
-    values = []
-    for year in range(start_year, end_year + 1):
-        value = _calc_inflated_value(start_cost, start_year, year, inflation_rate)
-        values.append(start_cost / value * 100)
-    plt.plot(years, values)
+    results = calc_remaining_percents(start_year, end_year, inflation_rate)
+    plt.plot(years, results)
 
 
 def _calc_inflated_cost_from_widgets(
