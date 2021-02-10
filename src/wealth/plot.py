@@ -118,3 +118,4 @@ def setup_yearly_plot_and_axes(
     ax.yaxis.set_major_formatter(
         mpl.ticker.FuncFormatter(lambda x, p: format(int(x), ","))
     )
+    fig.autofmt_xdate()
