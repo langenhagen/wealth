@@ -123,7 +123,7 @@ def calc_remaining_percents(
     start_year: int, end_year: int, inflation_rate: float
 ) -> List[float]:
     """Given the input values, return a list of percents of the remaining value
-    per year."""
+    per year, including end_year."""
     results = []
     for year in range(start_year, end_year + 1):
         value = _calc_inflated_value(1, start_year, year, inflation_rate)
