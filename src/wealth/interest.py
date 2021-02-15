@@ -14,6 +14,7 @@ from IPython.core.display import display
 from IPython.display import Markdown
 
 import wealth
+import wealth.inflation
 
 BoundedFloatText = widgets.BoundedFloatText
 BoundedIntText = widgets.BoundedIntText
@@ -121,12 +122,15 @@ def _build_account_history(
     return events
 
 
-def _calc_account_development(events: List[Event]) -> pd.DataFrame:
+def _calc_account_development(
+    events: List[Event], inflation_rate: float
+) -> pd.DataFrame:
     """Calculate the account development given the list of times and events and
     return it as a Dataframe.
     If events happen at the same time, additional prevents happen before
     compounds, compounds happen before deposits. The start amount comes as the
-    first event."""
+    first event.
+    Also add a column that contains values discounted by linear inflation."""
     events.sort(key=lambda event: event.timestamp)
     times = []
     types = []
@@ -155,19 +159,59 @@ def _calc_account_development(events: List[Event]) -> pd.DataFrame:
 
         balances.append(current_balance)
 
-    return pd.DataFrame(
+    df = pd.DataFrame(
         {"time": times, "type": types, "change": changes, "balance": balances}
     )
+    df["time"] = pd.to_datetime(df["time"])
+
+    start_year = df["time"].dt.year.min()
+    end_year = df["time"].dt.year.max()
+    years_to_remaining_factors = wealth.inflation.years_to_remaining_factors(
+        start_year, end_year, inflation_rate
+    )
+    df["discounted_balance"] = df["balance"] * df["time"].dt.year.map(
+        years_to_remaining_factors
+    )
+    return df
 
 
-def _plot_account_development(df: pd.DataFrame):
+def _plot_account_development(df: pd.DataFrame, inflation_rate: float):
     """Plot given dataframe to display its development both with its total
-    balance and with only the self-deposited values without interest."""
+    balance and with only the self-deposited values without interest.
+    Also plot inflation-discounted balances and deposits."""
+    # balances
     df_all = df[["time", "balance"]].groupby(["time"]).last()
     plt.step(df_all.index, df_all, where="post", label="Balance")
+
+    # own deposits
     mask = (df["type"] == "deposit") | (df["type"] == "regular deposit")
     df_deposits = df[mask][["time", "change"]].groupby(["time"]).sum().cumsum()
     plt.step(df_deposits.index, df_deposits, where="post", label="Own Deposits")
+
+    # balances after inflation
+    df_discounted = df[["time", "discounted_balance"]].groupby(["time"]).last()
+    plt.step(
+        df_discounted.index,
+        df_discounted,
+        where="post",
+        label="Balance after Inflation",
+    )
+
+    # own deposits after inflation
+    start_year = df_deposits.index.year.min()
+    end_year = df_deposits.index.year.max()
+    years_to_remaining_factors = wealth.inflation.years_to_remaining_factors(
+        start_year, end_year, inflation_rate
+    )
+    df_deposits["discounted_deposits"] = df_deposits[
+        "change"
+    ] * df_deposits.index.year.map(years_to_remaining_factors)
+    plt.step(
+        df_deposits.index,
+        df_deposits["discounted_deposits"],
+        where="post",
+        label="Own Deposits after Inflation",
+    )
 
 
 def _calc_interest_from_widgets(
@@ -199,7 +243,8 @@ def _calc_interest_from_widgets(
         btn_deposit_time.value,
         additional_events,
     )
-    df = _calc_account_development(events)
+    # TODO widgetize the inflation rate
+    df = _calc_account_development(events, 2)
 
     final_balance = df.iloc[-1]["balance"]
     increase_percent = round((final_balance / txt_start_amount.value - 1) * 100, 2)
@@ -233,7 +278,8 @@ def _calc_interest_from_widgets(
     with out_fig:
         fig.clear()
         wealth.plot.setup_yearly_plot_and_axes(fig, "Account Development")
-        _plot_account_development(df)
+        # TODO widgetize the inflation rate
+        _plot_account_development(df, 2)
         plt.legend(loc="best", borderaxespad=0.1)
     out_df.clear_output()
     with out_df:

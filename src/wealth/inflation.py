@@ -1,7 +1,7 @@
 """Inflation related functionality."""
 import datetime as dt
 import functools
-from typing import List
+from typing import Dict, List
 
 import ipywidgets as widgets
 import matplotlib as mpl
@@ -119,7 +119,7 @@ def _calc_inflated_value(
     return start_cost * (1 + inflation_rate / 100) ** (end_year - start_year)
 
 
-def calc_remaining_percents(
+def _calc_remaining_percents(
     start_year: int, end_year: int, inflation_rate: float
 ) -> List[float]:
     """Given the input values, return a list of percents of the remaining value
@@ -131,12 +131,27 @@ def calc_remaining_percents(
     return results
 
 
+def years_to_remaining_factors(
+    start_year: int, end_year: int, inflation_rate: float
+) -> Dict[int, float]:
+    """Given the input values, return a map of year to remaining factores
+    between [0, 1], including the end year."""
+    remaining_percents = _calc_remaining_percents(start_year, end_year, inflation_rate)
+    years_to_remaining_percents = {}
+    i = 0
+    for percent in remaining_percents:
+        year = start_year + i
+        years_to_remaining_percents[year] = percent / 100
+        i += 1
+    return years_to_remaining_percents
+
+
 def _plot_inflation_impact(
     start_cost: float, start_year: int, end_year: int, inflation_rate: float
 ):
     """Plot the impact of the inflation over time."""
     years = [dt.datetime(year, 1, 1) for year in range(start_year, end_year + 1)]
-    results = calc_remaining_percents(start_year, end_year, inflation_rate)
+    results = _calc_remaining_percents(start_year, end_year, inflation_rate)
     plt.plot(years, results)
 
 
