@@ -106,7 +106,7 @@ def _calc_inflated_value(
     return start_cost * (1 + inflation_rate / 100) ** (end_year - start_year)
 
 
-def _calc_remaining_percents(
+def _calc_remaining_rates(
     start_year: int, end_year: int, inflation_rate: float
 ) -> List[float]:
     """Given the input values, return a list of percents of the remaining value
@@ -114,7 +114,7 @@ def _calc_remaining_percents(
     results = []
     for year in range(start_year, end_year + 1):
         value = _calc_inflated_value(1, start_year, year, inflation_rate)
-        results.append(100 / value)
+        results.append(1 / value)
     return results
 
 
@@ -123,14 +123,14 @@ def years_to_remaining_factors(
 ) -> Dict[int, float]:
     """Given the input values, return a map of year to remaining factores
     between [0, 1], including the end year."""
-    remaining_percents = _calc_remaining_percents(start_year, end_year, inflation_rate)
-    years_to_remaining_percents = {}
+    remaining_rates = _calc_remaining_rates(start_year, end_year, inflation_rate)
+    years_to_remaining_rates = {}
     i = 0
-    for percent in remaining_percents:
+    for percent in remaining_rates:
         year = start_year + i
-        years_to_remaining_percents[year] = percent / 100
+        years_to_remaining_rates[year] = percent
         i += 1
-    return years_to_remaining_percents
+    return years_to_remaining_rates
 
 
 def _plot_inflation_impact(
@@ -138,7 +138,8 @@ def _plot_inflation_impact(
 ):
     """Plot the impact of the inflation over time."""
     years = [dt.datetime(year, 1, 1) for year in range(start_year, end_year + 1)]
-    results = _calc_remaining_percents(start_year, end_year, inflation_rate)
+    remaining_rates = _calc_remaining_rates(start_year, end_year, inflation_rate)
+    results = [start_cost * rate for rate in remaining_rates]
     plt.plot(years, results)
 
 
@@ -174,7 +175,7 @@ def _calc_inflated_cost_from_widgets(
     with out_fig:
         fig.clear()
         wealth.plot.setup_yearly_plot_and_axes(
-            fig, "Inflation Impact Over Time", xlabel="Year", ylabel="Value in %"
+            fig, "Inflation Impact Over Time", xlabel="Year", ylabel="Value"
         )
         _plot_inflation_impact(
             txt_start_cost.value,
@@ -197,16 +198,7 @@ def future_worth(
     txt_start_year = IntText(value=start_year, layout=wealth.plot.slim_text_layout)
     lbl_end_year = Label(value="End year: ")
     txt_end_year = IntText(value=end_year, layout=wealth.plot.slim_text_layout)
-    lbl_inflation = Label(value="Inflation rate %: ")
-    txt_inflation = BoundedFloatText(
-        min=0,
-        max=100,
-        step=0.01,
-        value=inflation_rate,
-        layout=wealth.plot.slim_text_layout,
-    )
-    sld_inflation = FloatSlider(readout=False, min=0, max=100, step=0.01)
-    widgets.jslink((txt_inflation, "value"), (sld_inflation, "value"))
+    txt_inflation, hbox_inflation = wealth.plot.create_inflation_widgets(inflation_rate)
     box = VBox(
         [
             HBox(
@@ -219,7 +211,7 @@ def future_worth(
                     txt_end_year,
                 ]
             ),
-            HBox([lbl_inflation, txt_inflation, sld_inflation]),
+            hbox_inflation,
         ]
     )
     out = Output()

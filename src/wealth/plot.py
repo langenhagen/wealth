@@ -1,6 +1,6 @@
 """Contains generally applicable utility functions for working with the packages
 matplotlib and ipyidgets."""
-from typing import Callable, List
+from typing import Callable, List, Tuple
 
 import ipywidgets as widgets
 import matplotlib as mpl
@@ -8,7 +8,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from IPython.core.display import display
 
+BoundedFloatText = widgets.BoundedFloatText
 Checkbox = widgets.Checkbox
+FloatSlider = widgets.FloatSlider
 HBox = widgets.HBox
 Label = widgets.Label
 Layout = widgets.Layout
@@ -54,11 +56,28 @@ def create_account_checkboxes(
 
 
 def account_checkboxes(checkboxes: List[Checkbox]):
-    """Return a HBox containing all given account checkboxes."""
+    """Return a HBox nicely containing all given account checkboxes."""
     return HBox(
         [Label("Accounts: ", layout=Layout(width="80px")), *checkboxes],
         layout=box_layout,
     )
+
+
+def create_inflation_widgets(inflation_rate: float) -> Tuple[BoundedFloatText, HBox]:
+    """Create a Label, a bounded float text and a slider to adjust inflation,
+    initially starting with the given inflation value in percent."""
+    label = Label(value="Inflation rate %: ")
+    textbox = BoundedFloatText(
+        min=0,
+        max=100,
+        step=0.01,
+        value=inflation_rate,
+        layout=slim_text_layout,
+    )
+    slider = FloatSlider(readout=False, min=0, max=100, step=0.01)
+    hbox_inflation = HBox([label, textbox, slider])
+    widgets.jslink((textbox, "value"), (slider, "value"))
+    return (textbox, hbox_inflation)
 
 
 def display_dataframe(
