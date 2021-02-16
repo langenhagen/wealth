@@ -315,31 +315,46 @@ def interest(**kwargs):
     deposit_at_period_start = kwargs.get("deposit_at_period_start", DepositTime.START)
     additional_events = kwargs.get("additional_events", [])
     show_transaction_table = kwargs.get("show_transaction_table", True)
+    default_inflation_rate = wealth.config["inflation_rate"]
+    inflation_rate = kwargs.get("inflation_rate", default_inflation_rate)
 
     lbl_start_amount = Label(value="Initial amount: ")
     txt_start_amount = BoundedFloatText(
-        value=initial_amount, min=0.01, max=999999999, layout=wealth.plot.text_layout
+        value=initial_amount,
+        min=0.01,
+        max=999999999,
+        layout=wealth.plot.slim_text_layout,
     )
     lbl_start_date = Label(value="Start date: ")
     txt_start_date = DatePicker(value=start_date, layout=wealth.plot.text_layout)
     lbl_regular_deposit = Label(value="Regular deposit: ")
     txt_regular_deposit = BoundedFloatText(
-        value=regular_deposit, min=0, max=999999999, layout=wealth.plot.text_layout
+        value=regular_deposit, min=0, max=999999999, layout=wealth.plot.slim_text_layout
     )
     lbl_regular_deposit_freq = Label(value="Deposits per year: ")
     txt_deposit_freq = BoundedIntText(
-        value=deposits_per_year, min=1, max=999999999, layout=wealth.plot.text_layout
+        value=deposits_per_year,
+        min=1,
+        max=999999999,
+        layout=wealth.plot.slim_text_layout,
     )
     lbl_interest_rate = Label(value="Interest rate %: ")
     txt_interest_rate = BoundedFloatText(
-        value=interest_rate, min=0, max=100, step=0.1, layout=wealth.plot.text_layout
+        value=interest_rate,
+        min=0,
+        max=100,
+        step=0.1,
+        layout=wealth.plot.slim_text_layout,
     )
     lbl_compounds_freq = Label(value="Compounds per year: ")
     txt_compound_freq = BoundedIntText(
-        value=compounds_per_year, min=1, max=999999999, layout=wealth.plot.text_layout
+        value=compounds_per_year,
+        min=1,
+        max=999999999,
+        layout=wealth.plot.slim_text_layout,
     )
     lbl_years = Label(value="Years: ")
-    txt_years = BoundedIntText(value=years, min=0, layout=wealth.plot.text_layout)
+    txt_years = BoundedIntText(value=years, min=0, layout=wealth.plot.slim_text_layout)
     lbl_deposit_time = Label(value="Deposit at: ")
     btn_deposit_time = ToggleButtons(
         options={"Period Start": DepositTime.START, "Period End": DepositTime.END},

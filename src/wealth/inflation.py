@@ -65,12 +65,12 @@ def inflation(
 ):
     """Interactively calculate inflation_rates."""
     lbl_start = Label(value="Start cost and year: ")
-    txt_start_cost = FloatText(value=start_cost, layout=wealth.plot.text_layout)
-    txt_start_year = IntText(value=start_year, layout=wealth.plot.text_layout)
+    txt_start_cost = FloatText(value=start_cost, layout=wealth.plot.slim_text_layout)
+    txt_start_year = IntText(value=start_year, layout=wealth.plot.slim_text_layout)
 
     lbl_end = Label(value="End cost and year: ")
-    txt_end_cost = FloatText(value=end_cost, layout=wealth.plot.text_layout)
-    txt_end_year = IntText(value=end_year, layout=wealth.plot.text_layout)
+    txt_end_cost = FloatText(value=end_cost, layout=wealth.plot.slim_text_layout)
+    txt_end_year = IntText(value=end_year, layout=wealth.plot.slim_text_layout)
     box = HBox(
         [
             VBox([lbl_start, lbl_end]),
@@ -192,18 +192,18 @@ def future_worth(
 ):
     """Interactively estimate future costs subject to inflation."""
     lbl_start_cost = Label(value="Start cost: ")
-    txt_start_cost = FloatText(value=start_cost, layout=wealth.plot.text_layout)
+    txt_start_cost = FloatText(value=start_cost, layout=wealth.plot.slim_text_layout)
     lbl_start_year = Label(value="Start year: ")
-    txt_start_year = IntText(value=start_year, layout=wealth.plot.text_layout)
+    txt_start_year = IntText(value=start_year, layout=wealth.plot.slim_text_layout)
     lbl_end_year = Label(value="End year: ")
-    txt_end_year = IntText(value=end_year, layout=wealth.plot.text_layout)
+    txt_end_year = IntText(value=end_year, layout=wealth.plot.slim_text_layout)
     lbl_inflation = Label(value="Inflation rate %: ")
     txt_inflation = BoundedFloatText(
         min=0,
         max=100,
         step=0.01,
         value=inflation_rate,
-        layout=wealth.plot.text_layout,
+        layout=wealth.plot.slim_text_layout,
     )
     sld_inflation = FloatSlider(readout=False, min=0, max=100, step=0.01)
     widgets.jslink((txt_inflation, "value"), (sld_inflation, "value"))

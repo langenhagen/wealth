@@ -85,7 +85,7 @@ def biggest_expenses():
         description="Frequency:",
         options=wealth.plot.frequency_options,
         value="MS",
-        layout=wealth.plot.dropdown_layout,
+        layout=wealth.plot.slim_dropdown_layout,
     )
     drp_date = Dropdown(
         description="Date:", options=[], layout=wealth.plot.dropdown_layout

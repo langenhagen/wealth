@@ -119,6 +119,7 @@ def info(buckets: Positions):
         min=1,
         max=9999,
         description="Multiplier:",
+        layout=wealth.plot.text_layout,
     )
 
     out = Output()

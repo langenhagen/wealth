@@ -16,7 +16,9 @@ Layout = widgets.Layout
 checkbox_layout = Layout(width="100px")
 wide_checkbox_layout = Layout(width="250px")
 dropdown_layout = Layout(width="250px")
+slim_dropdown_layout = Layout(width="200px")
 text_layout = Layout(width="150px")
+slim_text_layout = Layout(width="100px")
 frequency_options = [
     ("Day", "D"),
     ("Week", "W-MON"),

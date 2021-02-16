@@ -58,7 +58,12 @@ def balance():
     checkboxes = []
     df = wealth.df
     dates = list(_daterange(df.index.date.min(), df.index.date.max()))
-    drp_date = Dropdown(description="Date: ", options=dates, value=df.index.date.max())
+    drp_date = Dropdown(
+        description="Date: ",
+        options=dates,
+        value=df.index.date.max(),
+        layout=wealth.plot.dropdown_layout,
+    )
     update_balance = functools.partial(
         _display_balance,
         checkboxes=checkboxes,
@@ -151,6 +156,7 @@ def cumsum():
             ("Year", "365D"),
         ],
         value="<atomic>",
+        layout=wealth.plot.dropdown_layout,
     )
     sum_accs_checkboxes, single_accs_checkboxes = [], []
 
@@ -280,7 +286,7 @@ def _display_mean_balance_dataframes(
             12,
             min=1,
             max=10000,
-            layout=wealth.plot.text_layout,
+            layout=wealth.plot.slim_text_layout,
         )
         update_out = functools.partial(
             _display_summary,
