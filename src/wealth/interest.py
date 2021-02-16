@@ -228,6 +228,7 @@ def _calc_interest_from_widgets(
     txt_compound_freq: IntText,
     txt_years: IntText,
     btn_deposit_time: ToggleButtons,
+    txt_inflation: FloatText,
     additional_events: List[Event],
 ):
     """Calculate the according account balances from the given widget's
@@ -243,11 +244,10 @@ def _calc_interest_from_widgets(
         btn_deposit_time.value,
         additional_events,
     )
-    # TODO widgetize the inflation rate
-    df = _calc_account_development(events, 2)
+    df = _calc_account_development(events, txt_inflation.value)
 
     final_balance = df.iloc[-1]["balance"]
-    increase_percent = round((final_balance / txt_start_amount.value - 1) * 100, 2)
+    increase_percent = (final_balance / txt_start_amount.value - 1) * 100
     invested = df[(df["type"] == "deposit") | (df["type"] == "regular deposit")][
         "change"
     ].sum()
@@ -278,8 +278,7 @@ def _calc_interest_from_widgets(
     with out_fig:
         fig.clear()
         wealth.plot.setup_yearly_plot_and_axes(fig, "Account Development")
-        # TODO widgetize the inflation rate
-        _plot_account_development(df, 2)
+        _plot_account_development(df, txt_inflation.value)
         plt.legend(loc="best", borderaxespad=0.1)
     out_df.clear_output()
     with out_df:
@@ -360,26 +359,46 @@ def interest(**kwargs):
         options={"Period Start": DepositTime.START, "Period End": DepositTime.END},
         value=deposit_at_period_start,
     )
-    box = HBox(
+    txt_inflation, hbox_inflation = wealth.plot.create_inflation_widgets(inflation_rate)
+    box = VBox(
         [
-            VBox([lbl_start_amount, lbl_regular_deposit, lbl_interest_rate, lbl_years]),
-            VBox([txt_start_amount, txt_regular_deposit, txt_interest_rate, txt_years]),
-            VBox(
+            HBox(
                 [
-                    lbl_start_date,
-                    lbl_regular_deposit_freq,
-                    lbl_compounds_freq,
-                    lbl_deposit_time,
+                    VBox(
+                        [
+                            lbl_start_amount,
+                            lbl_regular_deposit,
+                            lbl_interest_rate,
+                            lbl_years,
+                        ]
+                    ),
+                    VBox(
+                        [
+                            txt_start_amount,
+                            txt_regular_deposit,
+                            txt_interest_rate,
+                            txt_years,
+                        ]
+                    ),
+                    VBox(
+                        [
+                            lbl_start_date,
+                            lbl_regular_deposit_freq,
+                            lbl_compounds_freq,
+                            lbl_deposit_time,
+                        ]
+                    ),
+                    VBox(
+                        [
+                            txt_start_date,
+                            txt_deposit_freq,
+                            txt_compound_freq,
+                            btn_deposit_time,
+                        ]
+                    ),
                 ]
             ),
-            VBox(
-                [
-                    txt_start_date,
-                    txt_deposit_freq,
-                    txt_compound_freq,
-                    btn_deposit_time,
-                ]
-            ),
+            hbox_inflation,
         ]
     )
     out_fig = Output()
@@ -402,6 +421,7 @@ def interest(**kwargs):
         txt_compound_freq=txt_compound_freq,
         txt_years=txt_years,
         btn_deposit_time=btn_deposit_time,
+        txt_inflation=txt_inflation,
         additional_events=additional_events,
     )
     txt_start_amount.observe(update_interest, "value")
@@ -412,6 +432,7 @@ def interest(**kwargs):
     txt_compound_freq.observe(update_interest, "value")
     txt_years.observe(update_interest, "value")
     btn_deposit_time.observe(update_interest, "value")
+    txt_inflation.observe(update_interest, "value")
 
     out_table = Output()
     chk_show_transaction_table = Checkbox(
