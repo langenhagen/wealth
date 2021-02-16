@@ -16,9 +16,16 @@ def _read_config_yaml() -> Dict[str, Any]:
         logging.getLogger().warning(f"Could not open {filename}.")
         return {}
 
-    birthday_str = config_dict.get("retirement", {}).get("birthday", "2000-01-01")
+    config_dict["inflation_rate"] = config_dict.get("inflation_rate", 2)
+
+    config_dict["retirement"] = retirement = config_dict.get("retirement", {})
+    birthday_str = retirement.get("birthday", "2000-01-01")
     birthday = dateutil.parser.parse(birthday_str)
-    config_dict.get("retirement", {})["birthday"] = birthday
+    retirement["birthday"] = birthday
+
+    retirement["retirement_age"] = retirement.get("retirement_age", 67)
+    retirement_age = retirement["retirement_age"]
+    retirement["retirement_year"] = retirement["birthday"].year + retirement_age
 
     return config_dict
 

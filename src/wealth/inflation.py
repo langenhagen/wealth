@@ -21,27 +21,14 @@ IntText = widgets.IntText
 Output = widgets.Output
 VBox = widgets.VBox
 
+config = wealth.config.config
+
 
 def _calc_inflation_rate(
     start_cost: float, end_cost: float, start_year: int, end_year: int
 ) -> float:
     """Given the input values, return the according linear inflation rate."""
     return (end_cost / start_cost) ** (1 / (end_year - start_year)) - 1
-
-
-def _get_birthday() -> dt.datetime:
-    """Return the user's birthday."""
-    return wealth.config.config.get("retirement", {})["birthday"]
-
-
-def _get_retirement_age() -> int:
-    """Return the user's retirement age."""
-    return wealth.config.config.get("retirement", {}).get("retirement_age", 67)
-
-
-def _get_inflation_rate() -> float:
-    """Get the user-configured intlation rate."""
-    return wealth.config.config.get("inflation_rate", 2)
 
 
 def _calc_inflation_rate_from_widgets(
@@ -74,7 +61,7 @@ def inflation(
     start_cost: float = 100,
     start_year: int = dt.datetime.now().year,
     end_cost: float = 200,
-    end_year: int = _get_birthday().year + _get_retirement_age(),
+    end_year: int = config["retirement"]["retirement_year"],
 ):
     """Interactively calculate inflation_rates."""
     lbl_start = Label(value="Start cost and year: ")
@@ -200,8 +187,8 @@ def _calc_inflated_cost_from_widgets(
 def future_worth(
     start_cost: float = 100,
     start_year: int = dt.datetime.now().year,
-    end_year: int = _get_birthday().year + _get_retirement_age(),
-    inflation_rate: float = _get_inflation_rate(),
+    end_year: int = config["retirement"]["retirement_year"],
+    inflation_rate: float = config["inflation_rate"],
 ):
     """Interactively estimate future costs subject to inflation."""
     lbl_start_cost = Label(value="Start cost: ")
