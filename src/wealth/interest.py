@@ -252,6 +252,7 @@ def _calc_interest_from_widgets(
         "change"
     ].sum()
     interest_sum = df[df["type"] == "interest"]["change"].sum()
+    discounted_final_balance = df.iloc[-1]["discounted_balance"]
 
     summary_df = pd.DataFrame(
         index=[
@@ -268,7 +269,14 @@ def _calc_interest_from_widgets(
                 wealth.Money(invested),
                 wealth.Money(interest_sum),
                 wealth.percent_fmt(interest_sum / invested * 100),
-            ]
+            ],
+            "discounted value": [
+                wealth.Money(discounted_final_balance),
+                "",
+                "",
+                "",
+                "",
+            ],
         },
     )
     out_summary.clear_output()
