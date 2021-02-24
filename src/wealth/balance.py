@@ -210,16 +210,16 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
     """Display mean, median and display mean and median without outliers."""
     filtered = df.dropna()[np.abs(scipy.stats.zscore(df.dropna())) < 2]
 
-    out_df = pd.DataFrame(
+    df_out = pd.DataFrame(
         index=["mean", "median", "filtered mean", "filtered median"],
         data={"values": [df.mean(), df.median(), filtered.mean(), filtered.median()]},
     )
-    out_df = out_df.applymap(wealth.money_fmt())
+    df_out = df_out.applymap(wealth.money_fmt())
 
     out = Output()
     with out:
         display(Markdown(f"### {caption}"))
-        display(out_df)
+        display(df_out)
     return out
 
 
@@ -257,27 +257,27 @@ def _display_mean_balance_dataframes(
     if df.empty:
         return
 
-    out_df = pd.DataFrame()
+    df_out = pd.DataFrame()
     accounts = [c.description for c in checkboxes if c.value and c.description != "All"]
     mask = df["account"].isin(accounts)
     daily_cumsum_df = df[mask]["amount"].resample("D").sum().cumsum()
     resampler = daily_cumsum_df.resample(drp_freq.value)
-    out_df["mean"] = resampler.mean()
-    out_df["diff"] = out_df["mean"].diff()
-    out_df["min"] = resampler.min()
-    out_df["min_diff"] = out_df["min"].diff()
-    out_df["max"] = resampler.max()
-    out_df["max_diff"] = out_df["max"].diff()
-    out_df.index = out_df.index.strftime("%Y-%m-%d")
+    df_out["mean"] = resampler.mean()
+    df_out["diff"] = df_out["mean"].diff()
+    df_out["min"] = resampler.min()
+    df_out["min_diff"] = df_out["min"].diff()
+    df_out["max"] = resampler.max()
+    df_out["max_diff"] = df_out["max"].diff()
+    df_out.index = df_out.index.strftime("%Y-%m-%d")
     style = [
         dict(selector="th", props=[("font-size", "24px")]),
         dict(selector="td", props=[("font-size", "24px")]),
     ]
 
     with out:
-        wealth.plot.display_dataframe(out_df.iloc[::-1], style=style)
+        wealth.plot.display_dataframe(df_out.iloc[::-1], style=style)
 
-        if len(out_df) <= 1:
+        if len(df_out) <= 1:
             return
 
         inner_out = Output()
@@ -292,7 +292,7 @@ def _display_mean_balance_dataframes(
             _display_summary,
             txt_n_periods=txt_n_periods,
             out=inner_out,
-            df=out_df,
+            df=df_out,
         )
         txt_n_periods.observe(update_out, "value")
         display(Markdown("## Summary"))

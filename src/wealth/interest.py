@@ -288,7 +288,7 @@ def _calc_interest_from_widgets(
 def _change_transaction_table_visibility(
     _,
     out_table: Output,
-    out_df: pd.DataFrame,
+    out_df: Output,
     chk_show_transaction_table: Checkbox,
 ):
     """Display or hide the transaction table in the given output depending on
