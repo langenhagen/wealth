@@ -281,6 +281,9 @@ def _calc_interest_from_widgets(
         _plot_account_development(df, txt_inflation.value)
         plt.legend(loc="best", borderaxespad=0.1)
     out_df.clear_output()
+    df["change"] = df["change"].map(wealth.money_fmt())
+    df["balance"] = df["balance"].map(wealth.money_fmt())
+    df["discounted_balance"] = df["discounted_balance"].map(wealth.money_fmt())
     with out_df:
         wealth.plot.display_dataframe(df)
 
