@@ -1,5 +1,6 @@
 """The setup.py for the Python code of the project `Wealth`."""
 import pathlib
+
 import setuptools
 
 with open(pathlib.Path.cwd().parent.joinpath("README.md"), "r") as file:

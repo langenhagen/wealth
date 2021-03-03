@@ -1,9 +1,9 @@
 """Functionality to calculate interest."""
-import enum
 import dataclasses
 import datetime as dt
+import enum
 import functools
-from typing import Any, List, Dict
+from typing import Any, Dict, List
 
 import dateutil.relativedelta
 import ipywidgets as widgets

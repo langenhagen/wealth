@@ -9,11 +9,11 @@ import numpy as np
 import pandas as pd
 
 import wealth.config
+import wealth.importers.common as import_common
 import wealth.importers.dkb_giro
 import wealth.importers.dkb_visa
 import wealth.importers.n26_mastercard
 import wealth.importers.sparkasse_giro
-import wealth.importers.common as import_common
 import wealth.util.transaction_type
 
 TransactionType = wealth.util.transaction_type.TransactionType
