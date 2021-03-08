@@ -48,6 +48,24 @@ def _yield_files_with_suffix(
             yield file
 
 
+def _create_offset_df(account_name: str, df: pd.DataFrame) -> pd.DataFrame:
+    """Create a dataframe holding the account's configured initial offset."""
+    accounts = wealth.config.get("accounts", {})
+    account_type = df["account_type"].iloc[0]
+    offset = accounts.get(account_name, {}).get("offset", 0)
+    date = df["date"].min()
+    return pd.DataFrame(
+        {
+            "account": account_name,
+            "account_type": account_type,
+            "amount": offset,
+            "date": date,
+            "description": "<initial offset>",
+        },
+        index=[0],
+    )
+
+
 def _delay_incomes(df: pd.DataFrame) -> pd.DataFrame:
     """Guarantee that cumsums of the amounts peak out towards negative amounts
     when sevaral transactions happen on the same day by delaying incomes
@@ -73,6 +91,7 @@ def _read_all_csv_files() -> pd.DataFrame:
         ".*sparkasse-giro.*": wealth.importers.sparkasse_giro.read_csv,
     }
     dataframes = []
+    found_accounts = set()
 
     for file in _yield_files_with_suffix(pathlib.Path.cwd() / "../csv", ".csv"):
         account_name = re.match(r"\d+-(.+)-.*", file.stem).group(1)
@@ -80,22 +99,16 @@ def _read_all_csv_files() -> pd.DataFrame:
         for regex, read_csv in namepattern_2_importer.items():
             if re.match(regex, file.stem):
                 current_df = read_csv(file, account_name)
-                offset_df = pd.DataFrame(
-                    {
-                        "account": account_name,
-                        "account_type": current_df["account_type"].iloc[0],
-                        "amount": accounts.get(account_name, {}).get("offset", 0),
-                        "date": current_df["date"].min(),
-                        "description": "<initial offset>",
-                    },
-                    index=[0],
-                )
-                dataframes.extend([offset_df, current_df])
+                if account_name not in found_accounts:
+                    offset_df = _create_offset_df(account_name, current_df)
+                    found_accounts.add(account_name)
+                    dataframes.extend([offset_df, current_df])
+                else:
+                    dataframes.append(current_df)
                 break
 
     df = (
         pd.concat(dataframes)
-        .drop_duplicates()
         .reset_index()
         .pipe(_delay_incomes)
         .sort_values(by="date")
