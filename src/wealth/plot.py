@@ -121,7 +121,7 @@ def setup_plot_and_axes(
     ax.xaxis.set_major_locator(mpl.dates.MonthLocator())
     ax.xaxis.set_minor_locator(mpl.dates.WeekdayLocator(byweekday=0))
     ax.yaxis.set_major_formatter(
-        mpl.ticker.FuncFormatter(lambda x, p: format(int(x), ","))
+        mpl.ticker.FuncFormatter(lambda x, _: format(int(x), ","))
     )
     fig.autofmt_xdate()
 
@@ -138,6 +138,6 @@ def setup_yearly_plot_and_axes(
     ax.xaxis.set_major_formatter(mpl.dates.DateFormatter("%Y"))
     ax.xaxis.set_major_locator(mpl.dates.YearLocator())
     ax.yaxis.set_major_formatter(
-        mpl.ticker.FuncFormatter(lambda x, p: format(int(x), ","))
+        mpl.ticker.FuncFormatter(lambda x, _: format(int(x), ","))
     )
     plt.xticks(rotation=45)
