@@ -99,7 +99,7 @@ def inflation(
     update_inflation_rate(None)
 
 
-def _calc_inflated_value(
+def calc_inflated_value(
     start_cost: float, start_year: int, end_year: int, inflation_rate: float
 ) -> float:
     """Given the input values, return the according inflated cost."""
@@ -113,7 +113,7 @@ def _calc_remaining_rates(
     per year, including end_year."""
     results = []
     for year in range(start_year, end_year + 1):
-        value = _calc_inflated_value(1, start_year, year, inflation_rate)
+        value = calc_inflated_value(1, start_year, year, inflation_rate)
         results.append(1 / value)
     return results
 
@@ -155,7 +155,7 @@ def _calc_inflated_cost_from_widgets(
 ):
     """Calculate the according inflated cost from the given widgets' values and
     display it."""
-    inflated_cost = _calc_inflated_value(
+    inflated_cost = calc_inflated_value(
         txt_start_cost.value,
         txt_start_year.value,
         txt_end_year.value,
