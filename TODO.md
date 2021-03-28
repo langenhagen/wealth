@@ -16,7 +16,7 @@ TODOs for the project `Wealth`.
 - do something similar: https://demo.firefly-iii.org/transactions/withdrawal
 - allow to add different scenarios
   - define artificial timeframes, e.g. from 2020-2099 or from Jan 2020 to July 2020
-  - take initial offsets and  different posts of regular lump-sum incomes, expenses, investiments
+  - take initial offsets and different posts of regular lump-sum incomes, expenses, investiments
     with re-investments, like interest on interest and inflation
   - allow to combine scenarios, i.e., add them together
     - allow to deactivate scenarios
