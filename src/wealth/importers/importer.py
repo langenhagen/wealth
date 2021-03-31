@@ -95,7 +95,6 @@ def _read_all_csv_files() -> pd.DataFrame:
 
     for file in _yield_files_with_suffix(pathlib.Path.cwd() / "../csv", ".csv"):
         account_name = re.match(r"\d+-(.+)-.*", file.stem).group(1)
-        accounts = wealth.config.get("accounts", {})
         for regex, read_csv in namepattern_2_importer.items():
             if re.match(regex, file.stem):
                 current_df = read_csv(file, account_name)
