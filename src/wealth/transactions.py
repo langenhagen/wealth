@@ -1,8 +1,9 @@
 """Transaction-related functionality."""
 import functools
+from typing import List
+
 import ipywidgets as widgets
 from IPython.core.display import display
-from typing import List
 
 import wealth
 
