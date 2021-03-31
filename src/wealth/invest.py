@@ -26,7 +26,7 @@ def bailout(
         inflated_value = wealth.inflation.calc_inflated_value(
             investment, investment_year, year, inflation_rate
         )
-        gain = (inflated_value * target_value_rate - investment) / (1 - tax_rate / 100)
+        gain = (inflated_value * target_value_rate - investment) / (1 + tax_rate / 100)
         bailout_amount = investment + gain
 
         years.append(year)
