@@ -352,7 +352,7 @@ def interest(**kwargs):
     txt_interest_rate = BoundedFloatText(
         value=interest_rate,
         min=0,
-        max=100,
+        max=1000,
         step=0.1,
         layout=wealth.plot.slim_text_layout,
     )
