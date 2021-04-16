@@ -4,6 +4,7 @@ import wealth.expenses  # noqa
 import wealth.importers  # noqa
 import wealth.inflation  # noqa
 import wealth.interest  # noqa
+import wealth.invest  # noqa
 import wealth.plot  # noqa
 import wealth.positions  # noqa
 import wealth.transactions  # noqa

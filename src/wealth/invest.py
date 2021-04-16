@@ -1,8 +1,32 @@
 """Investment related functionality."""
+from typing import Set, Tuple
+
 import pandas as pd
 from IPython.core.display import display
+from IPython.display import Markdown
 
 import wealth.inflation
+
+
+def summary(investments: Set[Tuple[str, float, int, str]]):
+    """Summarize the given set investments."""
+    sum_all_investments = sum([i[1] for i in investments])
+    print(f"Sum all investments: {wealth.Money(sum_all_investments)}\n")
+
+    display(Markdown("## Sums per Stock"))
+    stocks = sorted((i[3] for i in investments))
+    sums = []
+    shares = []
+    for stock in stocks:
+        sum_investments = sum([i[1] for i in investments if i[3] == stock])
+        sums.append(sum_investments)
+        sum_shares = sum([i[2] for i in investments if i[3] == stock])
+        shares.append(sum_shares)
+
+    df = pd.DataFrame({"stock": stocks, "sums": sums, "shares": shares})
+    df["sums"] = df["sums"].map(wealth.money_fmt())
+
+    display(df)
 
 
 def bailout(
