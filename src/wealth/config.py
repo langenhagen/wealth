@@ -7,18 +7,21 @@ import yaml
 
 
 def _read_config_yaml() -> Dict[str, Any]:
-    """Read the file `accounts.yml` and write its contents to a dict."""
+    """Read the file `config.yml` and write its contents to a dict.
+    Give defaults to values that the file doesn't specify."""
     filename = "config.yml"
     try:
         with open(f"../config/{filename}") as file:
-            config_dict = yaml.load(file, Loader=yaml.FullLoader)
+            config_ = yaml.load(file, Loader=yaml.FullLoader)
     except FileNotFoundError:
         logging.getLogger().warning(f"Could not open {filename}.")
         return {}
 
-    config_dict["inflation_rate"] = config_dict.get("inflation_rate", 2)
+    config_["capital_gains_taxrate"] = config_.get("capital_gains_taxrate", 0.27)
+    config_["currency"] = config_.get("currency", "€")
+    config_["inflation_rate"] = config_.get("inflation_rate", 2)
 
-    config_dict["retirement"] = retirement = config_dict.get("retirement", {})
+    config_["retirement"] = retirement = config_.get("retirement", {})
     birthday_str = retirement.get("birthday", "2000-01-01")
     birthday = dateutil.parser.parse(birthday_str)
     retirement["birthday"] = birthday
@@ -27,7 +30,7 @@ def _read_config_yaml() -> Dict[str, Any]:
     retirement_age = retirement["retirement_age"]
     retirement["retirement_year"] = retirement["birthday"].year + retirement_age
 
-    return config_dict
+    return config_
 
 
 config = _read_config_yaml()

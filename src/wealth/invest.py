@@ -1,5 +1,5 @@
 """Investment related functionality."""
-from typing import Set, Tuple
+from typing import Set, Optional, Tuple
 
 import pandas as pd
 from IPython.core.display import display
@@ -32,9 +32,9 @@ def summary(investments: Set[Tuple[str, float, int, str]]):
 def bailout(
     investment_year: int,
     investment: float,
-    inflation_rate: float,
-    tax_rate: float,
     target_value_rate: float,
+    inflation_rate: Optional[float] = None,
+    tax_rate: Optional[float] = None,
 ):
     """List a dataframe with years and amounts that make sense when to bail out.
 
@@ -45,13 +45,14 @@ def bailout(
     gross_gains = []
     net_gains = []
 
+    inflation_rate = inflation_rate or wealth.config["inflation_rate"]
+    tax_rate = tax_rate or wealth.config["capital_gains_taxrate"]
+
     for year in range(investment_year, investment_year + 10):
         inflated_value = wealth.inflation.calc_inflated_value(
             investment, investment_year, year, inflation_rate
         )
-        gross_gain = (inflated_value * target_value_rate - investment) * (
-            1 + tax_rate / 100
-        )
+        gross_gain = (inflated_value * target_value_rate - investment) * (1 + tax_rate)
         bailout_amount = investment + gross_gain
 
         years.append(year)

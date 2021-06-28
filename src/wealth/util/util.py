@@ -36,7 +36,7 @@ def money_fmt(currency: str = None):
     If no currency symbol is given, use the symbol from the config.
     If the config symbol is also missing, use the sign for euro `€`."""
     if currency is None:
-        currency = wealth.config.get("currency", "€")
+        currency = wealth.config["currency"]
 
     return ("{:,.2f}" + f" {currency}").format
 
@@ -46,6 +46,6 @@ def Money(value: float, currency: str = None) -> str:
     symbol. If no currency symbol is given, use the symbol from the config. If
     the config symbol is also missing, use the sign for euro `€`."""
     if currency is None:
-        currency = wealth.config.get("currency", "€")
+        currency = wealth.config["currency"]
 
     return money_fmt(currency)(value)

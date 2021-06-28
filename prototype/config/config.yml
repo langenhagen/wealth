@@ -33,6 +33,7 @@ accounts:
     offset: 2000.49
   example-n26:
     iban: nn26262626262626262626
+capital_gains_taxrate: 0.27
 currency: "€"
 inflation_rate: 2.0
 retirement:
