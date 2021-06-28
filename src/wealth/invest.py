@@ -14,7 +14,7 @@ def summary(investments: Set[Tuple[str, float, int, str]]):
     print(f"Sum all investments: {wealth.Money(sum_all_investments)}\n")
 
     display(Markdown("## Sums per Stock"))
-    stocks = sorted(set(i[3] for i in investments))
+    stocks = sorted(set(i[3] for i in investments), key=str.casefold)
     sums = []
     shares = []
     for stock in stocks:
