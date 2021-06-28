@@ -11,6 +11,7 @@ HBox = widgets.HBox
 Label = widgets.Label
 
 
+# pylint:disable=redefined-builtin
 def _numeric_adjust_widgets(caption: str, min: float, max: float) -> HBox:
     """Return a HBox with a label, a text box and a linked slider."""
     label = Label(value=caption)

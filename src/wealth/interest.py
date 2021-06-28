@@ -311,6 +311,7 @@ def _change_transaction_table_visibility(
             display(out_df)
 
 
+# pylint:disable=too-many-statements
 def interest(**kwargs):
     """Interactively estimate compound interest and plot an according graph.
     Also consider an optionally given list of Events into the calculation."""
