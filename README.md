@@ -9,6 +9,7 @@ widgets.
 The project has following structure:
 ```
 .
+├── LICENSE                         The project's license formulation.
 ├── prototype/                      Contains exemplaric defaults.
 │   ├── config/                     Contains config file examples.
 │   ├── notebooks/                  Contains the Jupyter notebook templates.
