@@ -1,5 +1,7 @@
 #!/bin/bash
 # Launch the Wealth workspace.
 
+cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
+
 source .venv/bin/activate
 jupyter lab
