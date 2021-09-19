@@ -5,3 +5,5 @@ jupyterlab
 matplotlib
 pandas
 pip
+pyyaml
+scipy
