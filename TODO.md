@@ -24,5 +24,4 @@ TODOs for the project `Wealth`.
       - income vs income
       - spending vs spending
       - income vs spending
-- have setup.cfg instead of setup.py
 - document track.csv
