@@ -12,7 +12,6 @@ TODOs for the project `Wealth`.
 - have future predictions, e.g. via rolling mean and fourier approximation or taylor expansion
 - make `clean-notebooks.sh` work recursively
 - throw superfluous/old stuff out
-- related great Software: Firefly III  https://docs.firefly-iii.org/en/latest/about/features.html
 - do something similar: https://demo.firefly-iii.org/transactions/withdrawal
 - allow to add different scenarios
   - define artificial timeframes, e.g. from 2020-2099 or from Jan 2020 to July 2020
@@ -25,3 +24,5 @@ TODOs for the project `Wealth`.
       - income vs income
       - spending vs spending
       - income vs spending
+- have setup.cfg instead of setup.py
+- document track.csv
