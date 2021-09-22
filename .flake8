@@ -1,0 +1,10 @@
+# Flake8 specific configuration.
+
+[flake8]
+
+# Specify a list of codes to ignore.
+ignore =
+    E128,
+    E501,
+    E712,
+    W503

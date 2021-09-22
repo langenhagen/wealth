@@ -1,0 +1,22 @@
+# Python-related configuration of the project.
+
+[tool.isort]
+profile = "black"
+
+[tool.pylint."MESSAGES CONTROL"]
+disable = [
+    "C0103",
+    "C0121",
+    "C0330",
+    "C0412",
+    "E0401",
+    "R0801",
+    "R0903",
+    "R0913",
+    "R0914",
+    "W0603",
+    "W1203",
+]
+
+[tool.pytest.ini_options]
+env = ["DB_URL = postgresql://postgres:example@127.0.0.1:5432/test"]
