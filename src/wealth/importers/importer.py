@@ -1,6 +1,6 @@
-"""Provides utilities to import all *.csv files in the folder csv.
+"""Provides utilities to import the account *.csv files in the folder `csv`.
 The csv files have to match a certain naming pattern in order to map them to
-different importers. See _read_all_csv_files()."""
+different importers. See `_read_account_csvs()`."""
 import pathlib
 import re
 from typing import Iterable
@@ -51,15 +51,12 @@ def _yield_files_with_suffix(
 def _create_offset_df(account_name: str, df: pd.DataFrame) -> pd.DataFrame:
     """Create a dataframe holding the account's configured initial offset."""
     accounts = wealth.config.get("accounts", {})
-    account_type = df["account_type"].iloc[0]
-    offset = accounts.get(account_name, {}).get("offset", 0)
-    date = df["date"].min()
     return pd.DataFrame(
         {
             "account": account_name,
-            "account_type": account_type,
-            "amount": offset,
-            "date": date,
+            "account_type": df["account_type"].iloc[0],
+            "amount": accounts.get(account_name, {}).get("offset", 0),
+            "date": df["date"].min(),
             "description": "<initial offset>",
         },
         index=[0],
@@ -67,9 +64,8 @@ def _create_offset_df(account_name: str, df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _delay_incomes(df: pd.DataFrame) -> pd.DataFrame:
-    """Guarantee that cumsums of the amounts peak out towards negative amounts
-    when sevaral transactions happen on the same day by delaying incomes
-    so that they virtually happen after all expenses at any given day."""
+    """Guarantee that incomese virtually happen after all expenses at any given
+    day."""
     df.loc[df["amount"] > 0, "date"] = df["date"] + pd.DateOffset(hours=1)
     return df
 
@@ -80,10 +76,10 @@ def _strip_times(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def _read_all_csv_files() -> pd.DataFrame:
-    """Import all *.csv files in the folder "csv".
-    The files must match a certain naming pattern that the map
-    `namepattern_2_importer` specifies."""
+def _read_account_csvs() -> pd.DataFrame:
+    """Import all account-related *.csv files in the folder `csv`. The files
+    must match a naming pattern that the map `namepattern_2_importer`
+    specifies."""
     namepattern_2_importer = {
         ".*dkb-giro.*": wealth.importers.dkb_giro.read_csv,
         ".*dkb-visa.*": wealth.importers.dkb_visa.read_csv,
@@ -91,7 +87,7 @@ def _read_all_csv_files() -> pd.DataFrame:
         ".*sparkasse-giro.*": wealth.importers.sparkasse_giro.read_csv,
     }
     dataframes = []
-    found_accounts = set()
+    processed_accounts = set()
 
     for file in _yield_files_with_suffix(pathlib.Path.cwd() / "../csv", ".csv"):
         if file.name == "track.csv":
@@ -100,12 +96,12 @@ def _read_all_csv_files() -> pd.DataFrame:
         for regex, read_csv in namepattern_2_importer.items():
             if re.match(regex, file.stem):
                 current_df = read_csv(file, account_name)
-                if account_name not in found_accounts:
-                    offset_df = _create_offset_df(account_name, current_df)
-                    found_accounts.add(account_name)
-                    dataframes.extend([offset_df, current_df])
-                else:
+                if account_name in processed_accounts:
                     dataframes.append(current_df)
+                else:
+                    offset_df = _create_offset_df(account_name, current_df)
+                    dataframes.extend([offset_df, current_df])
+                    processed_accounts.add(account_name)
                 break
 
     df = (
@@ -130,13 +126,12 @@ def _add_date_related_columns(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def create_dataframe() -> pd.DataFrame:
-    """Read the file accounts.yml and import csv files from the folder "csv"
-    as a DataFrame and add columns for working working with `Wealth`.
-    The resulting DataFrame is the main DataFrame that contains the
-    transaction information."""
+def init() -> pd.DataFrame:
+    """Read the file `accounts.yml` and import csv files from the folder `csv`
+    as a DataFrame and add columns for to conveniently work working with the
+    DataFrame. The resulting DataFrame contains the transaction information."""
     df = (
-        _read_all_csv_files()
+        _read_account_csvs()
         .pipe(_add_transaction_type_column)
         .pipe(_add_date_related_columns)
         .replace(np.nan, "", regex=True)[

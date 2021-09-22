@@ -13,4 +13,4 @@ from wealth.labels import expense_labels, income_labels  # noqa
 from wealth.util.transaction_type import TransactionType  # noqa
 from wealth.util.util import Money, money_fmt, percent_fmt  # noqa
 
-df = wealth.importers.create_dataframe()
+from wealth.importers import init  # noqa
