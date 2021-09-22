@@ -2,15 +2,10 @@
 import functools
 from typing import List
 
-import ipywidgets as widgets
 from IPython.core.display import display
+from ipywidgets import Checkbox, Output
 
 import wealth
-
-Checkbox = widgets.Checkbox
-HBox = widgets.HBox
-Label = widgets.Label
-Output = widgets.Output
 
 
 def _update_out(_, out: Output, checkboxes: List[Checkbox]):

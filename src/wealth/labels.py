@@ -31,7 +31,7 @@ def build_label_tree(dictionary: dict, root: Label) -> None:
 
 def load_label_tree_from_yaml() -> Tuple[Label, Label]:
     """Load labels from a yaml file and convert them to trees."""
-    with open("../config/labels.yml") as file:
+    with open("../config/labels.yml", encoding="UTF-8") as file:
         raw_label_data = yaml.load(file, Loader=yaml.FullLoader)
 
     assert isinstance(raw_label_data, dict)

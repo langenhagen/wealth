@@ -11,7 +11,7 @@ def _read_config_yaml() -> Dict[str, Any]:
     Give defaults to values that the file doesn't specify."""
     filename = "config.yml"
     try:
-        with open(f"../config/{filename}") as file:
+        with open(f"../config/{filename}", encoding="UTF-8") as file:
             config_ = yaml.load(file, Loader=yaml.FullLoader)
     except FileNotFoundError:
         logging.getLogger().warning(f"Could not open {filename}.")

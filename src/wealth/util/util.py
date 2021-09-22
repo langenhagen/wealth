@@ -1,6 +1,4 @@
 """Contains general utility functions."""
-import pandas as pd
-
 import wealth.config
 
 percent_fmt = "{:,.2f} %".format

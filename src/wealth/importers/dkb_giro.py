@@ -1,7 +1,7 @@
 """Contains logic to import DKB giro csv files format."""
 import pandas as pd
 
-import wealth.importers.common as common
+from wealth.importers.common import add_all_data_column, to_lower
 
 
 def read_csv(path: str, account_name: str) -> pd.DataFrame:
@@ -25,11 +25,9 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             thousands=".",
         )
         .assign(account=account_name, account_type="dkb-giro")
-        .pipe(common.add_all_data_column)
+        .pipe(add_all_data_column)
         .rename(columns=columns)
         .dropna(subset=["date"])
-        .pipe(common.make_lowercase)[
-            [*columns.values(), "account", "account_type", "all_data"]
-        ]
+        .pipe(to_lower)[[*columns.values(), "account", "account_type", "all_data"]]
     )
     return df

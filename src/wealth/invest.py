@@ -1,5 +1,5 @@
 """Investment related functionality."""
-from typing import Set, Optional, Tuple
+from typing import Optional, Set, Tuple
 
 import pandas as pd
 from IPython.core.display import display

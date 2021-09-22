@@ -3,10 +3,8 @@ import datetime as dt
 
 import pandas as pd
 
-import wealth.importers.common as common
-import wealth.util
-
-TransactionType = wealth.util.TransactionType
+from wealth.importers.common import add_all_data_column, to_lower, transfer_columns
+from wealth.util import TransactionType
 
 
 def _create_internal_transaction_type(row) -> TransactionType:
@@ -60,7 +58,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             thousands=None,
         )
         .assign(account=account_name, account_type="n26", transaction_type=None)
-        .pipe(common.add_all_data_column)
+        .pipe(add_all_data_column)
         .rename(
             columns={
                 "Amount (EUR)": "amount",
@@ -71,7 +69,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             }
         )
         .dropna(subset=["date"])
-        .pipe(common.make_lowercase)
-        .pipe(_handle_transactions_between_n26_spaces)[common.transfer_columns]
+        .pipe(to_lower)
+        .pipe(_handle_transactions_between_n26_spaces)[transfer_columns]
     )
     return df

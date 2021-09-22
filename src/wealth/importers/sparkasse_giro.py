@@ -3,8 +3,7 @@ import datetime as dt
 
 import pandas as pd
 
-import wealth
-import wealth.importers.common as common
+from wealth.importers.common import add_all_data_column, to_lower, transfer_columns
 
 
 def read_csv(path: str, account_name: str) -> pd.DataFrame:
@@ -28,10 +27,10 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             thousands=None,
         )
         .assign(account=account_name, account_type="sparkasse", transaction_type=None)
-        .pipe(common.add_all_data_column)
+        .pipe(add_all_data_column)
         .rename(columns=columns)
         .dropna(subset=["date"])
-        .pipe(common.make_lowercase)[common.transfer_columns]
+        .pipe(to_lower)[transfer_columns]
     )
 
     return df
