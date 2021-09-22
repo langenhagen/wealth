@@ -6,6 +6,11 @@ import wealth.importers.common as common
 
 def read_csv(path: str, account_name: str) -> pd.DataFrame:
     """Import csv data from Deutsche Kreditbank (DKB) visa accounts."""
+    columns = {
+        "Betrag (EUR)": "amount",
+        "Belegdatum": "date",
+        "Beschreibung": "description",
+    }
     df = (
         pd.read_csv(
             path,
@@ -19,13 +24,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
         )
         .assign(account=account_name, account_type="dkb-visa")
         .pipe(common.add_all_data_column)
-        .rename(
-            columns={
-                "Betrag (EUR)": "amount",
-                "Belegdatum": "date",
-                "Beschreibung": "description",
-            }
-        )
+        .rename(columns=columns)
         .dropna(subset=["date"])
         .pipe(common.make_lowercase)[
             [*columns.values(), "account", "account_type", "all_data"]
