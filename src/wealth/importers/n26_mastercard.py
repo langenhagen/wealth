@@ -60,7 +60,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             thousands=None,
         )
         .assign(account=account_name, account_type="n26", transaction_type=None)
-        .pipe(wealth.util.add_all_data_column)
+        .pipe(common.add_all_data_column)
         .rename(
             columns={
                 "Amount (EUR)": "amount",
@@ -71,7 +71,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             }
         )
         .dropna(subset=["date"])
-        .pipe(wealth.util.make_lowercase)
+        .pipe(common.make_lowercase)
         .pipe(_handle_transactions_between_n26_spaces)[common.transfer_columns]
     )
     return df

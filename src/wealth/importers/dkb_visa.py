@@ -1,7 +1,7 @@
 """Contains logic to import DKB Visa csv files format."""
 import pandas as pd
 
-import wealth.util
+import wealth.importers.common as common
 
 
 def read_csv(path: str, account_name: str) -> pd.DataFrame:
@@ -18,7 +18,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             thousands=".",
         )
         .assign(account=account_name, account_type="dkb-visa")
-        .pipe(wealth.util.add_all_data_column)
+        .pipe(common.add_all_data_column)
         .rename(
             columns={
                 "Betrag (EUR)": "amount",
@@ -27,7 +27,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             }
         )
         .dropna(subset=["date"])
-        .pipe(wealth.util.make_lowercase)[
+        .pipe(common.make_lowercase)[
             [*columns.values(), "account", "account_type", "all_data"]
         ]
     )
