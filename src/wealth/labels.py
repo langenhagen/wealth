@@ -3,7 +3,7 @@ from typing import Optional, Tuple
 
 import yaml
 
-import wealth.util.tree as tree
+from wealth.util import tree
 
 
 class Label(tree.Node):
