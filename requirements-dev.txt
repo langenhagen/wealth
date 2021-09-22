@@ -1,4 +1,6 @@
-black
+black[jupyter]
 bpython
 flake8
+isort
+mypy
 pylint
