@@ -4,7 +4,7 @@ import pathlib
 import setuptools
 
 readme_path = pathlib.Path.cwd().parent.joinpath("README.md")
-with open(readme_path, "r", encoding="UTF-8") as file:
+with open(readme_path, encoding="UTF-8") as file:
     long_description = file.read()
 
 setuptools.setup(
