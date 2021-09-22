@@ -4,7 +4,7 @@ import datetime as dt
 import pandas as pd
 
 import wealth
-import wealth.importers.common as import_common
+import wealth.importers.common as common
 import wealth.util
 
 
@@ -32,7 +32,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
         .pipe(wealth.util.add_all_data_column)
         .rename(columns=columns)
         .dropna(subset=["date"])
-        .pipe(wealth.util.make_lowercase)[import_common.transfer_columns]
+        .pipe(wealth.util.make_lowercase)[common.transfer_columns]
     )
 
     return df

@@ -20,16 +20,14 @@ class TransactionType(enum.Flag):
         return TransactionType.INTERNAL_IN if is_internal else TransactionType.IN
 
     @staticmethod
-    def create_from_row(row) -> "TransactionType":
-        """Create a TransactionType object from a dataframe row."""
-        return TransactionType.create_from_amount(row["amount"], False)
-
-    @staticmethod
-    def create_from_amount(
-        amount: float, is_internal: bool = False
-    ) -> "TransactionType":
+    def from_amount(amount: float, is_internal: bool = False) -> "TransactionType":
         """Create a TransactionType object given an amount."""
         return TransactionType.create(amount <= 0, is_internal)
+
+    @staticmethod
+    def from_row(row, is_internal: bool = False) -> "TransactionType":
+        """Create a TransactionType object from a dataframe row."""
+        return TransactionType.from_amount(row["amount"], False)
 
     def is_income(self) -> bool:
         """Determine if the given TransactionType is an income."""

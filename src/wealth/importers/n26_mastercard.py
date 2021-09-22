@@ -3,22 +3,22 @@ import datetime as dt
 
 import pandas as pd
 
-import wealth.importers.common as import_common
+import wealth.importers.common as common
 import wealth.util
 
 TransactionType = wealth.util.TransactionType
 
 
 def _create_internal_transaction_type(row) -> TransactionType:
-    """Creat a suitable transaction type according to the given row."""
-    return TransactionType.create_from_amount(row["amount"], is_internal=True)
+    """Create a suitable transaction type according to the given row."""
+    return TransactionType.from_row(row, is_internal=True)
 
 
-def _handle_transactions_between_internal_n26_spaces(df: pd.DataFrame) -> pd.DataFrame:
-    """Filter all rows that depict transactions between account-internal n26-spaces,
-    rename their account name according to their sub-account and duplicate the
-    according rows for completeness. Screws up the order of rows"""
-
+def _handle_transactions_between_n26_spaces(df: pd.DataFrame) -> pd.DataFrame:
+    """Filter all rows that depict transactions between account-internal
+    n26-spaces, rename their account name according to their sub-account and
+    double book the according rows for completeness. Screws up the order of
+    rows."""
     mask = (pd.isnull(df["iban"])) & (
         df["correspondent"].str.match("from (.+) to (.+)")
     )
@@ -29,6 +29,7 @@ def _handle_transactions_between_internal_n26_spaces(df: pd.DataFrame) -> pd.Dat
         "-" + internal["correspondent"].str.extract("^from (.+) to (.+)")
     ).replace("-main account", "")
 
+    # double booking
     inverted = internal.copy()
     internal.loc[(internal["amount"] > 0), "account"] = internal["account"] + spaces[1]
     internal.loc[(internal["amount"] <= 0), "account"] = internal["account"] + spaces[0]
@@ -46,15 +47,8 @@ def _handle_transactions_between_internal_n26_spaces(df: pd.DataFrame) -> pd.Dat
 
 
 def read_csv(path: str, account_name: str) -> pd.DataFrame:
-    """Import csv data from N26 giro/mastercard accounts and consider n26's sub-accounts."""
-    columns = {
-        "Amount (EUR)": "amount",
-        "Date": "date",
-        "Payee": "correspondent",
-        "Payment reference": "description",
-        "Account number": "iban",
-    }
-
+    """Import csv data from N26 giro/mastercard accounts and consider n26's
+    sub-accounts."""
     df = (
         pd.read_csv(
             path,
@@ -67,11 +61,17 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
         )
         .assign(account=account_name, account_type="n26", transaction_type=None)
         .pipe(wealth.util.add_all_data_column)
-        .rename(columns=columns)
+        .rename(
+            columns={
+                "Amount (EUR)": "amount",
+                "Date": "date",
+                "Payee": "correspondent",
+                "Payment reference": "description",
+                "Account number": "iban",
+            }
+        )
         .dropna(subset=["date"])
         .pipe(wealth.util.make_lowercase)
-        .pipe(_handle_transactions_between_internal_n26_spaces)[
-            import_common.transfer_columns
-        ]
+        .pipe(_handle_transactions_between_n26_spaces)[common.transfer_columns]
     )
     return df

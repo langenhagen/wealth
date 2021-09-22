@@ -6,14 +6,6 @@ import wealth.util
 
 def read_csv(path: str, account_name: str) -> pd.DataFrame:
     """Import csv data from Deutsche Kreditbank (DKB) giro accounts."""
-    columns = {
-        "Betrag (EUR)": "amount",
-        "Wertstellung": "date",
-        "Auftraggeber / Beg�nstigter": "correspondent",
-        "Verwendungszweck": "description",
-        "Kontonummer": "iban",
-    }
-
     df = (
         pd.read_csv(
             path,
@@ -27,7 +19,15 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
         )
         .assign(account=account_name, account_type="dkb-giro")
         .pipe(wealth.util.add_all_data_column)
-        .rename(columns=columns)
+        .rename(
+            columns={
+                "Betrag (EUR)": "amount",
+                "Wertstellung": "date",
+                "Auftraggeber / Beg�nstigter": "correspondent",
+                "Verwendungszweck": "description",
+                "Kontonummer": "iban",
+            }
+        )
         .dropna(subset=["date"])
         .pipe(wealth.util.make_lowercase)[
             [*columns.values(), "account", "account_type", "all_data"]

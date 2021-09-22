@@ -27,8 +27,8 @@ def _create_transaction_type(row: pd.Series) -> TransactionType:
     accounts = wealth.config.get("accounts", {})
     ibans = [accounts[acc].get("iban", 0) for acc in accounts.keys()]
     if row["iban"] in ibans:
-        return TransactionType.create_from_amount(row["amount"], is_internal=True)
-    return TransactionType.create_from_amount(row["amount"], is_internal=False)
+        return TransactionType.from_amount(row["amount"], is_internal=True)
+    return TransactionType.from_amount(row["amount"], is_internal=False)
 
 
 def _add_transaction_type_column(df: pd.DataFrame) -> pd.DataFrame:
