@@ -3,17 +3,9 @@ import pathlib
 
 import setuptools
 
-with open(pathlib.Path.cwd().parent.joinpath("README.md"), "r") as file:
+readme_path = pathlib.Path.cwd().parent.joinpath("README.md")
+with open(readme_path, "r", encoding="UTF-8") as file:
     long_description = file.read()
-
-install_requires = [
-    "ipywidgets",
-    "matplotlib",
-    "pandas",
-    "python-dateutil",
-    "pyyaml",
-    "scipy",
-]
 
 setuptools.setup(
     author="Andreas Langenhagen jr.",
@@ -24,12 +16,19 @@ setuptools.setup(
         "Operating System :: POSIX",
     ],
     description='The Python sources for the Project "Wealth"',
-    install_requires=install_requires,
+    install_requires=[
+        "ipywidgets",
+        "matplotlib",
+        "pandas",
+        "python-dateutil",
+        "pyyaml",
+        "scipy",
+    ],
     long_description=long_description,
     long_description_content_type="text/markdown",
     name="wealth",
     packages=setuptools.find_packages(),
     python_requires=">=3.9",
     url="https://github.com/langenhagen/wealth",
-    version="0.1.0",
+    version="0.1.1",
 )
