@@ -18,5 +18,5 @@ disable = [
     "W1203",
 ]
 
-[tool.pytest.ini_options]
-env = ["DB_URL = postgresql://postgres:example@127.0.0.1:5432/test"]
+[tool.pylint.format]
+expected-line-ending-format = "LF"
