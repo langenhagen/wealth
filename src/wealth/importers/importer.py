@@ -9,14 +9,12 @@ import numpy as np
 import pandas as pd
 
 import wealth.config
-import wealth.importers.common as import_common
 import wealth.importers.dkb_giro
 import wealth.importers.dkb_visa
 import wealth.importers.n26_mastercard
 import wealth.importers.sparkasse_giro
-import wealth.util.transaction_type
-
-TransactionType = wealth.util.transaction_type.TransactionType
+from wealth.importers.common import transfer_columns
+from wealth.util.transaction_type import TransactionType
 
 
 def _create_transaction_type(row: pd.Series) -> TransactionType:
@@ -110,7 +108,7 @@ def _read_account_csvs() -> pd.DataFrame:
         .pipe(_delay_incomes)
         .sort_values(by="date")
         .pipe(_strip_times)
-        .set_index("date", drop=False)[import_common.transfer_columns]
+        .set_index("date", drop=False)[transfer_columns]
     )
     return df
 
