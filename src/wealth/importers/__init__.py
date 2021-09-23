@@ -1,2 +1,2 @@
 """Namespace package for `Wealth` csv importers."""
-from .importer import init  # noqa
+from .importer import init
