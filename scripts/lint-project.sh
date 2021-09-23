@@ -7,15 +7,17 @@
 root_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../src"
 
 printf -- '\e[1mFlake8...\e[0m\n'
-flake8 "$root_path";
+flake8 "$root_path"
 
 printf -- '\e[1mPylint...\e[0m\n'
-pylint "$root_path" --msg-template='{msg_id} {path}:{line}: {msg}' --score no;
+pylint "$root_path" --msg-template='{msg_id} {path}:{line}: {msg}' --score no
+
+printf -- '\e[1mMypy...\e[0m\n'
+mypy --ignore-missing-imports --follow-imports=skip --no-color-output --no-error-summary "$root_path"
 
 printf -- '\e[1mShellcheck...\e[0m\n'
 shellcheck_exclude_codes_array=(
     'SC1090'  # Can't follow non-constant source
 )
 shellcheck_exclude_codes="$(printf '%s,' "${shellcheck_exclude_codes_array[@]}")"
-find "scripts" -iname "*.sh" -exec \
-    shellcheck --exclude "$shellcheck_exclude_codes" '{}' \;
+find "scripts" -iname "*.sh" -exec shellcheck --exclude "$shellcheck_exclude_codes" '{}' \;
