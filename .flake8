@@ -2,9 +2,11 @@
 
 [flake8]
 
-# Specify a list of codes to ignore.
+# a list of codes to ignore
 ignore =
-    E128,
-    E501,
-    E712,
-    W503
+    W503   # line break before binary operator
+
+max-line-length = 99
+
+# Max McCabe complexity
+max-complexity = 6
