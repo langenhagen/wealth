@@ -72,7 +72,7 @@ check_semver_le "$min_python_version" "$python_version" \
 mkdir -p "$workspace_dir"
 printf 'Installing workspace to: %s\n' "$workspace_dir"
 
-# install Python packages and jupyter extensions
+# install Python packages and Jupyter extensions
 python3 -m venv "${workspace_dir}/.venv"
 # shellcheck disable=SC1090
 source "${workspace_dir}/.venv/bin/activate"
