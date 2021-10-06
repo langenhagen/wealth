@@ -32,7 +32,8 @@ The project has following structure:
 
 
 ## Prerequisites
-`Wealth` runs on `Linux` and `Mac OS` and requires `Python`, at least version `3.7.0`.  
+`Wealth` runs on `Linux` and `Mac OS` and requires `Python`, at least version `3.7.0` as well as
+the node version manager `nvm`.  
 `Wealth` downloads further requirements during setup.
 
 
