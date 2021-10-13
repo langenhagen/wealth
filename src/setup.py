@@ -29,7 +29,7 @@ setuptools.setup(
     long_description_content_type="text/markdown",
     name="wealth",
     packages=setuptools.find_packages(),
-    python_requires=">=3.7",
+    python_requires=">=3.9",
     url="https://github.com/langenhagen/wealth",
     version="0.1.0",
 )
