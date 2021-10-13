@@ -18,7 +18,8 @@ The project has following structure:
 ├── requirements.txt                Requirements.txt for a Wealth workspace project.
 ├── requirements-dev.txt            Additional requirements for a Wealth workspace project.
 ├── scripts/                        Contains utility scripts.
-│   └── create-workspace.sh         Sets up a workspace.
+│   ├── create-workspace.sh         Sets up a workspace.
+│   └── setup.sh                    Sets up the project for development.
 └── src/                            Contains source files.
     ├── wealth/                     The Python source code package.
     └── setup.py                    Setup file for the Python package.
