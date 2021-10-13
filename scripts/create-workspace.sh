@@ -48,25 +48,27 @@ while [ "$#" -gt 0 ]; do
 done
 workspace_dir="${workspace_dir:-${default_workspace_dir}}"
 
-die() {
-    printf -- '%s\n' "$1"
-    exit "${2:-1}"
+command -v python3 >/dev/null || { printf 'Error: Python >=3.9 must be available\n'; exit 1; }
+
+check_semver_le() {
+    # Check whether the first given semantic version is less than or equal to the
+    # second given semantic version.
+    #
+    # Usage:
+    #   check_semver_le 3.8 3.9    # returns true
+    #   check_semver_le 3.8 3.8    # returns true
+    #   check_semver_le 3.8.1 3.8  # returns false
+    #   check_semver_le 4 3.1.2    # returns false
+    [ "$1" = "$(printf "%s\n%s" "$1" "$2" | sort -V | head -n1)" ]
 }
 
-# check if python is available
-command -v python3 >/dev/null || die 'Error: Python >=3.7 must be available' 1
-
-# check if Python is available and if version is compatible
-available_python_version="$(python3 --version | grep -Eo '[0-9.]+')"
-min_required_python_version='3.7.0'
-both_versions="$(printf '%s\n%s' "$available_python_version" "$min_required_python_version")"
-lower_version="$(printf '%s' "$both_versions" | sort -V | head -1)"
-error_msg="Errror: Wealth requires at least Python version ${min_required_python_version}. "
-error_msg+="Found Python version ${available_python_version}."
-[ "$lower_version" != "$min_required_python_version" ] && die "$error_msg" 2
+min_python_version='3.9'
+python_version="$(python -c "from sys import version_info as i; print(f'{i.major}.{i.minor}')")"
+check_semver_le "$min_python_version" "$python_version" \
+    || { printf "Python version should be at least ${min_python_version}\n"; exit 2; }
 
 # create workspace directory
-[ -e "${workspace_dir}" ] && die "Error: ${workspace_dir} already exists." 3
+[ -e "${workspace_dir}" ] && { printf "Error: ${workspace_dir} already exists.\n"; exit 3; }
 mkdir -p "$workspace_dir"
 printf 'Installing workspace to: %s\n' "$workspace_dir"
 
