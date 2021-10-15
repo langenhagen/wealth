@@ -78,7 +78,7 @@ def _display_expense_dataframes(
             wealth.plot.display_dataframe(df_out, txt_n_rows.value)
 
 
-def biggest_expenses():
+def biggest_expenses(df: pd.DataFrame):
     """Display dataframes containing the biggest expenses."""
     out = Output()
     drp_freq = Dropdown(
@@ -116,13 +116,13 @@ def biggest_expenses():
         checkboxes=checkboxes,
         chk_show_internal=chk_show_internal,
         out=out,
-        df=wealth.df,
+        df=df,
     )
     drp_freq.observe(update_out, "value")
     drp_date.observe(update_out, "value")
     txt_n_periods.observe(update_out, "value")
     txt_n_rows.observe(update_out, "value")
-    wealth.plot.create_account_checkboxes(checkboxes, wealth.df, True, update_out)
+    wealth.plot.create_account_checkboxes(checkboxes, df, True, update_out)
     chk_show_internal.observe(update_out, "value")
 
     display(Markdown("## Biggest Expenses"))

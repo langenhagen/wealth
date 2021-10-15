@@ -26,7 +26,7 @@ VBox = widgets.VBox
 
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
-    """Yield dates between, inclunding, given start and end dates."""
+    """Yield dates between, including given start and end dates."""
     for offset in range((end - start).days + 1):
         yield start + dt.timedelta(offset)
 
@@ -51,12 +51,11 @@ def _display_balance(
         display(Markdown(f'<br><font size="6">{wealth.Money(value)}</font>'))
 
 
-def balance():
+def balance(df: pd.DataFrame):
     """Show account-related cumulative sum of the dataframe's column `amount` at
     a specified date."""
     out = Output()
     checkboxes = []
-    df = wealth.df
     dates = list(_daterange(df.index.date.min(), df.index.date.max()))
     drp_date = Dropdown(
         description="Date: ",
@@ -139,7 +138,7 @@ def _plot_cumsum(
             plt.legend(loc="best", borderaxespad=0.1)
 
 
-def cumsum():
+def cumsum(df: pd.DataFrame):
     """Show an account-related cumulative sum graph of the dataframe's column
     `amount`."""
     drp_freq = Dropdown(
@@ -170,12 +169,12 @@ def cumsum():
         single_accs_checkboxes=single_accs_checkboxes,
         out=out,
         fig=fig,
-        df=wealth.df,
+        df=df,
         drp_freq=drp_freq,
     )
     drp_freq.observe(plot, "value")
-    wealth.plot.create_account_checkboxes(sum_accs_checkboxes, wealth.df, True, plot)
-    wealth.plot.create_account_checkboxes(single_accs_checkboxes, wealth.df, True, plot)
+    wealth.plot.create_account_checkboxes(sum_accs_checkboxes, df, True, plot)
+    wealth.plot.create_account_checkboxes(single_accs_checkboxes, df, True, plot)
 
     display(Markdown("# Plot"))
     display(
@@ -301,7 +300,7 @@ def _display_mean_balance_dataframes(
         update_out(None)
 
 
-def means():
+def means(df: pd.DataFrame):
     """Display dataframes containing balances for a given frequency."""
     out = Output()
     drp_freq = Dropdown(
@@ -316,10 +315,10 @@ def means():
         drp_freq=drp_freq,
         checkboxes=checkboxes,
         out=out,
-        df=wealth.df,
+        df=df,
     )
     drp_freq.observe(update_out, "value")
-    wealth.plot.create_account_checkboxes(checkboxes, wealth.df, True, update_out)
+    wealth.plot.create_account_checkboxes(checkboxes, df, True, update_out)
 
     display(Markdown("# Mean Balances"))
     display(

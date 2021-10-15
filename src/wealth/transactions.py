@@ -2,15 +2,16 @@
 import functools
 from typing import List
 
+import pandas as pd
 from IPython.core.display import display
 from ipywidgets import Checkbox, Output
 
 import wealth
 
 
-def _update_out(_, out: Output, checkboxes: List[Checkbox]):
+def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
     """Update the displayed transaction dataframe."""
-    df = wealth.df.iloc[::-1]
+    df = df.iloc[::-1]
     out.clear_output()
     accounts = [chk.description for chk in checkboxes if chk.value]
     df = df[df["account"].isin(accounts)].drop(
@@ -19,16 +20,15 @@ def _update_out(_, out: Output, checkboxes: List[Checkbox]):
     df["amount"] = df["amount"].map(wealth.money_fmt())
     with out:
         wealth.plot.display_dataframe(df)
-        display(df["amount"].describe())
 
 
-def transactions():
+def transactions(df: pd.DataFrame):
     """Plot some columns of the dataframe sorted in descending order and allow
     to filter accounts via checkboxes."""
     out = Output()
     checkboxes = []
-    update_out = functools.partial(_update_out, checkboxes=checkboxes, out=out)
-    wealth.plot.create_account_checkboxes(checkboxes, wealth.df, True, update_out)
+    update_out = functools.partial(_update_out, df=df, checkboxes=checkboxes, out=out)
+    wealth.plot.create_account_checkboxes(checkboxes, df, True, update_out)
 
     display(wealth.plot.account_checkboxes(checkboxes))
     display(out)
