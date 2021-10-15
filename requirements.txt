@@ -1,5 +1,5 @@
 -e src/
-ipympl
+ipympl==0.7.0
 ipywidgets
 jupyterlab
 matplotlib
