@@ -65,10 +65,10 @@ check_semver_le() {
 min_python_version='3.9'
 python_version="$(python -c "from sys import version_info as i; print(f'{i.major}.{i.minor}')")"
 check_semver_le "$min_python_version" "$python_version" \
-    || { printf "Python version should be at least ${min_python_version}\n"; exit 2; }
+    || { printf "Python version should be at least %s\n" "$min_python_version"; exit 2; }
 
 # create workspace directory
-[ -e "${workspace_dir}" ] && { printf "Error: ${workspace_dir} already exists.\n"; exit 3; }
+[ -e "${workspace_dir}" ] && { printf "Error: %s already exists.\n" "$workspace_dir"; exit 3; }
 mkdir -p "$workspace_dir"
 printf 'Installing workspace to: %s\n' "$workspace_dir"
 
