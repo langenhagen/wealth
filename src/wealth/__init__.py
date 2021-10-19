@@ -7,6 +7,7 @@ import wealth.interest
 import wealth.invest
 import wealth.plot
 import wealth.positions
+import wealth.track
 import wealth.transactions
 from wealth.config import config
 from wealth.importers import init
