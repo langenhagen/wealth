@@ -31,7 +31,7 @@ check_semver_le() {
 min_python_version='3.9'
 python_version="$(python -c "from sys import version_info as i; print(f'{i.major}.{i.minor}')")"
 check_semver_le "$min_python_version" "$python_version" \
-    || { printf "Python version should be at least ${min_python_version}\n"; exit 1; }
+    || { printf "Python version should be at least %s\n" "$min_python_version"; exit 1; }
 
 [[ "$*" =~ '--clean' ]] && rm -fr .venv/
 
