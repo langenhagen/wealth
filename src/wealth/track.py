@@ -70,13 +70,4 @@ def init() -> pd.DataFrame:
     print("Sums per type:\n")
     display(sums_per_type)
 
-    # TODO 1 graph the cumsums for both wealth and shopping
-
-    # TODO 2 highlight last shopping and wealth monthly cumsums, e.g. print them in bold
-    #   - see df.style.applymap():
-    #       df.style.applymap('font-weight: bold',
-    #                         subset=pd.IndexSlice[summary.index[summary.index=='Total'], :])
-
-    # TODO 3 use Money for monetary values
-
     return df
