@@ -3,7 +3,9 @@ Track expenses and cluster them according to type and subtype."""
 import pandas as pd
 import pandas.api.types as ptypes
 from IPython.core.display import display
+from ipywidgets import Output
 
+import wealth
 from wealth.importers.common import to_lower
 
 
@@ -60,14 +62,18 @@ def init() -> pd.DataFrame:
 
     df.set_index("date", drop=True, inplace=True)
 
-    display(df)
-
     sums_per_type = df.groupby(df["type"])["price"].sum().to_frame()
 
     sums_per_type.rename(columns={"price": "total_expenses"}, inplace=True)
     n_days = (df.index[0] - df.index[-1]).days
     sums_per_type["avg_monthly_expense"] = sums_per_type["total_expenses"] / n_days * 30
-    print("Sums per type:\n")
-    display(sums_per_type)
+
+    out = Output()
+    with out:
+        wealth.plot.display_dataframe(df)
+        print("Sums per type:\n")
+        display(sums_per_type)
+
+    display(out)
 
     return df
