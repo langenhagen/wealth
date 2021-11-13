@@ -3,7 +3,6 @@ import datetime as dt
 import functools
 from typing import Generator, List
 
-import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,18 +10,19 @@ import pandas as pd
 import scipy.stats
 from IPython.core.display import display
 from IPython.display import Markdown
+from ipywidgets.widgets import (
+    BoundedIntText,
+    Box,
+    Checkbox,
+    Dropdown,
+    HBox,
+    Label,
+    Output,
+    VBox,
+)
 
 import wealth
 import wealth.plot
-
-Box = widgets.Box
-BoundedIntText = widgets.BoundedIntText
-Checkbox = widgets.Checkbox
-Dropdown = widgets.Dropdown
-HBox = widgets.HBox
-Label = widgets.Label
-Output = widgets.Output
-VBox = widgets.VBox
 
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
