@@ -1,14 +1,14 @@
 """Contains general utility functions."""
 import wealth.config
 
-percent_fmt = "{:,.2f} %".format
+percent_fmt = "{:,.2f}%".format
 
 
 def money_fmt(currency: str = None):
     """Return a currency string format function with given currency symbol.
     If no currency symbol is given, use the symbol from the config."""
     currency = currency or wealth.config["currency"]
-    return ("{:,.2f}" + f" {currency}").format
+    return ("{:,.2f}" + f"{currency}").format
 
 
 def Money(value: float, currency: str = None) -> str:
