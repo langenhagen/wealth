@@ -15,6 +15,12 @@ pylint "$root_path" --msg-template='{msg_id} {path}:{line}: {msg}' --score no
 printf -- '\e[1mMypy...\e[0m\n'
 mypy --ignore-missing-imports --follow-imports=skip --no-color-output --no-error-summary "$root_path"
 
+printf -- '\e[1mBlack...\e[0m\n'
+black --check --quiet "$root_path" || printf 'The black formatting is bad\n'
+
+printf -- '\e[1mIsort...\e[0m\n'
+isort --profile black --check-only --diff "$root_path"
+
 printf -- '\e[1mShellcheck...\e[0m\n'
 shellcheck_exclude_codes_array=(
     'SC1090'  # Can't follow non-constant source
