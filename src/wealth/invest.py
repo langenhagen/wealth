@@ -241,11 +241,11 @@ def stock():
     display(Markdown("# Stock Investments"))
     investments = _load_stocks_yml()
 
-    n_investments = len(investments)
-    print(f"I made {n_investments} investments.")
+    done_investments = [i for i in investments if i.is_open() is False]
+    print(f"I made {len(done_investments)} done investments.")
 
-    net_profits = sum([i.net_profit() for i in investments if i.is_open() is False])
-    print(f"The net profits are {Money(net_profits)}.")
+    profits = sum([i.net_profit() for i in done_investments])
+    print(f"The net profits are {Money(profits)}.")
 
     print("\nClosed investments:")
     _summarize_closed_investments(investments)
