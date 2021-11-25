@@ -236,16 +236,38 @@ def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFram
     display(past_df)
 
 
-def stock():
-    """Render information about stock invesments."""
+def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
+    """Render information about stock invesments, also in the light of given
+    goals and fulfilled goals."""
     display(Markdown("# Stock Investments"))
     investments = _load_stocks_yml()
 
     done_investments = [i for i in investments if i.is_open() is False]
-    print(f"I made {len(done_investments)} done investments.")
+    display(
+        Markdown(
+            f"I finished {len(done_investments)} investments. "
+            f"I have {len(investments) - len(done_investments)} open investments."
+        )
+    )
 
-    profits = sum([i.net_profit() for i in done_investments])
-    print(f"The net profits are {Money(profits)}.")
+    net_profits = sum([i.net_profit() for i in done_investments])
+    display(Markdown(f"The net profits are {Money(net_profits)}."))
+
+    net_profits_after_goals = net_profits - sum(fulfilled_goals.values())
+    display(
+        Markdown(
+            "**The net profits after fulfilled goals are "
+            f"{Money(net_profits_after_goals)}.**"
+        )
+    )
+
+    display(Markdown(f"The sum of all open goals is {Money(sum(goals.values()))}."))
+    display(
+        Markdown(
+            "The sum of all fulfilled goals is "
+            f"{Money(sum(fulfilled_goals.values()))}."
+        )
+    )
 
     print("\nClosed investments:")
     _summarize_closed_investments(investments)
