@@ -3,13 +3,15 @@ Track expenses and cluster them according to type and subtype."""
 import pandas as pd
 import pandas.api.types as ptypes
 from IPython.core.display import display
+from IPython.display import Markdown
 from ipywidgets import Output
 
 import wealth
+from wealth import money_fmt
 from wealth.importers.common import to_lower
 
 
-def init() -> pd.DataFrame:
+def track() -> pd.DataFrame:
     """Import the file `track.csv` and return it as a DataFrame."""
     df = pd.read_csv(
         "../csv/track.csv",
@@ -47,31 +49,54 @@ def init() -> pd.DataFrame:
     df["monthly_shopping_cumsum"] = (
         df[df["bucket"] == "shopping"].groupby(df["year_and_month"])["price"].cumsum()
     )
-    df["monthly_shopping_cumsum"] = df["monthly_shopping_cumsum"].fillna("")
-    df["continuous_shopping_cumsum"] = df[df["bucket"] == "shopping"]["price"].cumsum()
-    df["continuous_shopping_cumsum"] = df["continuous_shopping_cumsum"].fillna("")
 
     df["monthly_wealth_cumsum"] = (
         df[df["bucket"] == "wealth"].groupby(df["year_and_month"])["price"].cumsum()
     )
+
+    monthly_end_balances = (
+        df[["date", "monthly_shopping_cumsum", "monthly_wealth_cumsum"]]
+        .ffill()
+        .groupby(df["year_and_month"])
+        .tail(1)
+    )
+    monthly_end_balances.set_index("date", drop=True, inplace=True)
+    monthly_end_balances.rename(
+        columns={
+            "monthly_shopping_cumsum": "shopping",
+            "monthly_wealth_cumsum": "wealth",
+        },
+        inplace=True,
+    )
+    monthly_end_balances["shopping"] = monthly_end_balances["shopping"].map(money_fmt())
+    monthly_end_balances["wealth"] = monthly_end_balances["wealth"].map(money_fmt())
+
+    df["monthly_shopping_cumsum"] = df["monthly_shopping_cumsum"].fillna("")
+    df["continuous_shopping_cumsum"] = df[df["bucket"] == "shopping"]["price"].cumsum()
+    df["continuous_shopping_cumsum"] = df["continuous_shopping_cumsum"].fillna("")
+
     df["monthly_wealth_cumsum"] = df["monthly_wealth_cumsum"].fillna("")
     df["continuous_wealth_cumsum"] = df[df["bucket"] == "wealth"]["price"].cumsum()
     df["continuous_wealth_cumsum"] = df["continuous_wealth_cumsum"].fillna("")
 
     df.drop("year_and_month", axis=1, inplace=True)
-
     df.set_index("date", drop=True, inplace=True)
 
     sums_per_type = df.groupby(df["type"])["price"].sum().to_frame()
-
     sums_per_type.rename(columns={"price": "total_expenses"}, inplace=True)
     n_days = (df.index[0] - df.index[-1]).days
     sums_per_type["avg_monthly_expense"] = sums_per_type["total_expenses"] / n_days * 30
+    sums_per_type["total_expenses"] = sums_per_type["total_expenses"].map(money_fmt())
+    sums_per_type["avg_monthly_expense"] = sums_per_type["avg_monthly_expense"].map(
+        money_fmt()
+    )
 
     out = Output()
     with out:
         wealth.plot.display_dataframe(df)
-        print("Sums per type:\n")
+        display(Markdown("Last balances per month:"))
+        display(monthly_end_balances)
+        display(Markdown("Sums per type:\n"))
         display(sums_per_type)
 
     display(out)
