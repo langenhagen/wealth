@@ -3,7 +3,7 @@ TODOs for the project `Wealth`.
 
 - assert that label regexes yield disjoint sets of matches
 - add bash script to `reimport-workspace.sh` to reimport scripts and missing notebooks.
-- use a Bubbleplot for showing where you have Many Expenses, the size of the sum of the expenses
+- use a Bubbleplot for showing where you have many expenses, the size of the sum of the expenses
 - consider stacked barplots
 - have mouse hover balloon messages
 - have tool to come up with regexes helping labelling transactions. E.g. cli-tool, jupyter notebook
