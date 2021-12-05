@@ -44,29 +44,29 @@ def track() -> pd.DataFrame:
 
     df["price"] = df["price"] * -1
 
-    df["year_and_month"] = df["date"].astype(str).apply(lambda x: x[:7])
-    df["monthly shopping cumsum"] = (
-        df[df["bucket"] == "shopping"].groupby(df["year_and_month"])["price"].cumsum()
+    df["year and month"] = df["date"].astype(str).apply(lambda x: x[:7])
+    df["monthly shopping balance"] = (
+        df[df["bucket"] == "shopping"].groupby(df["year and month"])["price"].cumsum()
     )
-    df["continuous shopping cumsum"] = df[df["bucket"] == "shopping"]["price"].cumsum()
+    df["continuous shopping balance"] = df[df["bucket"] == "shopping"]["price"].cumsum()
 
-    df["monthly wealth cumsum"] = (
-        df[df["bucket"] == "wealth"].groupby(df["year_and_month"])["price"].cumsum()
+    df["monthly wealth balance"] = (
+        df[df["bucket"] == "wealth"].groupby(df["year and month"])["price"].cumsum()
     )
-    df["continuous wealth cumsum"] = df[df["bucket"] == "wealth"]["price"].cumsum()
+    df["continuous wealth balance"] = df[df["bucket"] == "wealth"]["price"].cumsum()
 
     monthly_end_balances = (
-        df[["date", "monthly shopping cumsum", "monthly wealth cumsum"]]
+        df[["date", "monthly shopping balance", "monthly wealth balance"]]
         .ffill()
-        .groupby(df["year_and_month"])
+        .groupby(df["year and month"])
         .tail(1)
     )
     monthly_end_balances.set_index("date", drop=True, inplace=True)
     monthly_end_balances.index = monthly_end_balances.index.to_period("M")
     monthly_end_balances.rename(
         columns={
-            "monthly shopping cumsum": "shopping",
-            "monthly wealth cumsum": "wealth",
+            "monthly shopping balance": "shopping",
+            "monthly wealth balance": "wealth",
         },
         inplace=True,
     )
@@ -78,7 +78,7 @@ def track() -> pd.DataFrame:
     )
 
     df.fillna("", inplace=True)
-    df.drop("year_and_month", axis=1, inplace=True)
+    df.drop("year and month", axis=1, inplace=True)
     df.set_index("date", drop=True, inplace=True)
 
     sums_per_type = df.groupby(df["type"])["price"].sum().to_frame()
