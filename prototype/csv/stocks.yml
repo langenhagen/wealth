@@ -1,0 +1,49 @@
+# Track stock market investments.
+# Bundle several transactions into one investment.
+# One investment are 1 or more buy actions and all possible subsequent sell actions that include up
+# to the number of shares bought in the same investment.
+# Types of transactions are `buy`, `sell`, `dividend` and `capital raise`.
+---
+- Apple:
+    - buy:
+        date: 2020-01-22
+        amount: 1000
+        shares: 10
+    - dividend:
+        amount: 3
+        date: 2020-02-13
+    - sell:
+        date: 2021-01-10
+        amount: 1500
+        shares: 9
+    - capital raise:
+        date: 2021-01-10
+        amount: 300
+    - sell:
+        date: 2021-02-10
+        amount: 110
+        shares: 1
+
+- Tesla Inc:
+    - buy:
+        date: 2020-08-01
+        amount: 2000
+        shares: 4
+    - buy:
+        date: 2020-09-01
+        amount: 1000
+        shares: 2
+    - sell:
+        date: 2021-11-03
+        amount: 3500
+        shares: 6
+
+- Apple:
+    - buy:
+        date: 2021-05-01
+        amount: 2000
+        shares: 15
+    - sell:
+        date: 2021-06-01
+        amount: 150
+        shares: 1
