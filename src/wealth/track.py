@@ -7,7 +7,6 @@ from IPython.display import Markdown
 from ipywidgets import Output
 
 import wealth
-# from wealth import money_fmt
 from wealth.importers.common import to_lower
 
 
@@ -49,10 +48,12 @@ def track() -> pd.DataFrame:
     df["monthly shopping cumsum"] = (
         df[df["bucket"] == "shopping"].groupby(df["year_and_month"])["price"].cumsum()
     )
+    df["continuous shopping cumsum"] = df[df["bucket"] == "shopping"]["price"].cumsum()
 
     df["monthly wealth cumsum"] = (
         df[df["bucket"] == "wealth"].groupby(df["year_and_month"])["price"].cumsum()
     )
+    df["continuous wealth cumsum"] = df[df["bucket"] == "wealth"]["price"].cumsum()
 
     monthly_end_balances = (
         df[["date", "monthly shopping cumsum", "monthly wealth cumsum"]]
@@ -69,26 +70,26 @@ def track() -> pd.DataFrame:
         },
         inplace=True,
     )
-    monthly_end_balances["shopping"] = monthly_end_balances["shopping"].map(wealth.money_fmt())
-    monthly_end_balances["wealth"] = monthly_end_balances["wealth"].map(wealth.money_fmt())
-    monthly_end_balances = monthly_end_balances.iloc[::-1]
+    monthly_end_balances["shopping"] = monthly_end_balances["shopping"].map(
+        wealth.money_fmt()
+    )
+    monthly_end_balances["wealth"] = monthly_end_balances["wealth"].map(
+        wealth.money_fmt()
+    )
 
-    df["monthly shopping cumsum"] = df["monthly shopping cumsum"].fillna("")
-    df["continuous shopping cumsum"] = df[df["bucket"] == "shopping"]["price"].cumsum()
-    df["continuous shopping cumsum"] = df["continuous shopping cumsum"].fillna("")
-
-    df["monthly wealth cumsum"] = df["monthly wealth cumsum"].fillna("")
-    df["continuous wealth cumsum"] = df[df["bucket"] == "wealth"]["price"].cumsum()
-    df["continuous wealth cumsum"] = df["continuous wealth cumsum"].fillna("")
-
+    df.fillna("", inplace=True)
     df.drop("year_and_month", axis=1, inplace=True)
     df.set_index("date", drop=True, inplace=True)
 
     sums_per_type = df.groupby(df["type"])["price"].sum().to_frame()
     sums_per_type.rename(columns={"price": "total expenses"}, inplace=True)
     n_days = (df.index[0] - df.index[-1]).days
-    sums_per_type["avg monthly expenses"] = sums_per_type["total expenses"] / n_days * 30
-    sums_per_type["total expenses"] = sums_per_type["total expenses"].map(wealth.money_fmt())
+    sums_per_type["avg monthly expenses"] = (
+        sums_per_type["total expenses"] / n_days * 30
+    )
+    sums_per_type["total expenses"] = sums_per_type["total expenses"].map(
+        wealth.money_fmt()
+    )
     sums_per_type["avg monthly expenses"] = sums_per_type["avg monthly expenses"].map(
         wealth.money_fmt()
     )
