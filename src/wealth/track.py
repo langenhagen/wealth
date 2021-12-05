@@ -61,6 +61,7 @@ def track() -> pd.DataFrame:
         .tail(1)
     )
     monthly_end_balances.set_index("date", drop=True, inplace=True)
+    monthly_end_balances.index = monthly_end_balances.index.to_period("M")
     monthly_end_balances.rename(
         columns={
             "monthly shopping cumsum": "shopping",
@@ -70,6 +71,7 @@ def track() -> pd.DataFrame:
     )
     monthly_end_balances["shopping"] = monthly_end_balances["shopping"].map(wealth.money_fmt())
     monthly_end_balances["wealth"] = monthly_end_balances["wealth"].map(wealth.money_fmt())
+    monthly_end_balances = monthly_end_balances.iloc[::-1]
 
     df["monthly shopping cumsum"] = df["monthly shopping cumsum"].fillna("")
     df["continuous shopping cumsum"] = df[df["bucket"] == "shopping"]["price"].cumsum()
