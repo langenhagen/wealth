@@ -71,7 +71,6 @@ your `Wealth` workspace.
 In order to delete a workspace, simply delete the workspace folder.  
 If you want to delete the project `Wealth` from your system, just delete its folder.
 
-
 ### Import Banking Data
 Online Banking services provide means to download lists of transactions in a `*.csv` file format.
 You can download these `*.csv` files and feed them to `Wealth`.
