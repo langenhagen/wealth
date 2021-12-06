@@ -3,6 +3,12 @@
 # One investment are 1 or more buy actions and all possible subsequent sell actions that include up
 # to the number of shares bought in the same investment.
 # Types of transactions are `buy`, `sell`, `dividend` and `capital raise`.
+
+# The `wealth` sorts the entries by date and takes care to tax sells. `wealth` deducts taxes from
+# profitable share sells with the setting `capital_gains_taxrate` that you can define in the file
+# `config.yml`. `wealth` does not tax sells that realize losses.
+# Other than the field `date`, wealth can account for intra-day trades by considering the order of
+# transactions, i.e. `buy`, and `sell` entries.
 ---
 - Apple:
     - buy:
