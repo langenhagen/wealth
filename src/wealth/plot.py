@@ -85,27 +85,23 @@ def display_dataframe(
 ) -> pd.DataFrame:
     """Plot a dataframe with `max_rows` set to None aka infinity,
     optionally print the DataFrame's head with the given number."""
-    with pd.option_context(
-        "display.max_rows", None, "display.max_colwidth", None, "display.precision", 2
-    ):
+    options = {
+        "display.max_rows": None,
+        "display.max_colwidth": None,
+        "display.precision": 2,
+    }
+    with pd.option_context(*[i for option in list(options.items()) for i in option]):
         if n_items:
-            if style is not None:
-                display(
-                    df.head(n_items)
-                    .style.set_table_styles(style)
-                    .background_gradient(cmap="RdYlGn", vmin=-1, vmax=1, axis=0)
-                )
-            else:
-                display(df.head(n_items))
+            df = df.head(n_items)
+
+        if style is None:
+            display(df)
         else:
-            if style is not None:
-                display(
-                    df.style.set_table_styles(style).background_gradient(
-                        cmap="RdYlGn", vmin=-1, vmax=1, axis=0
-                    )
+            display(
+                df.style.set_table_styles(style).background_gradient(
+                    cmap="RdYlGn", vmin=-1, vmax=1, axis=0
                 )
-            else:
-                display(df)
+            )
 
 
 def setup_plot_and_axes(
