@@ -234,10 +234,10 @@ def _display_summary(_, txt_n_periods: BoundedIntText, out: Output, df: pd.DataF
                         df["diff"].tail(n_periods), "Mean Differences"
                     ),
                     _display_mean_and_median(
-                        df["min_diff"].tail(n_periods), "Differences of Minima"
+                        df["min diff"].tail(n_periods), "Differences of Minima"
                     ),
                     _display_mean_and_median(
-                        df["max_diff"].tail(n_periods), "Differences of Maxima"
+                        df["max diff"].tail(n_periods), "Differences of Maxima"
                     ),
                 ]
             )
@@ -264,9 +264,9 @@ def _display_mean_balance_dataframes(
     df_out["mean"] = resampler.mean()
     df_out["diff"] = df_out["mean"].diff()
     df_out["min"] = resampler.min()
-    df_out["min_diff"] = df_out["min"].diff()
+    df_out["min diff"] = df_out["min"].diff()
     df_out["max"] = resampler.max()
-    df_out["max_diff"] = df_out["max"].diff()
+    df_out["max diff"] = df_out["max"].diff()
     df_out.index = df_out.index.strftime("%Y-%m-%d")
     style = [
         dict(selector="th", props=[("font-size", "24px")]),
