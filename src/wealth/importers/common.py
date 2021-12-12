@@ -1,7 +1,7 @@
 """Contains common code for importing bank transaction csv files."""
 import pandas as pd
 
-# Columns that most transactions you import have.
+# Columns that most transactions have.
 transfer_columns = [
     "date",
     "account",
