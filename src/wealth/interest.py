@@ -15,7 +15,15 @@ from IPython.display import Markdown
 
 import wealth
 import wealth.inflation
-from wealth.plot import display_df
+from wealth.plot import (
+    create_inflation_widgets,
+    display_df,
+    setup_yearly_plot_and_axes,
+    slim_text_layout,
+    text_layout,
+    wide_checkbox_layout,
+)
+from wealth.util.util import money_fmt
 
 BoundedFloatText = widgets.BoundedFloatText
 BoundedIntText = widgets.BoundedIntText
@@ -286,13 +294,13 @@ def _calc_interest_from_widgets(
         display(summary_df)
     with out_fig:
         fig.clear()
-        wealth.plot.setup_yearly_plot_and_axes(fig, "Account Development")
+        setup_yearly_plot_and_axes(fig, "Account Development")
         _plot_account_development(df, txt_inflation.value)
         plt.legend(loc="best", borderaxespad=0.1)
     out_df.clear_output()
-    df["change"] = df["change"].map(wealth.money_fmt())
-    df["balance"] = df["balance"].map(wealth.money_fmt())
-    df["discounted_balance"] = df["discounted_balance"].map(wealth.money_fmt())
+    df["change"] = df["change"].map(money_fmt())
+    df["balance"] = df["balance"].map(money_fmt())
+    df["discounted_balance"] = df["discounted_balance"].map(money_fmt())
     with out_df:
         display_df(df)
 
@@ -335,20 +343,20 @@ def interest(**kwargs):
         value=initial_amount,
         min=0.01,
         max=999999999,
-        layout=wealth.plot.slim_text_layout,
+        layout=slim_text_layout,
     )
     lbl_start_date = Label(value="Start date: ")
-    txt_start_date = DatePicker(value=start_date, layout=wealth.plot.text_layout)
+    txt_start_date = DatePicker(value=start_date, layout=text_layout)
     lbl_regular_deposit = Label(value="Regular deposit: ")
     txt_regular_deposit = BoundedFloatText(
-        value=regular_deposit, min=0, max=999999999, layout=wealth.plot.slim_text_layout
+        value=regular_deposit, min=0, max=999999999, layout=slim_text_layout
     )
     lbl_regular_deposit_freq = Label(value="Deposits per year: ")
     txt_deposit_freq = BoundedIntText(
         value=deposits_per_year,
         min=1,
         max=999999999,
-        layout=wealth.plot.slim_text_layout,
+        layout=slim_text_layout,
     )
     lbl_interest_rate = Label(value="Interest rate %: ")
     txt_interest_rate = BoundedFloatText(
@@ -356,23 +364,23 @@ def interest(**kwargs):
         min=0,
         max=1000,
         step=0.1,
-        layout=wealth.plot.slim_text_layout,
+        layout=slim_text_layout,
     )
     lbl_compounds_freq = Label(value="Compounds per year: ")
     txt_compound_freq = BoundedIntText(
         value=compounds_per_year,
         min=1,
         max=999999999,
-        layout=wealth.plot.slim_text_layout,
+        layout=slim_text_layout,
     )
     lbl_years = Label(value="Years: ")
-    txt_years = BoundedIntText(value=years, min=0, layout=wealth.plot.slim_text_layout)
+    txt_years = BoundedIntText(value=years, min=0, layout=slim_text_layout)
     lbl_deposit_time = Label(value="Deposit at: ")
     btn_deposit_time = ToggleButtons(
         options={"Period Start": DepositTime.START, "Period End": DepositTime.END},
         value=deposit_at_period_start,
     )
-    txt_inflation, hbox_inflation = wealth.plot.create_inflation_widgets(inflation_rate)
+    txt_inflation, hbox_inflation = create_inflation_widgets(inflation_rate)
     box = VBox(
         [
             HBox(
@@ -452,7 +460,7 @@ def interest(**kwargs):
         value=show_transaction_table,
         description="Show Transaction Table",
         indent=False,
-        layout=wealth.plot.wide_checkbox_layout,
+        layout=wide_checkbox_layout,
     )
     change_transaction_table_visibility = functools.partial(
         _change_transaction_table_visibility,

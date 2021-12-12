@@ -10,6 +10,7 @@ from IPython.display import Markdown
 import wealth
 from wealth.plot import create_account_checkboxes, display_df
 from wealth.util.transaction_type import TransactionType
+from wealth.util.util import money_fmt
 
 BoundedIntText = widgets.BoundedIntText
 Checkbox = widgets.Checkbox
@@ -73,7 +74,7 @@ def _display_expense_dataframes(
                 .sort_values(by="amount")
                 .drop(["date", "year", "month", "day_of_month"], axis=1)
             )
-            df_out["amount"] = df_out["amount"].map(wealth.money_fmt())
+            df_out["amount"] = df_out["amount"].map(money_fmt())
             display_df(df_out.head(txt_n_rows.value))
 
 

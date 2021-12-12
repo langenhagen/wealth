@@ -9,9 +9,8 @@ import pandas as pd
 from IPython.core.display import display
 from IPython.display import Markdown
 
-import wealth.util.util
-
-Money = wealth.util.util.Money
+import wealth.plot
+from wealth.util.util import money_fmt, percent_fmt
 
 Positions = Dict[str, Dict[str, float]]
 
@@ -37,15 +36,15 @@ def _show_sums(
         display(Markdown("### Incomes"))
         incomes = df.loc[df["cost"] > 0].sort_values(by="cost", ascending=False)
         incomes["percent"] = (incomes["cost"] / incomes["cost"].sum()) * 100
-        incomes["cost"] = incomes["cost"].map(wealth.money_fmt())
-        incomes["percent"] = incomes["percent"].map(wealth.percent_fmt)
+        incomes["cost"] = incomes["cost"].map(money_fmt())
+        incomes["percent"] = incomes["percent"].map(percent_fmt)
         display(incomes)
 
         display(Markdown("### Expenses"))
         expenses = df.loc[df["cost"] <= 0].sort_values(by="cost")
         expenses["percent"] = (expenses["cost"] / expenses["cost"].sum()) * 100
-        expenses["cost"] = expenses["cost"].map(wealth.money_fmt())
-        expenses["percent"] = expenses["percent"].map(wealth.percent_fmt)
+        expenses["cost"] = expenses["cost"].map(money_fmt())
+        expenses["percent"] = expenses["percent"].map(percent_fmt)
         display(expenses)
 
         display(Markdown("### Buckets"))
@@ -55,8 +54,8 @@ def _show_sums(
             by="cost", ascending=False
         )
         income_sums["percent"] = (income_sums["cost"] / income_sums["cost"].sum()) * 100
-        income_sums["cost"] = income_sums["cost"].map(wealth.money_fmt())
-        income_sums["percent"] = income_sums["percent"].map(wealth.percent_fmt)
+        income_sums["cost"] = income_sums["cost"].map(money_fmt())
+        income_sums["percent"] = income_sums["percent"].map(percent_fmt)
         display(income_sums)
 
         display(Markdown("#### Expenses"))
@@ -64,8 +63,8 @@ def _show_sums(
         expense_sums["percent"] = (
             expense_sums["cost"] / expense_sums["cost"].sum()
         ) * 100
-        expense_sums["cost"] = expense_sums["cost"].map(wealth.money_fmt())
-        expense_sums["percent"] = expense_sums["percent"].map(wealth.percent_fmt)
+        expense_sums["cost"] = expense_sums["cost"].map(money_fmt())
+        expense_sums["percent"] = expense_sums["percent"].map(percent_fmt)
         display(expense_sums)
 
 

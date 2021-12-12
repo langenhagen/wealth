@@ -11,7 +11,7 @@ from IPython.core.display import display
 from IPython.display import Markdown
 
 import wealth
-from wealth.util import Money
+from wealth.util.util import Money, money_fmt
 
 
 class TransactionType(Enum):
@@ -206,9 +206,9 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
         }
     )
 
-    past_df["investment"] = past_df["investment"].map(wealth.money_fmt())
-    past_df["profit"] = past_df["profit"].map(wealth.money_fmt())
-    past_df["net profit"] = past_df["net profit"].map(wealth.money_fmt())
+    past_df["investment"] = past_df["investment"].map(money_fmt())
+    past_df["profit"] = past_df["profit"].map(money_fmt())
+    past_df["net profit"] = past_df["net profit"].map(money_fmt())
     past_df["net performance"] = past_df["net performance"].map(wealth.percent_fmt)
     past_df["net daily performance"] = past_df["net daily performance"].map(
         wealth.percent_fmt
@@ -231,7 +231,7 @@ def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFram
         }
     )
 
-    past_df["investment"] = past_df["investment"].map(wealth.money_fmt())
+    past_df["investment"] = past_df["investment"].map(money_fmt())
 
     display(past_df)
 
@@ -316,7 +316,7 @@ def bailout(
             "net gain": net_gains,
         }
     )
-    df["bailout_value"] = df["bailout_value"].map(wealth.money_fmt())
-    df["gross gain"] = df["gross gain"].map(wealth.money_fmt())
-    df["net gain"] = df["net gain"].map(wealth.money_fmt())
+    df["bailout_value"] = df["bailout_value"].map(money_fmt())
+    df["gross gain"] = df["gross gain"].map(money_fmt())
+    df["net gain"] = df["net gain"].map(money_fmt())
     display(df)

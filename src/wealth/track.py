@@ -6,9 +6,9 @@ from IPython.core.display import display
 from IPython.display import Markdown
 from ipywidgets import Output
 
-import wealth
 from wealth.importers.common import to_lower
 from wealth.plot import display_df
+from wealth.util.util import money_fmt
 
 
 def track() -> pd.DataFrame:
@@ -71,12 +71,8 @@ def track() -> pd.DataFrame:
         },
         inplace=True,
     )
-    monthly_end_balances["shopping"] = monthly_end_balances["shopping"].map(
-        wealth.money_fmt()
-    )
-    monthly_end_balances["wealth"] = monthly_end_balances["wealth"].map(
-        wealth.money_fmt()
-    )
+    monthly_end_balances["shopping"] = monthly_end_balances["shopping"].map(money_fmt())
+    monthly_end_balances["wealth"] = monthly_end_balances["wealth"].map(money_fmt())
 
     df.fillna("", inplace=True)
     df.drop("year and month", axis=1, inplace=True)
@@ -88,11 +84,9 @@ def track() -> pd.DataFrame:
     sums_per_type["avg monthly expenses"] = (
         sums_per_type["total expenses"] / n_days * 30
     )
-    sums_per_type["total expenses"] = sums_per_type["total expenses"].map(
-        wealth.money_fmt()
-    )
+    sums_per_type["total expenses"] = sums_per_type["total expenses"].map(money_fmt())
     sums_per_type["avg monthly expenses"] = sums_per_type["avg monthly expenses"].map(
-        wealth.money_fmt()
+        money_fmt()
     )
 
     out = Output()

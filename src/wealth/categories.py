@@ -3,8 +3,8 @@ import math
 
 import pandas as pd
 
-import wealth
 from wealth.plot import display_side_by_side
+from wealth.util.util import money_fmt
 
 
 def categories(df: pd.DataFrame, categories: dict[str, str]):
@@ -31,7 +31,7 @@ def categories(df: pd.DataFrame, categories: dict[str, str]):
         category_df = pd.DataFrame(amount)
         category_df.index = category_df.index.to_period("M")
         style = category_df.style.format(
-            formatter=wealth.money_fmt(),
+            formatter=money_fmt(),
             na_rep="",
         ).set_caption(f"<br><h2>{key}</h2>")
         dfs.append(style)
