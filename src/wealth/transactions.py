@@ -6,8 +6,17 @@ import pandas as pd
 from IPython.core.display import display
 from ipywidgets import Checkbox, Output
 
-from wealth.plot import account_checkboxes, create_account_checkboxes, display_df
+from wealth.plot import (
+    account_checkboxes,
+    create_account_checkboxes,
+    display_df,
+    style_green,
+)
 from wealth.util.util import money_fmt
+
+
+def date_fmt(v):
+    return v.strftime("%Y-%m-%d")
 
 
 def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
@@ -15,12 +24,12 @@ def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
     df = df.iloc[::-1]
     out.clear_output()
     accounts = [chk.description for chk in checkboxes if chk.value]
-    df = df[df["account"].isin(accounts)].drop(
-        ["date", "year", "month", "day_of_month"], axis=1
+    df.index = df.index.strftime("%Y-%m-%d")
+    style = df.style.format(formatter=money_fmt(), subset="amount").hide_columns(
+        ["date", "year", "month", "day_of_month", "day_of_week"]
     )
-    df["amount"] = df["amount"].map(money_fmt())
     with out:
-        display_df(df)
+        display_df(style)
 
 
 def transactions(df: pd.DataFrame):
