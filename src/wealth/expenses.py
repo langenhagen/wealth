@@ -75,7 +75,7 @@ def _display_expense_dataframes(
                 .drop(["date", "year", "month", "day_of_month"], axis=1)
             )
             df_out["amount"] = df_out["amount"].map(wealth.money_fmt())
-            wealth.plot.display_dataframe(df_out, txt_n_rows.value)
+            wealth.plot.display_df(df_out.head(txt_n_rows.value))
 
 
 def biggest_expenses(df: pd.DataFrame):

@@ -96,7 +96,7 @@ def track() -> pd.DataFrame:
 
     out = Output()
     with out:
-        wealth.plot.display_dataframe(df)
+        wealth.plot.display_df(df)
         display(Markdown("Last balances per month:"))
         display(monthly_end_balances)
         display(Markdown("Sums per type:\n"))

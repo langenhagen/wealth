@@ -293,7 +293,7 @@ def _calc_interest_from_widgets(
     df["balance"] = df["balance"].map(wealth.money_fmt())
     df["discounted_balance"] = df["discounted_balance"].map(wealth.money_fmt())
     with out_df:
-        wealth.plot.display_dataframe(df)
+        wealth.plot.display_df(df)
 
 
 def _change_transaction_table_visibility(

@@ -1,12 +1,14 @@
 """Contains generally applicable utility functions for working with the packages
 matplotlib and ipyidgets."""
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Union
 
 import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
+import pandas.io.formats.style
 from IPython.core.display import display
+from IPython.display import display_html
 
 BoundedFloatText = widgets.BoundedFloatText
 Checkbox = widgets.Checkbox
@@ -80,9 +82,7 @@ def create_inflation_widgets(inflation_rate: float) -> Tuple[BoundedFloatText, H
     return (textbox, hbox_inflation)
 
 
-def display_dataframe(
-    df: pd.DataFrame, n_items: int = None, style=None
-) -> pd.DataFrame:
+def display_df(df: Union[pd.DataFrame, pandas.io.formats.style.Styler]) -> pd.DataFrame:
     """Plot a dataframe with `max_rows` set to None aka infinity,
     optionally print the DataFrame's head with the given number."""
     options = {
@@ -91,17 +91,28 @@ def display_dataframe(
         "display.precision": 2,
     }
     with pd.option_context(*[i for option in list(options.items()) for i in option]):
-        if n_items:
-            df = df.head(n_items)
+        style = df if isinstance(df, pd.io.formats.style.Styler) else df.style
+        display(style)
+        # TODO something about this
+        # else:
+        #     display(
+        #         df.style.set_table_styles(style).background_gradient(
+        #             cmap="RdYlGn", vmin=-1, vmax=1, axis=0
+        #         )
+        #     )
 
-        if style is None:
-            display(df)
-        else:
-            display(
-                df.style.set_table_styles(style).background_gradient(
-                    cmap="RdYlGn", vmin=-1, vmax=1, axis=0
-                )
-            )
+
+# pylint:disable=protected-access
+def display_side_by_side(dfs):
+    """Display the given dataframes/styles and the given titles side by side in
+    an inline manner."""
+    html_str = ""
+    for df in dfs:
+        style = df if isinstance(df, pd.io.formats.style.Styler) else df.style
+        style.set_table_attributes("style='display:inline;padding:10px;'")
+        html_str += style._repr_html_()
+
+    display_html(html_str, raw=True)
 
 
 def setup_plot_and_axes(

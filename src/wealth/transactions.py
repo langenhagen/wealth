@@ -19,7 +19,7 @@ def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
     )
     df["amount"] = df["amount"].map(wealth.money_fmt())
     with out:
-        wealth.plot.display_dataframe(df)
+        wealth.plot.display_df(df)
 
 
 def transactions(df: pd.DataFrame):

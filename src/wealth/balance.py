@@ -22,7 +22,6 @@ from ipywidgets.widgets import (
 )
 
 import wealth
-import wealth.plot
 
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
@@ -138,7 +137,7 @@ def _plot_cumsum(
             plt.legend(loc="best", borderaxespad=0.1)
 
 
-def cumsum(df: pd.DataFrame):
+def graph(df: pd.DataFrame):
     """Show an account-related cumulative sum graph of the dataframe's column
     `amount`."""
     drp_freq = Dropdown(
@@ -213,12 +212,12 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
         index=["mean", "median", "filtered mean", "filtered median"],
         data={"values": [df.mean(), df.median(), filtered.mean(), filtered.median()]},
     )
-    df_out = df_out.applymap(wealth.money_fmt())
+    style = df_out.style.format(formatter=wealth.money_fmt(), na_rep="")
 
     out = Output()
     with out:
         display(Markdown(f"### {caption}"))
-        display(df_out)
+        display(style)
     return out
 
 
@@ -230,9 +229,7 @@ def _display_summary(_, txt_n_periods: BoundedIntText, out: Output, df: pd.DataF
         display(
             HBox(
                 [
-                    _display_mean_and_median(
-                        df["diff"].tail(n_periods), "Mean Differences"
-                    ),
+                    _display_mean_and_median(df["diff"].tail(n_periods), "Differences"),
                     _display_mean_and_median(
                         df["min diff"].tail(n_periods), "Differences of Minima"
                     ),
@@ -268,13 +265,11 @@ def _display_mean_balance_dataframes(
     df_out["max"] = resampler.max()
     df_out["max diff"] = df_out["max"].diff()
     df_out.index = df_out.index.strftime("%Y-%m-%d")
-    style = [
-        dict(selector="th", props=[("font-size", "24px")]),
-        dict(selector="td", props=[("font-size", "24px")]),
-    ]
+
+    style = df_out.iloc[::-1].style.format(formatter=wealth.money_fmt(), na_rep="")
 
     with out:
-        wealth.plot.display_dataframe(df_out.iloc[::-1], style=style)
+        wealth.plot.display_df(style)
 
         if len(df_out) <= 1:
             return

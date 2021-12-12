@@ -3,7 +3,8 @@ import math
 
 import pandas as pd
 
-from wealth.util.util import Money, display_side_by_side
+import wealth
+from wealth.plot import display_side_by_side
 
 
 def categories(df: pd.DataFrame, categories: dict[str, str]):
@@ -12,7 +13,7 @@ def categories(df: pd.DataFrame, categories: dict[str, str]):
     quarterly sums and averages and yearly sums and averages.
     Extrapolate average values to full quarters or years."""
     dfs = []
-    for regex in categories.values():
+    for key, regex in categories.items():
         rows = df[df["all_data"].str.contains(regex)]
         amount = {}
 
@@ -28,8 +29,11 @@ def categories(df: pd.DataFrame, categories: dict[str, str]):
         amount["yearly avg"] = yearly_resampler.mean()
 
         category_df = pd.DataFrame(amount)
-        category_df = category_df.applymap(lambda x: "" if math.isnan(x) else Money(x))
         category_df.index = category_df.index.to_period("M")
-        dfs.append(category_df)
+        style = category_df.style.format(
+            formatter=wealth.money_fmt(),
+            na_rep="",
+        ).set_caption(f"<br><h2>{key}</h2>")
+        dfs.append(style)
 
-    display_side_by_side(dfs, list(categories.keys()))
+    display_side_by_side(dfs)
