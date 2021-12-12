@@ -58,7 +58,7 @@ def create_account_checkboxes(
 
 
 def account_checkboxes(checkboxes: List[Checkbox]):
-    """Return a HBox nicely containing all given account checkboxes."""
+    """Return a HBox containing all given account checkboxes."""
     return HBox(
         [Label("Accounts: ", layout=Layout(width="80px")), *checkboxes],
         layout=box_layout,
@@ -82,6 +82,12 @@ def create_inflation_widgets(inflation_rate: float) -> Tuple[BoundedFloatText, H
     return (textbox, hbox_inflation)
 
 
+def style_red_green(value) -> str:
+    """Return a green font color if the given value is greater or equal than 0,
+    else return a red font."""
+    return "color: #ff0000aa;" if value < 0 else "color: #00ff00aa;"
+
+
 def display_df(df: Union[pd.DataFrame, pandas.io.formats.style.Styler]) -> pd.DataFrame:
     """Plot a dataframe with `max_rows` set to None aka infinity,
     optionally print the DataFrame's head with the given number."""
@@ -93,13 +99,6 @@ def display_df(df: Union[pd.DataFrame, pandas.io.formats.style.Styler]) -> pd.Da
     with pd.option_context(*[i for option in list(options.items()) for i in option]):
         style = df if isinstance(df, pd.io.formats.style.Styler) else df.style
         display(style)
-        # TODO something about this
-        # else:
-        #     display(
-        #         df.style.set_table_styles(style).background_gradient(
-        #             cmap="RdYlGn", vmin=-1, vmax=1, axis=0
-        #         )
-        #     )
 
 
 # pylint:disable=protected-access

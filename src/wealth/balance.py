@@ -22,7 +22,8 @@ from ipywidgets.widgets import (
 )
 
 import wealth
-from wealth.plot import create_account_checkboxes, display_df
+from wealth.plot import create_account_checkboxes, display_df, style_red_green
+from wealth.util.util import money_fmt
 
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
@@ -212,7 +213,9 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
         index=["mean", "median", "filtered mean", "filtered median"],
         data={"values": [df.mean(), df.median(), filtered.mean(), filtered.median()]},
     )
-    style = df_out.style.format(formatter=wealth.money_fmt(), na_rep="")
+    style = df_out.style.format(formatter=money_fmt(), na_rep="").applymap(
+        style_red_green
+    )
 
     out = Output()
     with out:
@@ -266,7 +269,11 @@ def _display_mean_balance_dataframes(
     df_out["max diff"] = df_out["max"].diff()
     df_out.index = df_out.index.strftime("%Y-%m-%d")
 
-    style = df_out.iloc[::-1].style.format(formatter=wealth.money_fmt(), na_rep="")
+    style = (
+        df_out.iloc[::-1]
+        .style.format(formatter=money_fmt(), na_rep="")
+        .applymap(style_red_green)
+    )
 
     with out:
         display_df(style)
