@@ -108,7 +108,7 @@ def display_side_by_side(dfs):
     html_str = ""
     for df in dfs:
         style = df if isinstance(df, pd.io.formats.style.Styler) else df.style
-        style.set_table_attributes("style='display:inline;padding:10px;'")
+        style.set_table_attributes("style='display: inline; padding: 10px;'")
         html_str += style._repr_html_()
 
     display_html(html_str, raw=True)
