@@ -7,6 +7,7 @@ from IPython.core.display import display
 from ipywidgets import Checkbox, Output
 
 import wealth
+from wealth.plot import create_account_checkboxes, display_df
 
 
 def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
@@ -19,7 +20,7 @@ def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
     )
     df["amount"] = df["amount"].map(wealth.money_fmt())
     with out:
-        wealth.plot.display_df(df)
+        display_df(df)
 
 
 def transactions(df: pd.DataFrame):
@@ -28,7 +29,7 @@ def transactions(df: pd.DataFrame):
     out = Output()
     checkboxes = []
     update_out = functools.partial(_update_out, df=df, checkboxes=checkboxes, out=out)
-    wealth.plot.create_account_checkboxes(checkboxes, df, True, update_out)
+    create_account_checkboxes(checkboxes, df, True, update_out)
 
     display(wealth.plot.account_checkboxes(checkboxes))
     display(out)

@@ -22,6 +22,7 @@ from ipywidgets.widgets import (
 )
 
 import wealth
+from wealth.plot import create_account_checkboxes, display_df
 
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
@@ -39,7 +40,6 @@ def _display_balance(
 ):
     """Plot the balance, i.e. the cumulative sum, of the given dataframe's
     column `amount` at the date of the given dropdown's value."""
-
     accounts = [c.description for c in checkboxes if c.value and c.description != "All"]
     series = df[df["account"].isin(accounts)]["amount"].resample("D").sum().cumsum()
     date = dt.datetime(drp_date.value.year, drp_date.value.month, drp_date.value.day)
@@ -69,7 +69,7 @@ def balance(df: pd.DataFrame):
         drp_date=drp_date,
         df=df,
     )
-    wealth.plot.create_account_checkboxes(checkboxes, df, True, update_balance)
+    create_account_checkboxes(checkboxes, df, True, update_balance)
     drp_date.observe(update_balance, "value")
 
     display(Markdown("# Balance"))
@@ -172,8 +172,8 @@ def graph(df: pd.DataFrame):
         drp_freq=drp_freq,
     )
     drp_freq.observe(plot, "value")
-    wealth.plot.create_account_checkboxes(sum_accs_checkboxes, df, True, plot)
-    wealth.plot.create_account_checkboxes(single_accs_checkboxes, df, True, plot)
+    create_account_checkboxes(sum_accs_checkboxes, df, True, plot)
+    create_account_checkboxes(single_accs_checkboxes, df, True, plot)
 
     display(Markdown("# Plot"))
     display(
@@ -269,7 +269,7 @@ def _display_mean_balance_dataframes(
     style = df_out.iloc[::-1].style.format(formatter=wealth.money_fmt(), na_rep="")
 
     with out:
-        wealth.plot.display_df(style)
+        display_df(style)
 
         if len(df_out) <= 1:
             return
@@ -313,7 +313,7 @@ def means(df: pd.DataFrame):
         df=df,
     )
     drp_freq.observe(update_out, "value")
-    wealth.plot.create_account_checkboxes(checkboxes, df, True, update_out)
+    create_account_checkboxes(checkboxes, df, True, update_out)
 
     display(Markdown("# Mean Balances"))
     display(

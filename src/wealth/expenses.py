@@ -8,9 +8,8 @@ from IPython.core.display import display
 from IPython.display import Markdown
 
 import wealth
-import wealth.util.transaction_type
-
-TransactionType = wealth.util.transaction_type.TransactionType
+from wealth.plot import create_account_checkboxes, display_df
+from wealth.util.transaction_type import TransactionType
 
 BoundedIntText = widgets.BoundedIntText
 Checkbox = widgets.Checkbox
@@ -75,7 +74,7 @@ def _display_expense_dataframes(
                 .drop(["date", "year", "month", "day_of_month"], axis=1)
             )
             df_out["amount"] = df_out["amount"].map(wealth.money_fmt())
-            wealth.plot.display_df(df_out.head(txt_n_rows.value))
+            display_df(df_out.head(txt_n_rows.value))
 
 
 def biggest_expenses(df: pd.DataFrame):
@@ -122,7 +121,7 @@ def biggest_expenses(df: pd.DataFrame):
     drp_date.observe(update_out, "value")
     txt_n_periods.observe(update_out, "value")
     txt_n_rows.observe(update_out, "value")
-    wealth.plot.create_account_checkboxes(checkboxes, df, True, update_out)
+    create_account_checkboxes(checkboxes, df, True, update_out)
     chk_show_internal.observe(update_out, "value")
 
     display(Markdown("## Biggest Expenses"))

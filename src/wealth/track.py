@@ -8,6 +8,7 @@ from ipywidgets import Output
 
 import wealth
 from wealth.importers.common import to_lower
+from wealth.plot import display_df
 
 
 def track() -> pd.DataFrame:
@@ -96,7 +97,7 @@ def track() -> pd.DataFrame:
 
     out = Output()
     with out:
-        wealth.plot.display_df(df)
+        display_df(df)
         display(Markdown("Last balances per month:"))
         display(monthly_end_balances)
         display(Markdown("Sums per type:\n"))

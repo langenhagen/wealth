@@ -15,6 +15,7 @@ from IPython.display import Markdown
 
 import wealth
 import wealth.inflation
+from wealth.plot import display_df
 
 BoundedFloatText = widgets.BoundedFloatText
 BoundedIntText = widgets.BoundedIntText
@@ -293,7 +294,7 @@ def _calc_interest_from_widgets(
     df["balance"] = df["balance"].map(wealth.money_fmt())
     df["discounted_balance"] = df["discounted_balance"].map(wealth.money_fmt())
     with out_df:
-        wealth.plot.display_df(df)
+        display_df(df)
 
 
 def _change_transaction_table_visibility(
