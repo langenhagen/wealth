@@ -26,7 +26,7 @@ def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
     accounts = [chk.description for chk in checkboxes if chk.value]
     df.index = df.index.strftime("%Y-%m-%d")
     style = df.style.format(formatter=money_fmt(), subset="amount").hide_columns(
-        ["date", "year", "month", "day_of_month", "day_of_week"]
+        ["date"]
     )
     with out:
         display_df(style)

@@ -102,8 +102,6 @@ def _read_account_csvs() -> pd.DataFrame:
                     processed_accounts.add(account_name)
                 break
 
-    # TODO measure if loading is faster without this [transfer_columns] stuff;
-    # you filter it later
     df = (
         pd.concat(dataframes)
         .reset_index()
@@ -115,27 +113,13 @@ def _read_account_csvs() -> pd.DataFrame:
     return df
 
 
-# TODO check if this can go away
-def _add_date_related_columns(df: pd.DataFrame) -> pd.DataFrame:
-    """Add columns with year, month, weekday name and day of month from the
-    given datetimeindex of the DataFrame and return the DataFrame."""
-    return df.assign(
-        year=df.index.year,
-        month=df.index.month_name(),
-        day_of_week=df.index.day_name(),
-        day_of_month=df.index.day,
-    )
-
-
 def init() -> pd.DataFrame:
     """Read the file `accounts.yml` and import csv files from the folder `csv`
     as a DataFrame and add columns for to conveniently work working with the
     DataFrame. The resulting DataFrame contains the transaction information."""
-    # TODO adjust the columns when _add_date_related_columns goes away
     df = (
         _read_account_csvs()
         .pipe(_add_transaction_type_column)
-        .pipe(_add_date_related_columns)
         .replace(np.nan, "", regex=True)[
             [
                 "account",
@@ -146,10 +130,6 @@ def init() -> pd.DataFrame:
                 "iban",
                 "transaction_type",
                 "date",
-                "year",
-                "month",
-                "day_of_week",
-                "day_of_month",
                 "all_data",
             ]
         ]

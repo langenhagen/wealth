@@ -65,17 +65,19 @@ def _display_expense_dataframes(
                 .isin([TransactionType.INTERNAL_OUT, TransactionType.OUT])
             )
         )
+
+        df_out = df[mask].sort_values(by="amount").head(txt_n_rows.value)
+        df_out.index = df_out.index.strftime("%Y-%m-%d")
+        start = rng[i - 1].strftime(fmt)
+        end = (rng[i] - day_off).strftime(fmt)
+
+        style = df_out.style.format(
+            formatter=money_fmt(), subset="amount"
+        ).hide_columns(["date"])
+
         with out:
-            start = rng[i - 1].strftime(fmt)
-            end = (rng[i] - day_off).strftime(fmt)
             display(Markdown(f"## {start} – {end}"))
-            df_out = (
-                df[mask]
-                .sort_values(by="amount")
-                .drop(["date", "year", "month", "day_of_month"], axis=1)
-            )
-            df_out["amount"] = df_out["amount"].map(money_fmt())
-            display_df(df_out.head(txt_n_rows.value))
+            display_df(style)
 
 
 def biggest_expenses(df: pd.DataFrame):
