@@ -77,10 +77,11 @@ def track() -> pd.DataFrame:
     df.fillna("", inplace=True)
     df.drop("year and month", axis=1, inplace=True)
     df.set_index("date", drop=True, inplace=True)
+    n_days = (df.index[0] - df.index[-1]).days
+    df.index = df.index.strftime("%Y-%m-%d")
 
     sums_per_type = df.groupby(df["type"])["price"].sum().to_frame()
     sums_per_type.rename(columns={"price": "total expenses"}, inplace=True)
-    n_days = (df.index[0] - df.index[-1]).days
     sums_per_type["avg monthly expenses"] = (
         sums_per_type["total expenses"] / n_days * 30
     )
