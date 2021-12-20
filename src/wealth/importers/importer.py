@@ -70,7 +70,7 @@ def _delay_incomes(df: pd.DataFrame) -> pd.DataFrame:
 
 def _strip_times(df: pd.DataFrame) -> pd.DataFrame:
     """Strip the times from the column `date`."""
-    df["date"] = pd.to_datetime(df["date"].dt.date)
+    df["date"] = df["date"].dt.date
     return df
 
 
@@ -108,7 +108,7 @@ def _read_account_csvs() -> pd.DataFrame:
         .pipe(_delay_incomes)
         .sort_values(by="date")
         .pipe(_strip_times)
-        .set_index("date", drop=False)[transfer_columns]
+        .reset_index()[transfer_columns]
     )
     return df
 
@@ -122,6 +122,7 @@ def init() -> pd.DataFrame:
         .pipe(_add_transaction_type_column)
         .replace(np.nan, "", regex=True)[
             [
+                "date",
                 "account",
                 "amount",
                 "description",
@@ -129,7 +130,6 @@ def init() -> pd.DataFrame:
                 "correspondent",
                 "iban",
                 "transaction_type",
-                "date",
                 "all_data",
             ]
         ]

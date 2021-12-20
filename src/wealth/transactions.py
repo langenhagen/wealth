@@ -10,24 +10,20 @@ from wealth.plot import (
     account_checkboxes,
     create_account_checkboxes,
     display_df,
-    style_green,
+    style_green_yellow_bg,
 )
 from wealth.util.util import money_fmt
 
 
-def date_fmt(v):
-    return v.strftime("%Y-%m-%d")
-
-
 def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
     """Update the displayed transaction dataframe."""
-    df = df.iloc[::-1]
+    accounts = [chk.description for chk in checkboxes if chk.value][1:]
+    df_out = df[df["account"].isin(accounts)].iloc[::-1]
     out.clear_output()
-    accounts = [chk.description for chk in checkboxes if chk.value]
-    df.index = df.index.strftime("%Y-%m-%d")
-    style = df.style.format(formatter=money_fmt(), subset="amount").hide_columns(
-        ["date"]
+    style = df_out.style.format(formatter=money_fmt(), subset="amount").apply(
+        style_green_yellow_bg, axis=1
     )
+
     with out:
         display_df(style)
 
