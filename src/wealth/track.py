@@ -1,5 +1,6 @@
 """Functionality to track expenses.
 Track expenses and cluster them according to type and subtype."""
+from numpy import dtype
 import pandas as pd
 import pandas.api.types as ptypes
 from IPython.core.display import display
@@ -71,32 +72,47 @@ def track() -> pd.DataFrame:
         },
         inplace=True,
     )
-    monthly_end_balances["shopping"] = monthly_end_balances["shopping"].map(money_fmt())
-    monthly_end_balances["wealth"] = monthly_end_balances["wealth"].map(money_fmt())
+    monthly_end_balances_style = monthly_end_balances.style.format(
+        formatter=money_fmt(), na_rep=""
+    )
 
-    df.fillna("", inplace=True)
     df.drop("year and month", axis=1, inplace=True)
     df.set_index("date", drop=True, inplace=True)
     n_days = (df.index[0] - df.index[-1]).days
     df.index = df.index.strftime("%Y-%m-%d")
+    df_style = df.style.format(
+        formatter={
+            "price": money_fmt(),
+            "monthly shopping balance": money_fmt(),
+            "continuous shopping balance": money_fmt(),
+            "monthly wealth balance": money_fmt(),
+            "continuous wealth balance": money_fmt(),
+        },
+        na_rep="",
+    )
+
+    average_monthly_end_balances = monthly_end_balances.mean().to_frame(name="amount")
+    average_monthly_end_balances_style = average_monthly_end_balances.style.format(
+        formatter=money_fmt(),
+        na_rep="",
+    )
 
     sums_per_type = df.groupby(df["type"])["price"].sum().to_frame()
     sums_per_type.rename(columns={"price": "total expenses"}, inplace=True)
     sums_per_type["avg monthly expenses"] = (
         sums_per_type["total expenses"] / n_days * 30
     )
-    sums_per_type["total expenses"] = sums_per_type["total expenses"].map(money_fmt())
-    sums_per_type["avg monthly expenses"] = sums_per_type["avg monthly expenses"].map(
-        money_fmt()
-    )
+    sums_per_type_style = sums_per_type.style.format(formatter=money_fmt(), na_rep="")
 
     out = Output()
     with out:
-        display_df(df)
-        display(Markdown("Last balances per month:"))
-        display(monthly_end_balances)
-        display(Markdown("Sums per type:\n"))
-        display(sums_per_type)
+        display_df(df_style)
+        display(Markdown("<br>Average monthly last balances:"))
+        display(average_monthly_end_balances_style)
+        display(Markdown("<br>Last balances per month:"))
+        display(monthly_end_balances_style)
+        display(Markdown("<br>Sums per type:"))
+        display(sums_per_type_style)
 
     display(out)
 
