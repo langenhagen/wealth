@@ -22,7 +22,7 @@ from ipywidgets.widgets import (
 )
 
 import wealth
-from wealth.plot import create_account_checkboxes, display_df, style_red_green
+from wealth.plot import create_account_checkboxes, display_df, style_red_green_fg
 from wealth.util.util import money_fmt
 
 
@@ -54,6 +54,9 @@ def _display_balance(
 def balance(df: pd.DataFrame):
     """Show account-related cumulative sum of the dataframe's column `amount` at
     a specified date."""
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.reset_index(drop=True).set_index("date")
+
     out = Output()
     checkboxes = []
     dates = list(_daterange(df.index.date.min(), df.index.date.max()))
@@ -214,7 +217,7 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
         data={"values": [df.mean(), df.median(), filtered.mean(), filtered.median()]},
     )
     style = df_out.style.format(formatter=money_fmt(), na_rep="").applymap(
-        style_red_green
+        style_red_green_fg
     )
 
     out = Output()
@@ -272,7 +275,7 @@ def _display_mean_balance_dataframes(
     style = (
         df_out.iloc[::-1]
         .style.format(formatter=money_fmt(), na_rep="")
-        .applymap(style_red_green)
+        .applymap(style_red_green_fg)
     )
 
     with out:
@@ -304,6 +307,9 @@ def _display_mean_balance_dataframes(
 
 def means(df: pd.DataFrame):
     """Display dataframes containing balances for a given frequency."""
+    df["date"] = pd.to_datetime(df["date"])
+    df = df.reset_index(drop=True).set_index("date")
+
     out = Output()
     drp_freq = Dropdown(
         description="Frequency:",
