@@ -56,8 +56,8 @@ def _display_expense_dataframes(
         return
     for i in range(len(rng) - 1, max(len(rng) - 1 - txt_n_periods.value, 0), -1):
         mask = (
-            (df.index >= rng[i - 1])
-            & (df["date"] < rng[i])
+            (df.index >= rng[i - 1].date())
+            & (df["date"] < rng[i].date())
             & (df["account"].isin(accounts))
             & (
                 df["transaction_type"]
@@ -67,10 +67,8 @@ def _display_expense_dataframes(
         )
 
         df_out = df[mask].sort_values(by="amount").head(txt_n_rows.value)
-        df_out.index = df_out.index.strftime("%Y-%m-%d")
         start = rng[i - 1].strftime(fmt)
         end = (rng[i] - day_off).strftime(fmt)
-
         style = df_out.style.format(
             formatter=money_fmt(), subset="amount"
         ).hide_columns(["date"])
