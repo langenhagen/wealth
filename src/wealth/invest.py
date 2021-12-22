@@ -269,11 +269,11 @@ def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
         )
     )
 
-    print("\nClosed investments:")
-    _summarize_closed_investments(investments)
-
     print("\nOpen investments:")
     _summarize_open_investments(investments)
+
+    print("\nClosed investments:")
+    _summarize_closed_investments(investments)
 
 
 def bailout(
