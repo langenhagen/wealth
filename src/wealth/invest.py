@@ -103,15 +103,23 @@ class InvestmentSet:
         return bool(share_balance)
 
     def total_invested_sum(self) -> float:
-        """The absolute total amount of money invested."""
+        """The total amount of money invested."""
         buy = TransactionType.buy
         return sum([t.amount for t in self.transactions if t.type_ is buy])
 
+    def total_returns(self) -> float:
+        """The total amount of money returned."""
+        types = TransactionType.profit_types()
+        return sum([t.amount for t in self.transactions if t.type_ in types])
+
     def gross_profit(self) -> float:
         """The amount of gross profit."""
-        types = TransactionType.profit_types()
-        amount = sum([t.amount for t in self.transactions if t.type_ in types])
-        return amount - self.total_invested_sum()
+        return self.total_returns() - self.total_invested_sum()
+
+    def open_invested_sum(self) -> float:
+        """The amount of money still invested - money paid out.
+        Can be negative if investments are profitable."""
+        return self.total_invested_sum() - self.total_returns()
 
     def _get_individual_shares_and_prices(self, type_: TransactionType) -> list[float]:
         """Return a list of individual share prices for all transactions with
@@ -243,10 +251,12 @@ def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
     investments = _load_stocks_yml()
 
     done_investments = [i for i in investments if i.is_open() is False]
+    open_sum = sum([i.open_invested_sum() for i in investments if i.is_open() is True])
     display(
         Markdown(
+            f"I currently invest {Money(open_sum)} in "
+            f"{len(investments) - len(done_investments)} open investments."
             f"I finished {len(done_investments)} investments. "
-            f"I have {len(investments) - len(done_investments)} open investments."
         )
     )
 
