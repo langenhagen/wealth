@@ -102,7 +102,7 @@ class InvestmentSet:
         assert share_balance >= 0, "Cannot sell more shares than bought"
         return bool(share_balance)
 
-    def invested_sum(self) -> float:
+    def total_invested_sum(self) -> float:
         """The absolute total amount of money invested."""
         buy = TransactionType.buy
         return sum([t.amount for t in self.transactions if t.type_ is buy])
@@ -111,7 +111,7 @@ class InvestmentSet:
         """The amount of gross profit."""
         types = TransactionType.profit_types()
         amount = sum([t.amount for t in self.transactions if t.type_ in types])
-        return amount - self.invested_sum()
+        return amount - self.total_invested_sum()
 
     def _get_individual_shares_and_prices(self, type_: TransactionType) -> list[float]:
         """Return a list of individual share prices for all transactions with
@@ -154,7 +154,7 @@ class InvestmentSet:
     def net_performance(self) -> Optional[float]:
         """Returns the net performance in percent if the investment set is not
         open anymore."""
-        sum_ = self.invested_sum()
+        sum_ = self.total_invested_sum()
         if (net_profit := self.net_profit()) is None:
             return None
         return ((sum_ + net_profit) / sum_ - 1) * 100
@@ -196,7 +196,7 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
             "company": [i.company for i in past_investments],
             "start date": [i.start_date() for i in past_investments],
             "days": [i.duration() for i in past_investments],
-            "investment": [i.invested_sum() for i in past_investments],
+            "investment": [i.total_invested_sum() for i in past_investments],
             "profit": [i.gross_profit() for i in past_investments],
             "net profit": [i.net_profit() for i in past_investments],
             "net performance": [i.net_performance() for i in past_investments],
@@ -227,7 +227,7 @@ def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFram
             "company": [i.company for i in past_investments],
             "start date": [i.start_date() for i in past_investments],
             "days": [i.duration() for i in past_investments],
-            "investment": [i.invested_sum() for i in past_investments],
+            "investment": [i.total_invested_sum() for i in past_investments],
         }
     )
 
