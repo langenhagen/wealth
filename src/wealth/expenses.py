@@ -80,6 +80,7 @@ def _display_expense_dataframes(
 
 def biggest_expenses(df: pd.DataFrame):
     """Display dataframes containing the biggest expenses."""
+    df.set_index("date", drop=False, inplace=True)
     out = Output()
     drp_freq = Dropdown(
         description="Frequency:",
