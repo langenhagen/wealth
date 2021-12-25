@@ -1,6 +1,5 @@
 """Functionality to track expenses.
 Track expenses and cluster them according to type and subtype."""
-from numpy import dtype
 import pandas as pd
 import pandas.api.types as ptypes
 from IPython.core.display import display
