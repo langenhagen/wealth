@@ -84,6 +84,11 @@ def create_inflation_widgets(inflation_rate: float) -> Tuple[BoundedFloatText, H
     return (textbox, hbox_inflation)
 
 
+def style_red_fg(value) -> str:
+    """Return a red font color if the given value is smaller than 0."""
+    return "color: #ff0000aa;" if value < 0 else None
+
+
 def style_red_green_fg(value) -> str:
     """Return a green font color if the given value is greater or equal than 0,
     else return a red font."""
