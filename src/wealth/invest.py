@@ -11,7 +11,8 @@ from IPython.core.display import display
 from IPython.display import Markdown
 
 import wealth
-from wealth.util.util import Money, money_fmt
+from wealth.plot import display_df, style_red_fg
+from wealth.util.util import Money, money_fmt, percent_fmt
 
 
 class TransactionType(Enum):
@@ -199,7 +200,7 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
     closed investment set."""
 
     past_investments = [i for i in investments if not i.is_open()]
-    past_df = pd.DataFrame(
+    df = pd.DataFrame(
         {
             "company": [i.company for i in past_investments],
             "start date": [i.start_date() for i in past_investments],
@@ -214,15 +215,25 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
         }
     )
 
-    past_df["investment"] = past_df["investment"].map(money_fmt())
-    past_df["profit"] = past_df["profit"].map(money_fmt())
-    past_df["net profit"] = past_df["net profit"].map(money_fmt())
-    past_df["net performance"] = past_df["net performance"].map(wealth.percent_fmt)
-    past_df["net daily performance"] = past_df["net daily performance"].map(
-        wealth.percent_fmt
+    df_style = df.style.format(
+        formatter={
+            "investment": money_fmt(),
+            "profit": money_fmt(),
+            "net profit": money_fmt(),
+            "net performance": percent_fmt,
+            "net daily performance": percent_fmt,
+        },
+    ).applymap(
+        style_red_fg,
+        subset=[
+            "profit",
+            "net profit",
+            "net performance",
+            "net daily performance",
+        ],
     )
 
-    display(past_df)
+    display_df(df_style)
 
 
 def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFrame:
@@ -230,7 +241,7 @@ def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFram
     open investment set."""
 
     past_investments = [i for i in investments if i.is_open()]
-    past_df = pd.DataFrame(
+    df = pd.DataFrame(
         {
             "company": [i.company for i in past_investments],
             "start date": [i.start_date() for i in past_investments],
@@ -239,9 +250,9 @@ def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFram
         }
     )
 
-    past_df["investment"] = past_df["investment"].map(money_fmt())
+    df["investment"] = df["investment"].map(money_fmt())
 
-    display(past_df)
+    display_df(df)
 
 
 def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
@@ -329,4 +340,4 @@ def bailout(
     df["bailout_value"] = df["bailout_value"].map(money_fmt())
     df["gross gain"] = df["gross gain"].map(money_fmt())
     df["net gain"] = df["net gain"].map(money_fmt())
-    display(df)
+    display_df(df)
