@@ -90,7 +90,7 @@ def style_red_green_fg(value) -> str:
     return "color: #ff0000aa;" if value < 0 else "color: #00ff00aa;"
 
 
-def style_green_yellow_bg(cols) -> str:
+def style_green_yellow_bg(cols) -> list[str]:
     """Return a green back color if the given value is an income and return a
     yellow back color if the given value is an internal transactions."""
     type_ = cols["transaction_type"]
