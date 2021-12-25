@@ -11,7 +11,7 @@ from wealth.plot import display_df, style_red_fg
 from wealth.util.util import money_fmt
 
 
-def style_track(cols) -> list[str]:
+def style_track(cols, special_indices) -> list[str]:
     """Return a green back color if the given value is a budget and return a
     red back color if the given value is an internal transactions."""
     green = "color: #00ff00aa;"
@@ -31,6 +31,11 @@ def style_track(cols) -> list[str]:
         styles[7] = red
     if cols["continuous wealth balance"] < 0:
         styles[8] = red
+
+    if cols.name in special_indices:
+        bold = "font-weight:bold;"
+        for i in [0, 5, 6, 7, 8]:
+            styles[i] = bold if styles[i] is None else styles[i] + bold
 
     return styles
 
@@ -84,7 +89,6 @@ def track() -> pd.DataFrame:
         df[df["bucket"] == "shopping"].groupby(year_and_month)["price"].cumsum()
     )
     df["continuous shopping balance"] = df[df["bucket"] == "shopping"]["price"].cumsum()
-
     df["monthly wealth balance"] = (
         df[df["bucket"] == "wealth"].groupby(year_and_month)["price"].cumsum()
     )
@@ -108,6 +112,12 @@ def track() -> pd.DataFrame:
         formatter=money_fmt()
     ).applymap(style_red_fg)
 
+    end_balance_indices = (
+        pd.DataFrame()
+        .append(df[df["bucket"] == "shopping"].groupby(year_and_month).tail(1))
+        .append(df[df["bucket"] == "wealth"].groupby(year_and_month).tail(1))
+    ).index
+
     df["date"] = df["date"].apply(lambda x: x.date())
     df_style = df.style.format(
         formatter={
@@ -118,7 +128,7 @@ def track() -> pd.DataFrame:
             "continuous wealth balance": money_fmt(),
         },
         na_rep="",
-    ).apply(style_track, axis=1)
+    ).apply(style_track, special_indices=end_balance_indices, axis=1)
 
     numbers_by_bucket = (
         df.groupby(df[df["type"] != "budget"]["bucket"])["price"]
