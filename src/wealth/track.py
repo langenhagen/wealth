@@ -42,8 +42,10 @@ def _import_track_df() -> pd.DataFrame:
         engine="python",
         parse_dates=["date"],
         sep=";",
-    )
-    return to_lower(df)
+    ).pipe(to_lower)
+    df["price"] = df["price"] * -1
+
+    return df
 
 
 def _assert_df_integrity(df: pd.DataFrame):
@@ -75,23 +77,23 @@ def track() -> pd.DataFrame:
     df = _import_track_df()
     _assert_df_integrity(df)
 
-    df["price"] = df["price"] * -1
+    n_days = (df["date"].iloc[-1] - df["date"].iloc[0]).days
 
-    df["year and month"] = df["date"].astype(str).apply(lambda x: x[:7])
+    year_and_month = df["date"].astype(str).apply(lambda x: x[:7])
     df["monthly shopping balance"] = (
-        df[df["bucket"] == "shopping"].groupby(df["year and month"])["price"].cumsum()
+        df[df["bucket"] == "shopping"].groupby(year_and_month)["price"].cumsum()
     )
     df["continuous shopping balance"] = df[df["bucket"] == "shopping"]["price"].cumsum()
 
     df["monthly wealth balance"] = (
-        df[df["bucket"] == "wealth"].groupby(df["year and month"])["price"].cumsum()
+        df[df["bucket"] == "wealth"].groupby(year_and_month)["price"].cumsum()
     )
     df["continuous wealth balance"] = df[df["bucket"] == "wealth"]["price"].cumsum()
 
     monthly_end_balances = (
         df[["date", "monthly shopping balance", "monthly wealth balance"]]
         .ffill()
-        .groupby(df["year and month"])
+        .groupby(year_and_month)
         .tail(1)
         .set_index("date", drop=True)
         .rename(
@@ -103,14 +105,10 @@ def track() -> pd.DataFrame:
     )
     monthly_end_balances.index = monthly_end_balances.index.to_period("M")
     monthly_end_balances_style = monthly_end_balances.style.format(
-        formatter=money_fmt(), na_rep=""
+        formatter=money_fmt()
     ).applymap(style_red_fg)
 
-    df.drop("year and month", axis=1, inplace=True)
-    df.set_index("date", drop=True, inplace=True)
-    n_days = (df.index[-1] - df.index[0]).days
-    df.index = df.index.strftime("%Y-%m-%d")
-    df.reset_index(inplace=True)
+    df["date"] = df["date"].apply(lambda x: x.date())
     df_style = df.style.format(
         formatter={
             "price": money_fmt(),
@@ -132,10 +130,9 @@ def track() -> pd.DataFrame:
     numbers_by_bucket["avg monthly amount"] = (
         numbers_by_bucket["total amount"] / n_days * 30
     )
-    numbers_by_bucket["avg last monthly balance"] = monthly_end_balances.mean()
+    numbers_by_bucket["avg monthly end balance"] = monthly_end_balances.mean()
     numbers_by_bucket_style = numbers_by_bucket.style.format(
-        formatter=money_fmt(),
-        na_rep="",
+        formatter=money_fmt()
     ).applymap(style_red_fg)
 
     numbers_per_type = (
@@ -149,9 +146,7 @@ def track() -> pd.DataFrame:
     numbers_per_type["avg monthly amount"] = (
         numbers_per_type["total amount"] / n_days * 30
     )
-    numbers_per_type_style = numbers_per_type.style.format(
-        formatter=money_fmt(), na_rep=""
-    )
+    numbers_per_type_style = numbers_per_type.style.format(formatter=money_fmt())
 
     out = Output()
     with out:
@@ -160,7 +155,7 @@ def track() -> pd.DataFrame:
         display(numbers_by_bucket_style)
         display(Markdown("<br>Numbers per type:"))
         display(numbers_per_type_style)
-        display(Markdown("<br>Last balances per month:"))
+        display(Markdown("<br>End balances per month:"))
         display(monthly_end_balances_style)
 
     display(out)
