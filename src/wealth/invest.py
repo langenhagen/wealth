@@ -267,9 +267,9 @@ def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
         Markdown(
             f"I currently invest {Money(open_sum)} in "
             f"{len(investments) - len(done_investments)} open investments."
-            f"I finished {len(done_investments)} investments. "
         )
     )
+    display(Markdown(f"I finished {len(done_investments)} investments."))
 
     net_profits = sum([i.net_profit() for i in done_investments])
     display(Markdown(f"The net profits are {Money(net_profits)}."))
@@ -290,10 +290,10 @@ def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
         )
     )
 
-    print("\nOpen investments:")
+    display(Markdown("<br>Open investments:"))
     _summarize_open_investments(investments)
 
-    print("\nClosed investments:")
+    display(Markdown("<br>Closed investments:"))
     _summarize_closed_investments(investments)
 
 
