@@ -62,17 +62,11 @@ class Event:
     values: Dict[str, Any]
 
 
-def calc_compound_interest(
-    initial_amount: float,
-    interest_rate: float,
-    n_years: int,
-    n_interest_compounds_per_year: int = 1,
-) -> float:
-    """Calculate an amount with compoound interest given the input values."""
-    final_amount = initial_amount * (
-        1 + interest_rate / n_interest_compounds_per_year
-    ) ** (n_years * n_interest_compounds_per_year)
-    return final_amount
+def calc_compound_interest(P: float, r: float, t: int, n: int = 1) -> float:
+    """Given the initial principal balance P, an interest rate r, the number of
+    times interest applied per time period n and the number of time periods
+    elapsed t, calculate and return the compound interest."""
+    return P * (1 + r / n) ** (t * n)
 
 
 def _build_account_history(
