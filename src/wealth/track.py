@@ -57,22 +57,22 @@ def _assert_df_integrity(df: pd.DataFrame):
     """Assert the given track-DataFrame's integrity."""
     if not ptypes.is_numeric_dtype(df["price"]):
         raise AssertionError(
-            "Price column must contain only numeric values. "
+            'Column "price" must contain only numeric values. '
             f'Column "price" looks like:\n{df["price"]}'
         )
     if not ptypes.is_datetime64_any_dtype(df["date"]):
         raise AssertionError(
-            "Date column must contain only date values. "
+            'Column "date" must contain only date values. '
             f'Column "date" looks like:\n{df["date"]}'
         )
     if not set(df["bucket"].tolist()) == set(["shopping", "wealth"]):
         raise AssertionError(
-            'Bucket column must contain only values "shopping" or "wealth". '
+            'Column "bucket" must contain only values "shopping" or "wealth". '
             f'Column "bucket" looks like:\n{set(df["bucket"].tolist())}'
         )
     if not df["date"].is_monotonic:
         raise AssertionError(
-            "Date column must be monotonic increasing. "
+            'Column "date" must be monotonic increasing. '
             f'Column "date" looks like:\n{df["date"]}'
         )
 
