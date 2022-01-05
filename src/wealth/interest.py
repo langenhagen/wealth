@@ -130,7 +130,7 @@ def _calc_account_development(
 ) -> pd.DataFrame:
     """Calculate the account development given the list of times and events and
     return it as a Dataframe.
-    If events happen at the same time, additional prevents happen before
+    If events happen at the same time, additional events happen before
     compounds, compounds happen before deposits. The start amount comes as the
     first event.
     Also add a column that contains values discounted by linear inflation."""
