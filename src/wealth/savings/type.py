@@ -7,3 +7,7 @@ class TransactionType(enum.Enum):
 
     DEPOSIT = "deposit"
     INTEREST = "interest"
+
+    def __str__(self):
+        """Print the enum's value nicely."""
+        return self.value
