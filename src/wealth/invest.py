@@ -215,7 +215,7 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
         }
     )
 
-    df_style = df.style.format(
+    style = df.style.format(
         formatter={
             "investment": money_fmt(),
             "profit": money_fmt(),
@@ -233,7 +233,7 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
         ],
     )
 
-    display_df(df_style)
+    display_df(style)
 
 
 def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFrame:

@@ -119,7 +119,7 @@ def track() -> pd.DataFrame:
     ).index
 
     df["date"] = df["date"].apply(lambda x: x.date())
-    df_style = df.style.format(
+    style = df.style.format(
         formatter={
             "price": money_fmt(),
             "monthly shopping balance": money_fmt(),
@@ -160,7 +160,7 @@ def track() -> pd.DataFrame:
 
     out = Output()
     with out:
-        display_df(df_style)
+        display_df(style)
         display(Markdown("<br>Numbers per bucket:"))
         display(numbers_by_bucket_style)
         display(Markdown("<br>Numbers per type:"))
