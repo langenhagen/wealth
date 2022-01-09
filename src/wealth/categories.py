@@ -4,7 +4,7 @@ import math
 import pandas as pd
 
 from wealth.plot import display_side_by_side
-from wealth.util.util import money_fmt
+from wealth.util.format import money_fmt
 
 
 def categories(df: pd.DataFrame, categories: dict[str, str]):

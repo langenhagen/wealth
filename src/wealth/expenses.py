@@ -9,8 +9,8 @@ from IPython.display import Markdown
 
 import wealth
 from wealth.plot import create_account_checkboxes, display_df
+from wealth.util.format import money_fmt
 from wealth.util.transaction_type import TransactionType
-from wealth.util.util import money_fmt
 
 BoundedIntText = widgets.BoundedIntText
 Checkbox = widgets.Checkbox

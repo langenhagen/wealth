@@ -1,4 +1,4 @@
-"""Contains general utility functions."""
+"""Contains string-formatting functions."""
 import wealth.config
 
 date_fmt = "{:%Y-%m-%d}".format

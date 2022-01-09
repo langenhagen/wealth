@@ -8,7 +8,7 @@ from ipywidgets import Output
 
 from wealth.importers.common import to_lower
 from wealth.plot import display_df, style_red_fg
-from wealth.util.util import money_fmt
+from wealth.util.format import money_fmt
 
 
 def style_track(cols, special_indices) -> list[str]:

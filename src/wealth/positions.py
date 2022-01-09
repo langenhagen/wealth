@@ -10,7 +10,7 @@ from IPython.core.display import display
 from IPython.display import Markdown
 
 import wealth.plot
-from wealth.util.util import money_fmt, percent_fmt
+from wealth.util.format import money_fmt, percent_fmt
 
 Positions = Dict[str, Dict[str, float]]
 

@@ -23,7 +23,7 @@ from wealth.plot import (
     text_layout,
     wide_checkbox_layout,
 )
-from wealth.util.util import money_fmt
+from wealth.util.format import money_fmt
 
 BoundedFloatText = widgets.BoundedFloatText
 BoundedIntText = widgets.BoundedIntText

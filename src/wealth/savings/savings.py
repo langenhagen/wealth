@@ -6,7 +6,7 @@ import pandas as pd
 
 from wealth.config import config
 from wealth.plot import display_df
-from wealth.util.util import date_fmt, money_fmt
+from wealth.util.format import date_fmt, money_fmt
 
 from .account_history import build_account_history
 from .importer import import_csv

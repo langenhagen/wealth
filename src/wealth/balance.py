@@ -23,7 +23,7 @@ from ipywidgets.widgets import (
 
 import wealth
 from wealth.plot import create_account_checkboxes, display_df, style_red_green_fg
-from wealth.util.util import money_fmt
+from wealth.util.format import money_fmt
 
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:

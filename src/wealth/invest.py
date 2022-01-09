@@ -12,7 +12,7 @@ from IPython.display import Markdown
 
 import wealth
 from wealth.plot import display_df, style_red_fg
-from wealth.util.util import Money, money_fmt, percent_fmt
+from wealth.util.format import Money, money_fmt, percent_fmt
 
 
 class TransactionType(Enum):

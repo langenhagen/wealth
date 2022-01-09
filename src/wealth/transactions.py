@@ -12,7 +12,7 @@ from wealth.plot import (
     display_df,
     style_green_yellow_bg,
 )
-from wealth.util.util import money_fmt
+from wealth.util.format import money_fmt
 
 
 def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
