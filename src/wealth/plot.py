@@ -1,13 +1,13 @@
 """Contains generally applicable utility functions for working with the packages
 matplotlib and ipyidgets."""
-from typing import Callable, List, Tuple, Union
+from typing import Any, Callable, Iterable, List, Tuple
 
 import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
-import pandas.io.formats.style
-from IPython.core.display import display
+from IPython.display import Markdown
+from IPython.display import display as ipython_display
 from IPython.display import display_html
 
 from wealth.util.transaction_type import TransactionType
@@ -115,21 +115,27 @@ def style_red_green_bg(row) -> str:
     return [color] * len(row)
 
 
-def display_df(df: Union[pd.DataFrame, pandas.io.formats.style.Styler]) -> pd.DataFrame:
-    """Plot a dataframe with `max_rows` set to None aka infinity,
-    optionally print the DataFrame's head with the given number."""
+def display(o: Any):
+    """Display an object.
+    Print strings as Markdown.
+    Print dataframes and styles with `max_rows` set to None aka infinity,
+    `max_colwitdth` set to inifinity and numeric precision set to 2."""
     options = {
         "display.max_rows": None,
         "display.max_colwidth": None,
         "display.precision": 2,
     }
     with pd.option_context(*[i for option in list(options.items()) for i in option]):
-        style = df if isinstance(df, pd.io.formats.style.Styler) else df.style
-        display(style)
+        if isinstance(o, pd.DataFrame):
+            ipython_display(o.style)
+        elif isinstance(o, str):
+            ipython_display(Markdown(o))
+        else:
+            ipython_display(o)
 
 
 # pylint:disable=protected-access
-def display_side_by_side(dfs):
+def display_side_by_side(dfs: Iterable[pd.DataFrame]):
     """Display the given dataframes/styles and the given titles side by side in
     an inline manner."""
     html_str = ""

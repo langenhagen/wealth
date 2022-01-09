@@ -7,11 +7,9 @@ from typing import Optional
 import dateutil.parser
 import pandas as pd
 import yaml
-from IPython.core.display import display
-from IPython.display import Markdown
 
 import wealth
-from wealth.plot import display_df, style_red_fg
+from wealth.plot import display, style_red_fg
 from wealth.util.format import Money, money_fmt, percent_fmt
 
 
@@ -233,7 +231,7 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
         ],
     )
 
-    display_df(style)
+    display(style)
 
 
 def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFrame:
@@ -252,48 +250,41 @@ def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFram
 
     df["investment"] = df["investment"].map(money_fmt())
 
-    display_df(df)
+    display(df)
 
 
 def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
     """Render information about stock invesments, also in the light of given
     goals and fulfilled goals."""
-    display(Markdown("# Stock Investments"))
+    display("# Stock Investments")
     investments = _load_stocks_yml()
 
     done_investments = [i for i in investments if i.is_open() is False]
     open_sum = sum([i.open_invested_sum() for i in investments if i.is_open() is True])
     display(
-        Markdown(
-            f"I currently invest {Money(open_sum)} in "
-            f"{len(investments) - len(done_investments)} open investments."
-        )
+        f"I currently invest {Money(open_sum)} in "
+        f"{len(investments) - len(done_investments)} open investments."
     )
-    display(Markdown(f"I finished {len(done_investments)} investments."))
+    display(f"I finished {len(done_investments)} investments.")
 
     net_profits = sum([i.net_profit() for i in done_investments])
-    display(Markdown(f"The net profits are {Money(net_profits)}."))
+    display(f"The net profits are {Money(net_profits)}.")
 
     net_profits_after_goals = net_profits - sum(fulfilled_goals.values())
     display(
-        Markdown(
-            "**The net profits after fulfilled goals are "
-            f"{Money(net_profits_after_goals)}.**"
-        )
+        "**The net profits after fulfilled goals are "
+        f"{Money(net_profits_after_goals)}.**"
     )
 
-    display(Markdown(f"The sum of all open goals is {Money(sum(goals.values()))}."))
+    display(f"The sum of all open goals is {Money(sum(goals.values()))}.")
     display(
-        Markdown(
-            "The sum of all fulfilled goals is "
-            f"{Money(sum(fulfilled_goals.values()))}."
-        )
+        "The sum of all fulfilled goals is " f"{Money(sum(fulfilled_goals.values()))}."
     )
 
-    display(Markdown("<br>Open investments:"))
+    display("<br>Open investments:")
     _summarize_open_investments(investments)
 
-    display(Markdown("<br>Closed investments:"))
+    display("<br>Closed investments:")
     _summarize_closed_investments(investments)
 
 
@@ -340,4 +331,4 @@ def bailout(
     df["bailout_value"] = df["bailout_value"].map(money_fmt())
     df["gross gain"] = df["gross gain"].map(money_fmt())
     df["net gain"] = df["net gain"].map(money_fmt())
-    display_df(df)
+    display(df)

@@ -3,13 +3,12 @@ import functools
 from typing import List
 
 import pandas as pd
-from IPython.core.display import display
 from ipywidgets import Checkbox, Output
 
 from wealth.plot import (
     account_checkboxes,
     create_account_checkboxes,
-    display_df,
+    display,
     style_green_yellow_bg,
 )
 from wealth.util.format import money_fmt
@@ -25,7 +24,7 @@ def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
     )
 
     with out:
-        display_df(style)
+        display(style)
 
 
 def transactions(df: pd.DataFrame):

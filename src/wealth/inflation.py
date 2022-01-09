@@ -6,11 +6,10 @@ from typing import Dict, List
 import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-from IPython.core.display import display
-from IPython.display import Markdown
 
 import wealth
 import wealth.config
+from wealth.plot import display
 
 BoundedFloatText = widgets.BoundedFloatText
 FloatSlider = widgets.FloatSlider
@@ -54,7 +53,7 @@ def _calc_inflation_rate_from_widgets(
 
     out.clear_output()
     with out:
-        display(Markdown(f"<br>The linear inflation rate is {rate}%"))
+        display(f"<br>The linear inflation rate is {rate}%")
 
 
 def inflation(
@@ -93,7 +92,7 @@ def inflation(
     txt_end_cost.observe(update_inflation_rate, "value")
     txt_end_year.observe(update_inflation_rate, "value")
 
-    display(Markdown("## Calculate Inflation Rates"))
+    display("## Calculate Inflation Rates")
     display(box)
     display(out)
     update_inflation_rate(None)
@@ -166,11 +165,9 @@ def _calc_inflated_cost_from_widgets(
 
     out.clear_output()
     with out:
-        display(Markdown(f"<br>The inflated cost is {wealth.Money(inflated_cost)}"))
+        display(f"<br>The inflated cost is {wealth.Money(inflated_cost)}")
         display(
-            Markdown(
-                f"Money has {wealth.percent_fmt(ratio * 100)} of the value it had at start"
-            )
+            f"Money has {wealth.percent_fmt(ratio * 100)} of the value it had at start"
         )
     with out_fig:
         fig.clear()
@@ -234,7 +231,7 @@ def future_worth(
     txt_end_year.observe(update_inflated_cost, "value")
     txt_inflation.observe(update_inflated_cost, "value")
 
-    display(Markdown("## Calculate Money's Future Worth"))
+    display("## Calculate Money's Future Worth")
     display(box)
     display(out)
     display(out_fig)

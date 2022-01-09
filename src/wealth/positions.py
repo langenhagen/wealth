@@ -6,10 +6,9 @@ from typing import Dict
 import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import pandas as pd
-from IPython.core.display import display
-from IPython.display import Markdown
 
 import wealth.plot
+from wealth.plot import display
 from wealth.util.format import money_fmt, percent_fmt
 
 Positions = Dict[str, Dict[str, float]]
@@ -33,23 +32,23 @@ def _show_sums(
     out.clear_output()
     with out, pd.option_context("display.max_rows", None, "display.precision", 2):
 
-        display(Markdown("### Incomes"))
+        display("### Incomes")
         incomes = df.loc[df["cost"] > 0].sort_values(by="cost", ascending=False)
         incomes["percent"] = (incomes["cost"] / incomes["cost"].sum()) * 100
         incomes["cost"] = incomes["cost"].map(money_fmt())
         incomes["percent"] = incomes["percent"].map(percent_fmt)
         display(incomes)
 
-        display(Markdown("### Expenses"))
+        display("### Expenses")
         expenses = df.loc[df["cost"] <= 0].sort_values(by="cost")
         expenses["percent"] = (expenses["cost"] / expenses["cost"].sum()) * 100
         expenses["cost"] = expenses["cost"].map(money_fmt())
         expenses["percent"] = expenses["percent"].map(percent_fmt)
         display(expenses)
 
-        display(Markdown("### Buckets"))
+        display("### Buckets")
 
-        display(Markdown("#### Incomes"))
+        display("#### Incomes")
         income_sums = sums_df.loc[sums_df["cost"] > 0].sort_values(
             by="cost", ascending=False
         )
@@ -58,7 +57,7 @@ def _show_sums(
         income_sums["percent"] = income_sums["percent"].map(percent_fmt)
         display(income_sums)
 
-        display(Markdown("#### Expenses"))
+        display("#### Expenses")
         expense_sums = sums_df.loc[sums_df["cost"] <= 0].sort_values(by="cost")
         expense_sums["percent"] = (
             expense_sums["cost"] / expense_sums["cost"].sum()
@@ -131,10 +130,10 @@ def info(buckets: Positions):
     )
     txt_multiplier.observe(show_sums, "value")
 
-    display(Markdown("## Sums of Positions"))
+    display("## Sums of Positions")
     display(txt_multiplier)
     display(out)
     show_sums(None)
-    display(Markdown("## Ratios of Expenses"))
+    display("## Ratios of Expenses")
     _plot_piechart_of_expense_bucket_sums(bucket_sums)
     _plot_piechart_of_expense_positons({k: v[0] for k, v in posts.items()})

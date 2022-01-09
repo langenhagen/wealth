@@ -2,12 +2,10 @@
 Track expenses and cluster them according to type and subtype."""
 import pandas as pd
 import pandas.api.types as ptypes
-from IPython.core.display import display
-from IPython.display import Markdown
 from ipywidgets import Output
 
 from wealth.importers.common import to_lower
-from wealth.plot import display_df, style_red_fg
+from wealth.plot import display, style_red_fg
 from wealth.util.format import money_fmt
 
 
@@ -160,12 +158,12 @@ def track() -> pd.DataFrame:
 
     out = Output()
     with out:
-        display_df(style)
-        display(Markdown("<br>Numbers per bucket:"))
+        display(style)
+        display("<br>Numbers per bucket:")
         display(numbers_by_bucket_style)
-        display(Markdown("<br>Numbers per type:"))
+        display("<br>Numbers per type:")
         display(numbers_per_type_style)
-        display(Markdown("<br>End balances per month:"))
+        display("<br>End balances per month:")
         display(monthly_end_balances_style)
 
     display(out)

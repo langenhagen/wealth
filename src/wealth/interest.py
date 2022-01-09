@@ -10,14 +10,12 @@ import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
-from IPython.core.display import display
-from IPython.display import Markdown
 
 import wealth
 import wealth.inflation
 from wealth.plot import (
     create_inflation_widgets,
-    display_df,
+    display,
     setup_yearly_plot_and_axes,
     slim_text_layout,
     text_layout,
@@ -284,7 +282,7 @@ def _calc_interest_from_widgets(
     )
     out_summary.clear_output()
     with out_summary:
-        display(Markdown(f"After {txt_years.value} years:"))
+        display(f"After {txt_years.value} years:")
         display(summary_df)
     with out_fig:
         fig.clear()
@@ -296,7 +294,7 @@ def _calc_interest_from_widgets(
     df["balance"] = df["balance"].map(money_fmt())
     df["discounted_balance"] = df["discounted_balance"].map(money_fmt())
     with out_df:
-        display_df(df)
+        display(df)
 
 
 def _change_transaction_table_visibility(
@@ -310,7 +308,7 @@ def _change_transaction_table_visibility(
     out_table.clear_output()
     if chk_show_transaction_table.value:
         with out_table:
-            display(Markdown("# Transaction Table"))
+            display("# Transaction Table")
             display(out_df)
 
 
@@ -464,11 +462,11 @@ def interest(**kwargs):
     )
     chk_show_transaction_table.observe(change_transaction_table_visibility, "value")
 
-    display(Markdown("## Calculate Compound Interest"))
+    display("## Calculate Compound Interest")
     display(box)
-    display(Markdown("# Summary"))
+    display("# Summary")
     display(out_summary)
-    display(Markdown("# Account Development"))
+    display("# Account Development")
     display(out_fig)
     display(chk_show_transaction_table)
     display(out_table)

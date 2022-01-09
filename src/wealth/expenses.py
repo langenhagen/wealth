@@ -4,11 +4,9 @@ from typing import List
 
 import ipywidgets as widgets
 import pandas as pd
-from IPython.core.display import display
-from IPython.display import Markdown
 
 import wealth
-from wealth.plot import create_account_checkboxes, display_df
+from wealth.plot import create_account_checkboxes, display
 from wealth.util.format import money_fmt
 from wealth.util.transaction_type import TransactionType
 
@@ -74,8 +72,8 @@ def _display_expense_dataframes(
         ).hide_columns(["date"])
 
         with out:
-            display(Markdown(f"## {start} – {end}"))
-            display_df(style)
+            display(f"## {start} – {end}")
+            display(style)
 
 
 def biggest_expenses(df: pd.DataFrame):
@@ -126,7 +124,7 @@ def biggest_expenses(df: pd.DataFrame):
     create_account_checkboxes(checkboxes, df, True, update_out)
     chk_show_internal.observe(update_out, "value")
 
-    display(Markdown("## Biggest Expenses"))
+    display("## Biggest Expenses")
     display(
         VBox(
             [

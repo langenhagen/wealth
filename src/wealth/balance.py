@@ -8,8 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.stats
-from IPython.core.display import display
-from IPython.display import Markdown
 from ipywidgets.widgets import (
     BoundedIntText,
     Box,
@@ -22,7 +20,7 @@ from ipywidgets.widgets import (
 )
 
 import wealth
-from wealth.plot import create_account_checkboxes, display_df, style_red_green_fg
+from wealth.plot import create_account_checkboxes, display, style_red_green_fg
 from wealth.util.format import money_fmt
 
 
@@ -48,7 +46,7 @@ def _display_balance(
 
     out.clear_output()
     with out:
-        display(Markdown(f'<br><font size="6">{wealth.Money(value)}</font>'))
+        display(f'<br><font size="6">{wealth.Money(value)}</font>')
 
 
 def balance(df: pd.DataFrame):
@@ -76,7 +74,7 @@ def balance(df: pd.DataFrame):
     create_account_checkboxes(checkboxes, df, True, update_balance)
     drp_date.observe(update_balance, "value")
 
-    display(Markdown("# Balance"))
+    display("# Balance")
     display(wealth.plot.account_checkboxes(checkboxes))
     display(drp_date)
     display(out)
@@ -179,7 +177,7 @@ def graph(df: pd.DataFrame):
     create_account_checkboxes(sum_accs_checkboxes, df, True, plot)
     create_account_checkboxes(single_accs_checkboxes, df, True, plot)
 
-    display(Markdown("# Plot"))
+    display("# Plot")
     display(
         VBox(
             [
@@ -222,7 +220,7 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
 
     out = Output()
     with out:
-        display(Markdown(f"### {caption}"))
+        display(f"### {caption}")
         display(style)
     return out
 
@@ -279,7 +277,7 @@ def _display_mean_balance_dataframes(
     )
 
     with out:
-        display_df(style)
+        display(style)
 
         if len(df_out) <= 1:
             return
@@ -299,7 +297,7 @@ def _display_mean_balance_dataframes(
             df=df_out,
         )
         txt_n_periods.observe(update_out, "value")
-        display(Markdown("## Summary"))
+        display("## Summary")
         display(Box([lbl_n_periods, txt_n_periods], layout=wealth.plot.box_layout))
         display(inner_out)
         update_out(None)
@@ -328,7 +326,7 @@ def means(df: pd.DataFrame):
     drp_freq.observe(update_out, "value")
     create_account_checkboxes(checkboxes, df, True, update_out)
 
-    display(Markdown("# Mean Balances"))
+    display("# Mean Balances")
     display(
         VBox(
             [
