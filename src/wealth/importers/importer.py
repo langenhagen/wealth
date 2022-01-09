@@ -88,9 +88,10 @@ def _read_account_csvs() -> pd.DataFrame:
     processed_accounts = set()
 
     for file in _yield_files_with_suffix(pathlib.Path.cwd() / "../csv", ".csv"):
-        if file.name == "track.csv":
+        match = re.match(r"\d{4}-(.+)-.*", file.stem)
+        if match == None:
             continue
-        account_name = re.match(r"\d{4}-(.+)-.*", file.stem).group(1)
+        account_name = match.group(1)
         for regex, read_csv in namepattern_2_importer.items():
             if re.match(regex, file.stem):
                 current_df = read_csv(file, account_name)
