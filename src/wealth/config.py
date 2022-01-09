@@ -6,6 +6,8 @@ from typing import Any, Dict
 import dateutil
 import yaml
 
+from wealth.util.deepupdate import deepcopy, deepupdate
+
 default = {
     "capital_gains_taxrate": 0.27,
     "currency": "€",
@@ -32,12 +34,9 @@ def _create_config() -> Dict[str, Any]:
     """Read the file `config.yml` from file and give defaults to values that the
     file doesn't specify."""
     user = _read_config_yaml()
-    config_ = deepcopy(default)
-    config_.update(user)
+    config_ = deepupdate(default, user)
 
-    retire = deepcopy(default["retirement"])
-    retire.update(user.get("retirement", {}))
-
+    retire = config_["retirement"]
     retire["birthday"] = dateutil.parser.parse(retire["birthday"])
     retire["retirement_year"] = retire["birthday"].year + retire["retirement_age"]
     config_["retirement"] = retire
