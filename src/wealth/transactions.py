@@ -7,11 +7,8 @@ from ipywidgets import Checkbox, Output
 
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.plot import (
-    account_checkboxes,
-    create_account_checkboxes,
-    style_green_yellow_bg,
-)
+from wealth.ui.plot import account_checkboxes, create_account_checkboxes
+from wealth.ui.styles import green_yellow_bg
 
 
 def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
@@ -20,7 +17,7 @@ def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
     df_out = df[df["account"].isin(accounts)].iloc[::-1]
     out.clear_output()
     style = df_out.style.format(formatter=money_fmt(), subset="amount").apply(
-        style_green_yellow_bg, axis=1
+        green_yellow_bg, axis=1
     )
 
     with out:

@@ -7,7 +7,7 @@ from ipywidgets import Output
 from wealth.importers.common import to_lower
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.plot import style_red_fg
+from wealth.ui.styles import red_fg
 
 
 def style_track(cols, special_indices) -> list[str]:
@@ -109,7 +109,7 @@ def track() -> pd.DataFrame:
     monthly_end_balances.index = monthly_end_balances.index.to_period("M")
     monthly_end_balances_style = monthly_end_balances.style.format(
         formatter=money_fmt()
-    ).applymap(style_red_fg)
+    ).applymap(red_fg)
 
     end_balance_indices = (
         pd.DataFrame()
@@ -142,7 +142,7 @@ def track() -> pd.DataFrame:
     numbers_by_bucket["avg monthly end balance"] = monthly_end_balances.mean()
     numbers_by_bucket_style = numbers_by_bucket.style.format(
         formatter=money_fmt()
-    ).applymap(style_red_fg)
+    ).applymap(red_fg)
 
     numbers_per_type = (
         df.groupby(df["type"])["price"]

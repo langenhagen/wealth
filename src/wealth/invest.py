@@ -11,7 +11,7 @@ import yaml
 import wealth
 from wealth.ui.display import display
 from wealth.ui.format import Money, money_fmt, percent_fmt
-from wealth.ui.plot import style_red_fg
+from wealth.ui.styles import red_fg
 
 
 class TransactionType(Enum):
@@ -223,7 +223,7 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
             "net daily performance": percent_fmt,
         },
     ).applymap(
-        style_red_fg,
+        red_fg,
         subset=[
             "profit",
             "net profit",

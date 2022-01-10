@@ -23,7 +23,8 @@ import wealth
 import wealth.ui.layouts as layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.plot import create_account_checkboxes, style_red_green_fg
+from wealth.ui.plot import create_account_checkboxes
+from wealth.ui.styles import red_green_fg
 
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
@@ -216,9 +217,7 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
         index=["mean", "median", "filtered mean", "filtered median"],
         data={"values": [df.mean(), df.median(), filtered.mean(), filtered.median()]},
     )
-    style = df_out.style.format(formatter=money_fmt(), na_rep="").applymap(
-        style_red_green_fg
-    )
+    style = df_out.style.format(formatter=money_fmt(), na_rep="").applymap(red_green_fg)
 
     out = Output()
     with out:
@@ -275,7 +274,7 @@ def _display_mean_balance_dataframes(
     style = (
         df_out.iloc[::-1]
         .style.format(formatter=money_fmt(), na_rep="")
-        .applymap(style_red_green_fg)
+        .applymap(red_green_fg)
     )
 
     with out:

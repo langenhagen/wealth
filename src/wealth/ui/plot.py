@@ -16,8 +16,6 @@ from ipywidgets import (
     jslink,
 )
 
-from wealth.util.transaction_type import TransactionType
-
 from .layouts import box, checkbox, text_slim
 
 frequency_options = [
@@ -72,37 +70,6 @@ def create_inflation_widgets(inflation_rate: float) -> Tuple[BoundedFloatText, H
     hbox_inflation = HBox([label, textbox, slider])
     jslink((textbox, "value"), (slider, "value"))
     return (textbox, hbox_inflation)
-
-
-def style_red_fg(value) -> str:
-    """Return a red font color if the given value is smaller than 0."""
-    return "color: #ff0000aa;" if value < 0 else None
-
-
-def style_red_green_fg(value) -> str:
-    """Return a green font color if the given value is greater or equal than 0,
-    else return a red font."""
-    return "color: #ff0000aa;" if value < 0 else "color: #00ff00aa;"
-
-
-def style_green_yellow_bg(cols) -> list[str]:
-    """Return a green back color if the given value is an income and return a
-    yellow back color if the given value is an internal transactions."""
-    type_ = cols["transaction_type"]
-    if type_ == TransactionType.IN:
-        color = "background: #00ff0044"
-    elif type_ in [TransactionType.INTERNAL_IN, TransactionType.INTERNAL_OUT]:
-        color = "background: #ffff0044"
-    else:
-        color = ""
-    return [color] * len(cols)
-
-
-def style_red_green_bg(row) -> str:
-    """Return a green back color if the given value is greater or equal than 0,
-    else return a red back color. Also render every 2nd row with a darker background darker."""
-    color = "background: #ff000044;" if row["amount"] <= 0 else "background: #00ff0044;"
-    return [color] * len(row)
 
 
 def setup_plot_and_axes(
