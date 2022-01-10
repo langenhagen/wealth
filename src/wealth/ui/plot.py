@@ -1,5 +1,4 @@
-"""Contains generally applicable utility functions for working with the packages
-matplotlib and ipyidgets."""
+"""Contains common matplotlib functionality."""
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
