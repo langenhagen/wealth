@@ -2,8 +2,8 @@
 import functools
 from typing import List
 
-import ipywidgets as widgets
 import pandas as pd
+from ipywidgets import BoundedIntText, Checkbox, Dropdown, HBox, Output, VBox
 
 import wealth
 from wealth.ui.display import display
@@ -11,14 +11,6 @@ from wealth.ui.format import money_fmt
 from wealth.ui.layouts import checkbox_wide, dropdown, dropdown_slim, text
 from wealth.ui.plot import create_account_checkboxes
 from wealth.util.transaction_type import TransactionType
-
-BoundedIntText = widgets.BoundedIntText
-Checkbox = widgets.Checkbox
-Dropdown = widgets.Dropdown
-HBox = widgets.HBox
-Label = widgets.Label
-Output = widgets.Output
-VBox = widgets.VBox
 
 
 def _display_expense_dataframes(

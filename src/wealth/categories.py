@@ -1,5 +1,4 @@
 """Functionality to examine expenses via categories."""
-import math
 
 import pandas as pd
 

@@ -1,14 +1,9 @@
 """Retirement & pension related functionality."""
 # import datetime as dt
 
-import ipywidgets as widgets
+from ipywidgets import BoundedFloatText, FloatSlider, HBox, Label, jslink
 
 import wealth
-
-BoundedFloatText = widgets.BoundedFloatText
-FloatSlider = widgets.FloatSlider
-HBox = widgets.HBox
-Label = widgets.Label
 
 
 # pylint:disable=redefined-builtin
@@ -17,7 +12,7 @@ def _numeric_adjust_widgets(caption: str, min: float, max: float) -> HBox:
     label = Label(value=caption)
     text = BoundedFloatText(min=min, max=max, layout=wealth.ui.plot.text)
     slider = FloatSlider(readout=False, min=min, max=max)
-    widgets.jslink((text, "value"), (slider, "value"))
+    jslink((text, "value"), (slider, "value"))
     box = HBox([label, text, slider])
     return box
 

@@ -6,10 +6,22 @@ import functools
 from typing import Any, Dict, List
 
 import dateutil.relativedelta
-import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
+from ipywidgets import (
+    BoundedFloatText,
+    BoundedIntText,
+    Checkbox,
+    DatePicker,
+    FloatText,
+    HBox,
+    IntText,
+    Label,
+    Output,
+    ToggleButtons,
+    VBox,
+)
 
 import wealth
 import wealth.inflation
@@ -17,18 +29,6 @@ from wealth.ui.display import display
 from wealth.ui.format import money_fmt
 from wealth.ui.layouts import checkbox_wide, text, text_slim
 from wealth.ui.plot import create_inflation_widgets, setup_yearly_plot_and_axes
-
-BoundedFloatText = widgets.BoundedFloatText
-BoundedIntText = widgets.BoundedIntText
-Checkbox = widgets.Checkbox
-DatePicker = widgets.DatePicker
-FloatText = widgets.FloatText
-Label = widgets.Label
-HBox = widgets.HBox
-IntText = widgets.IntText
-Output = widgets.Output
-ToggleButtons = widgets.ToggleButtons
-VBox = widgets.VBox
 
 
 class DepositTime(enum.Enum):

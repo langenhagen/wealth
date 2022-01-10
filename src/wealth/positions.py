@@ -3,18 +3,15 @@ import functools
 import operator
 from typing import Dict
 
-import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import pandas as pd
+from ipywidgets import BoundedIntText, Output
 
 import wealth.ui.layouts as layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt, percent_fmt
 
 Positions = Dict[str, Dict[str, float]]
-
-BoundedIntText = widgets.BoundedIntText
-Output = widgets.Output
 
 
 def _show_sums(

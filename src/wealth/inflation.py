@@ -3,24 +3,13 @@ import datetime as dt
 import functools
 from typing import Dict, List
 
-import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from ipywidgets import FloatText, HBox, IntText, Label, Output, VBox
 
 import wealth
-import wealth.config
+from wealth.config import config
 from wealth.ui.display import display
-
-BoundedFloatText = widgets.BoundedFloatText
-FloatSlider = widgets.FloatSlider
-FloatText = widgets.FloatText
-HBox = widgets.HBox
-Label = widgets.Label
-IntText = widgets.IntText
-Output = widgets.Output
-VBox = widgets.VBox
-
-config = wealth.config.config
 
 
 def _calc_inflation_rate(
