@@ -136,7 +136,7 @@ def _plot_inflation_impact(
 def _calc_inflated_cost_from_widgets(
     _,
     out: Output,
-    out_fig: Output,
+    out_figure: Output,
     fig: mpl.figure.Figure,
     txt_start_cost: FloatText,
     txt_start_year: IntText,
@@ -160,7 +160,7 @@ def _calc_inflated_cost_from_widgets(
         display(
             f"Money has {wealth.percent_fmt(ratio * 100)} of the value it had at start"
         )
-    with out_fig:
+    with out_figure:
         fig.clear()
         wealth.ui.plot.setup_yearly_plot_and_axes(
             fig, "Inflation Impact Over Time", xlabel="Year", ylabel="Value"
@@ -203,14 +203,14 @@ def future_worth(
         ]
     )
     out = Output()
-    out_fig = Output()
-    with out_fig:
+    out_figure = Output()
+    with out_figure:
         fig = plt.figure(figsize=(10, 7), num="Inflation Impact Over Time")
 
     update_inflated_cost = functools.partial(
         _calc_inflated_cost_from_widgets,
         out=out,
-        out_fig=out_fig,
+        out_figure=out_figure,
         fig=fig,
         txt_start_cost=txt_start_cost,
         txt_start_year=txt_start_year,
@@ -225,5 +225,5 @@ def future_worth(
     display("## Calculate Money's Future Worth")
     display(box)
     display(out)
-    display(out_fig)
+    display(out_figure)
     update_inflated_cost(None)

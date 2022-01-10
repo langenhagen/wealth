@@ -214,7 +214,7 @@ def _plot_account_development(df: pd.DataFrame, inflation_rate: float):
 def _calc_interest_from_widgets(
     _,
     out_summary: Output,
-    out_fig: Output,
+    out_figure: Output,
     out_df: Output,
     fig: mpl.figure.Figure,
     txt_start_amount: FloatText,
@@ -280,7 +280,7 @@ def _calc_interest_from_widgets(
     with out_summary:
         display(f"After {txt_years.value} years:")
         display(summary_df)
-    with out_fig:
+    with out_figure:
         fig.clear()
         setup_yearly_plot_and_axes(fig, "Account Development")
         _plot_account_development(df, txt_inflation.value)
@@ -410,8 +410,8 @@ def interest(**kwargs):
             hbox_inflation,
         ]
     )
-    out_fig = Output()
-    with out_fig:
+    out_figure = Output()
+    with out_figure:
         fig = plt.figure(figsize=(10, 7), num="Account Development")
 
     out_summary = Output()
@@ -419,7 +419,7 @@ def interest(**kwargs):
     update_interest = functools.partial(
         _calc_interest_from_widgets,
         out_summary=out_summary,
-        out_fig=out_fig,
+        out_figure=out_figure,
         out_df=out_df,
         fig=fig,
         txt_start_amount=txt_start_amount,
@@ -463,7 +463,7 @@ def interest(**kwargs):
     display("# Summary")
     display(out_summary)
     display("# Account Development")
-    display(out_fig)
+    display(out_figure)
     display(chk_show_transaction_table)
     display(out_table)
     update_interest(None)
