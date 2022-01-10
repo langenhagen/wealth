@@ -8,8 +8,10 @@ import matplotlib.pyplot as plt
 from ipywidgets import FloatText, HBox, IntText, Label, Output, VBox
 
 import wealth
+import wealth.ui.layouts as layouts
 from wealth.config import config
 from wealth.ui.display import display
+from wealth.ui.widgets import create_inflation_widgets
 
 
 def _calc_inflation_rate(
@@ -53,12 +55,12 @@ def inflation(
 ):
     """Interactively calculate inflation_rates."""
     lbl_start = Label(value="Start cost and year: ")
-    txt_start_cost = FloatText(value=start_cost, layout=wealth.ui.plot.text_slim)
-    txt_start_year = IntText(value=start_year, layout=wealth.ui.plot.text_slim)
+    txt_start_cost = FloatText(value=start_cost, layout=layouts.text_slim)
+    txt_start_year = IntText(value=start_year, layout=layouts.text_slim)
 
     lbl_end = Label(value="End cost and year: ")
-    txt_end_cost = FloatText(value=end_cost, layout=wealth.ui.plot.text_slim)
-    txt_end_year = IntText(value=end_year, layout=wealth.ui.plot.text_slim)
+    txt_end_cost = FloatText(value=end_cost, layout=layouts.text_slim)
+    txt_end_year = IntText(value=end_year, layout=layouts.text_slim)
     box = HBox(
         [
             VBox([lbl_start, lbl_end]),
@@ -179,14 +181,12 @@ def future_worth(
 ):
     """Interactively estimate future costs subject to inflation."""
     lbl_start_cost = Label(value="Start cost: ")
-    txt_start_cost = FloatText(value=start_cost, layout=wealth.ui.plot.text_slim)
+    txt_start_cost = FloatText(value=start_cost, layout=layouts.text_slim)
     lbl_start_year = Label(value="Start year: ")
-    txt_start_year = IntText(value=start_year, layout=wealth.ui.plot.text_slim)
+    txt_start_year = IntText(value=start_year, layout=layouts.text_slim)
     lbl_end_year = Label(value="End year: ")
-    txt_end_year = IntText(value=end_year, layout=wealth.ui.plot.text_slim)
-    txt_inflation, hbox_inflation = wealth.ui.plot.create_inflation_widgets(
-        inflation_rate
-    )
+    txt_end_year = IntText(value=end_year, layout=layouts.text_slim)
+    txt_inflation, hbox_inflation = create_inflation_widgets(inflation_rate)
     box = VBox(
         [
             HBox(

@@ -7,8 +7,8 @@ from ipywidgets import Checkbox, Output
 
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.plot import account_checkboxes, create_account_checkboxes
 from wealth.ui.styles import green_yellow_bg
+from wealth.ui.widgets import align_checkboxes, create_account_checkboxes
 
 
 def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
@@ -32,7 +32,7 @@ def transactions(df: pd.DataFrame):
     update_out = functools.partial(_update_out, df=df, checkboxes=checkboxes, out=out)
     create_account_checkboxes(checkboxes, df, True, update_out)
 
-    display(account_checkboxes(checkboxes))
+    display(align_checkboxes(checkboxes))
     display(out)
 
     update_out(None)

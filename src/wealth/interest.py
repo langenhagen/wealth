@@ -25,10 +25,11 @@ from ipywidgets import (
 
 import wealth
 import wealth.inflation
+import wealth.ui.layouts as layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.layouts import checkbox_wide, text, text_slim
-from wealth.ui.plot import create_inflation_widgets, setup_yearly_plot_and_axes
+from wealth.ui.plot import setup_yearly_plot_and_axes
+from wealth.ui.widgets import create_inflation_widgets
 
 
 class DepositTime(enum.Enum):
@@ -330,20 +331,20 @@ def interest(**kwargs):
         value=initial_amount,
         min=0.01,
         max=999999999,
-        layout=text_slim,
+        layout=layouts.text_slim,
     )
     lbl_start_date = Label(value="Start date: ")
-    txt_start_date = DatePicker(value=start_date, layout=text)
+    txt_start_date = DatePicker(value=start_date, layout=layouts.text)
     lbl_regular_deposit = Label(value="Regular deposit: ")
     txt_regular_deposit = BoundedFloatText(
-        value=regular_deposit, min=0, max=999999999, layout=text_slim
+        value=regular_deposit, min=0, max=999999999, layout=layouts.text_slim
     )
     lbl_regular_deposit_freq = Label(value="Deposits per year: ")
     txt_deposit_freq = BoundedIntText(
         value=deposits_per_year,
         min=1,
         max=999999999,
-        layout=text_slim,
+        layout=layouts.text_slim,
     )
     lbl_interest_rate = Label(value="Interest rate %: ")
     txt_interest_rate = BoundedFloatText(
@@ -351,17 +352,17 @@ def interest(**kwargs):
         min=0,
         max=1000,
         step=0.1,
-        layout=text_slim,
+        layout=layouts.text_slim,
     )
     lbl_compounds_freq = Label(value="Compounds per year: ")
     txt_compound_freq = BoundedIntText(
         value=compounds_per_year,
         min=1,
         max=999999999,
-        layout=text_slim,
+        layout=layouts.text_slim,
     )
     lbl_years = Label(value="Years: ")
-    txt_years = BoundedIntText(value=years, min=0, layout=text_slim)
+    txt_years = BoundedIntText(value=years, min=0, layout=layouts.text_slim)
     lbl_deposit_time = Label(value="Deposit at: ")
     btn_deposit_time = ToggleButtons(
         options={"Period Start": DepositTime.START, "Period End": DepositTime.END},
@@ -447,7 +448,7 @@ def interest(**kwargs):
         value=show_transaction_table,
         description="Show Transaction Table",
         indent=False,
-        layout=checkbox_wide,
+        layout=layouts.checkbox_wide,
     )
     change_transaction_table_visibility = functools.partial(
         _change_transaction_table_visibility,

@@ -5,11 +5,14 @@ from typing import List
 import pandas as pd
 from ipywidgets import BoundedIntText, Checkbox, Dropdown, HBox, Output, VBox
 
-import wealth
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
 from wealth.ui.layouts import checkbox_wide, dropdown, dropdown_slim, text
-from wealth.ui.plot import create_account_checkboxes
+from wealth.ui.widgets import (
+    align_checkboxes,
+    create_account_checkboxes,
+    frequency_options,
+)
 from wealth.util.transaction_type import TransactionType
 
 
@@ -76,7 +79,7 @@ def biggest_expenses(df: pd.DataFrame):
     out = Output()
     drp_freq = Dropdown(
         description="Frequency:",
-        options=wealth.ui.plot.frequency_options,
+        options=frequency_options,
         value="MS",
         layout=dropdown_slim,
     )
@@ -119,7 +122,7 @@ def biggest_expenses(df: pd.DataFrame):
         VBox(
             [
                 HBox([drp_freq, drp_date, txt_n_periods, txt_n_rows]),
-                wealth.ui.plot.account_checkboxes(checkboxes),
+                align_checkboxes(checkboxes),
                 chk_show_internal,
             ]
         )

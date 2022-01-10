@@ -23,8 +23,12 @@ import wealth
 import wealth.ui.layouts as layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.plot import create_account_checkboxes
 from wealth.ui.styles import red_green_fg
+from wealth.ui.widgets import (
+    align_checkboxes,
+    create_account_checkboxes,
+    frequency_options,
+)
 
 
 def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
@@ -78,7 +82,7 @@ def balance(df: pd.DataFrame):
     drp_date.observe(update_balance, "value")
 
     display("# Balance")
-    display(wealth.ui.plot.account_checkboxes(checkboxes))
+    display(align_checkboxes(checkboxes))
     display(drp_date)
     display(out)
     update_balance(None)
@@ -289,7 +293,7 @@ def _display_mean_balance_dataframes(
             12,
             min=1,
             max=10000,
-            layout=wealth.ui.plot.text_slim,
+            layout=layouts.text_slim,
         )
         update_out = functools.partial(
             _display_summary,
@@ -312,7 +316,7 @@ def means(df: pd.DataFrame):
     out = Output()
     drp_freq = Dropdown(
         description="Frequency:",
-        options=wealth.ui.plot.frequency_options,
+        options=frequency_options,
         value="MS",
         layout=layouts.dropdown,
     )
@@ -332,7 +336,7 @@ def means(df: pd.DataFrame):
         VBox(
             [
                 HBox([drp_freq], layout=layouts.box),
-                wealth.ui.plot.account_checkboxes(checkboxes),
+                align_checkboxes(checkboxes),
             ]
         )
     )
