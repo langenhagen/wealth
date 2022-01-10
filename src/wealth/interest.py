@@ -13,9 +13,10 @@ import pandas as pd
 
 import wealth
 import wealth.inflation
+from wealth.ui.display import display
+from wealth.ui.format import money_fmt
 from wealth.ui.layouts import checkbox_wide, text, text_slim
-from wealth.ui.plot import create_inflation_widgets, display, setup_yearly_plot_and_axes
-from wealth.util.format import money_fmt
+from wealth.ui.plot import create_inflation_widgets, setup_yearly_plot_and_axes
 
 BoundedFloatText = widgets.BoundedFloatText
 BoundedIntText = widgets.BoundedIntText

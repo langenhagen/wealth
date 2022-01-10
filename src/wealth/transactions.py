@@ -5,13 +5,13 @@ from typing import List
 import pandas as pd
 from ipywidgets import Checkbox, Output
 
+from wealth.ui.display import display
+from wealth.ui.format import money_fmt
 from wealth.ui.plot import (
     account_checkboxes,
     create_account_checkboxes,
-    display,
     style_green_yellow_bg,
 )
-from wealth.util.format import money_fmt
 
 
 def _update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):

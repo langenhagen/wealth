@@ -3,8 +3,8 @@ import math
 
 import pandas as pd
 
-from wealth.ui.plot import display_side_by_side
-from wealth.util.format import money_fmt
+from wealth.ui.display import display_side_by_side
+from wealth.ui.format import money_fmt
 
 
 def categories(df: pd.DataFrame, categories: dict[str, str]):

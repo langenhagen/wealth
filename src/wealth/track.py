@@ -5,8 +5,9 @@ import pandas.api.types as ptypes
 from ipywidgets import Output
 
 from wealth.importers.common import to_lower
-from wealth.ui.plot import display, style_red_fg
-from wealth.util.format import money_fmt
+from wealth.ui.display import display
+from wealth.ui.format import money_fmt
+from wealth.ui.plot import style_red_fg
 
 
 def style_track(cols, special_indices) -> list[str]:

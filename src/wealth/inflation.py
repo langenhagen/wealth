@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 import wealth
 import wealth.config
-from wealth.ui.plot import display
+from wealth.ui.display import display
 
 BoundedFloatText = widgets.BoundedFloatText
 FloatSlider = widgets.FloatSlider

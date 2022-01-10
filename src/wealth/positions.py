@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 import wealth.ui.layouts as layouts
-from wealth.ui.plot import display
-from wealth.util.format import money_fmt, percent_fmt
+from wealth.ui.display import display
+from wealth.ui.format import money_fmt, percent_fmt
 
 Positions = Dict[str, Dict[str, float]]
 

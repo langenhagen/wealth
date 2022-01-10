@@ -6,9 +6,10 @@ import ipywidgets as widgets
 import pandas as pd
 
 import wealth
+from wealth.ui.display import display
+from wealth.ui.format import money_fmt
 from wealth.ui.layouts import checkbox_wide, dropdown, dropdown_slim, text
-from wealth.ui.plot import create_account_checkboxes, display
-from wealth.util.format import money_fmt
+from wealth.ui.plot import create_account_checkboxes
 from wealth.util.transaction_type import TransactionType
 
 BoundedIntText = widgets.BoundedIntText
