@@ -52,18 +52,20 @@ def align_checkboxes(checkboxes: List[Checkbox]):
     )
 
 
-def create_inflation_widgets(inflation_rate: float) -> Tuple[BoundedFloatText, HBox]:
+def create_inflation_widgets(
+    inflation_rate: float, max: float
+) -> Tuple[BoundedFloatText, HBox]:
     """Create a Label, a bounded float text and a slider to adjust inflation,
     initially starting with the given inflation value in percent."""
     label = Label(value="Inflation rate %: ")
     textbox = BoundedFloatText(
         min=0,
-        max=100,
-        step=0.01,
+        max=max,
+        step=0.1,
         value=inflation_rate,
         layout=text_slim,
     )
-    slider = FloatSlider(readout=False, min=0, max=100, step=0.01)
-    hbox_inflation = HBox([label, textbox, slider])
+    slider = FloatSlider(readout=False, min=0, max=max, step=0.1)
+    box = HBox([label, textbox, slider])
     jslink((textbox, "value"), (slider, "value"))
-    return (textbox, hbox_inflation)
+    return (textbox, box)

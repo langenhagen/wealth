@@ -368,7 +368,7 @@ def interest(**kwargs):
         options={"Period Start": DepositTime.START, "Period End": DepositTime.END},
         value=deposit_at_period_start,
     )
-    txt_inflation, hbox_inflation = create_inflation_widgets(inflation_rate)
+    txt_inflation, hbox_inflation = create_inflation_widgets(inflation_rate, max=20)
     box = VBox(
         [
             HBox(

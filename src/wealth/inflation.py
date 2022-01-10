@@ -186,7 +186,7 @@ def future_worth(
     txt_start_year = IntText(value=start_year, layout=layouts.text_slim)
     lbl_end_year = Label(value="End year: ")
     txt_end_year = IntText(value=end_year, layout=layouts.text_slim)
-    txt_inflation, hbox_inflation = create_inflation_widgets(inflation_rate)
+    txt_inflation, hbox_inflation = create_inflation_widgets(inflation_rate, max=20)
     box = VBox(
         [
             HBox(
