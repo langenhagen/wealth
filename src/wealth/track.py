@@ -5,7 +5,7 @@ import pandas.api.types as ptypes
 from ipywidgets import Output
 
 from wealth.importers.common import to_lower
-from wealth.plot import display, style_red_fg
+from wealth.ui.plot import display, style_red_fg
 from wealth.util.format import money_fmt
 
 

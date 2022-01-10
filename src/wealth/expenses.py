@@ -6,7 +6,8 @@ import ipywidgets as widgets
 import pandas as pd
 
 import wealth
-from wealth.plot import create_account_checkboxes, display
+from wealth.ui.layouts import checkbox_wide, dropdown, dropdown_slim, text
+from wealth.ui.plot import create_account_checkboxes, display
 from wealth.util.format import money_fmt
 from wealth.util.transaction_type import TransactionType
 
@@ -82,29 +83,25 @@ def biggest_expenses(df: pd.DataFrame):
     out = Output()
     drp_freq = Dropdown(
         description="Frequency:",
-        options=wealth.plot.frequency_options,
+        options=wealth.ui.plot.frequency_options,
         value="MS",
-        layout=wealth.plot.slim_dropdown_layout,
+        layout=dropdown_slim,
     )
-    drp_date = Dropdown(
-        description="Date:", options=[], layout=wealth.plot.dropdown_layout
-    )
+    drp_date = Dropdown(description="Date:", options=[], layout=dropdown)
     txt_n_periods = BoundedIntText(
         1,
         description="Periods:",
         min=1,
         max=10000,
-        layout=wealth.plot.text_layout,
+        layout=text,
     )
-    txt_n_rows = BoundedIntText(
-        5, description="Rows:", min=1, layout=wealth.plot.text_layout
-    )
+    txt_n_rows = BoundedIntText(5, description="Rows:", min=1, layout=text)
     checkboxes = []
     chk_show_internal = Checkbox(
         value=True,
         description="Show Internal Transactions",
         indent=False,
-        layout=wealth.plot.wide_checkbox_layout,
+        layout=checkbox_wide,
     )
     update_out = functools.partial(
         _display_expense_dataframes,
@@ -129,7 +126,7 @@ def biggest_expenses(df: pd.DataFrame):
         VBox(
             [
                 HBox([drp_freq, drp_date, txt_n_periods, txt_n_rows]),
-                wealth.plot.account_checkboxes(checkboxes),
+                wealth.ui.plot.account_checkboxes(checkboxes),
                 chk_show_internal,
             ]
         )

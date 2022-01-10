@@ -9,7 +9,7 @@ import pandas as pd
 import yaml
 
 import wealth
-from wealth.plot import display, style_red_fg
+from wealth.ui.plot import display, style_red_fg
 from wealth.util.format import Money, money_fmt, percent_fmt
 
 

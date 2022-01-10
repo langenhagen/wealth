@@ -5,7 +5,7 @@ from typing import Optional
 import pandas as pd
 
 from wealth.config import config
-from wealth.plot import display
+from wealth.ui.plot import display
 from wealth.util.format import date_fmt, money_fmt
 
 from .account_history import build_account_history

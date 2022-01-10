@@ -2,29 +2,27 @@
 matplotlib and ipyidgets."""
 from typing import Any, Callable, Iterable, List, Tuple
 
-import ipywidgets as widgets
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 from IPython.display import Markdown
 from IPython.display import display as ipython_display
 from IPython.display import display_html
+from ipywidgets import (
+    BoundedFloatText,
+    Checkbox,
+    FloatSlider,
+    HBox,
+    Label,
+    Layout,
+    dlink,
+    jslink,
+)
 
 from wealth.util.transaction_type import TransactionType
 
-BoundedFloatText = widgets.BoundedFloatText
-Checkbox = widgets.Checkbox
-FloatSlider = widgets.FloatSlider
-HBox = widgets.HBox
-Label = widgets.Label
-Layout = widgets.Layout
+from .layouts import box, checkbox, text_slim
 
-checkbox_layout = Layout(width="100px")
-wide_checkbox_layout = Layout(width="250px")
-dropdown_layout = Layout(width="250px")
-slim_dropdown_layout = Layout(width="200px")
-text_layout = Layout(width="150px")
-slim_text_layout = Layout(width="100px")
 frequency_options = [
     ("Day", "D"),
     ("Week", "W-MON"),
@@ -33,7 +31,6 @@ frequency_options = [
     ("Quarter", "QS"),
     ("Year", "AS"),
 ]
-box_layout = Layout(margin="20px 0px 20px 0px")
 
 
 def create_account_checkboxes(
@@ -44,16 +41,12 @@ def create_account_checkboxes(
 ) -> List[Checkbox]:
     """Create checkboxes for every account in the given dataframe, assign the
     given callback to these checkboxes and add them to the given list."""
-    chk_all = Checkbox(
-        value=value, description="All", indent=False, layout=checkbox_layout
-    )
+    chk_all = Checkbox(value=value, description="All", indent=False, layout=checkbox)
     out_checkboxes.append(chk_all)
     for account in df["account"].unique():
-        chk = Checkbox(
-            value=value, description=account, indent=False, layout=checkbox_layout
-        )
+        chk = Checkbox(value=value, description=account, indent=False, layout=checkbox)
         chk.observe(callback, "value")
-        widgets.dlink((chk_all, "value"), (chk, "value"))
+        dlink((chk_all, "value"), (chk, "value"))
         out_checkboxes.append(chk)
         out_checkboxes.sort(key=lambda chk: chk.description)
     return out_checkboxes
@@ -63,7 +56,7 @@ def account_checkboxes(checkboxes: List[Checkbox]):
     """Return a HBox containing all given account checkboxes."""
     return HBox(
         [Label("Accounts: ", layout=Layout(width="80px")), *checkboxes],
-        layout=box_layout,
+        layout=box,
     )
 
 
@@ -76,11 +69,11 @@ def create_inflation_widgets(inflation_rate: float) -> Tuple[BoundedFloatText, H
         max=100,
         step=0.01,
         value=inflation_rate,
-        layout=slim_text_layout,
+        layout=text_slim,
     )
     slider = FloatSlider(readout=False, min=0, max=100, step=0.01)
     hbox_inflation = HBox([label, textbox, slider])
-    widgets.jslink((textbox, "value"), (slider, "value"))
+    jslink((textbox, "value"), (slider, "value"))
     return (textbox, hbox_inflation)
 
 

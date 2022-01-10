@@ -15,7 +15,7 @@ Label = widgets.Label
 def _numeric_adjust_widgets(caption: str, min: float, max: float) -> HBox:
     """Return a HBox with a label, a text box and a linked slider."""
     label = Label(value=caption)
-    text = BoundedFloatText(min=min, max=max, layout=wealth.plot.text_layout)
+    text = BoundedFloatText(min=min, max=max, layout=wealth.ui.plot.text)
     slider = FloatSlider(readout=False, min=min, max=max)
     widgets.jslink((text, "value"), (slider, "value"))
     box = HBox([label, text, slider])

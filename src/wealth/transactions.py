@@ -5,7 +5,7 @@ from typing import List
 import pandas as pd
 from ipywidgets import Checkbox, Output
 
-from wealth.plot import (
+from wealth.ui.plot import (
     account_checkboxes,
     create_account_checkboxes,
     display,

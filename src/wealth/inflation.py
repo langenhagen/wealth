@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 
 import wealth
 import wealth.config
-from wealth.plot import display
+from wealth.ui.plot import display
 
 BoundedFloatText = widgets.BoundedFloatText
 FloatSlider = widgets.FloatSlider
@@ -64,12 +64,12 @@ def inflation(
 ):
     """Interactively calculate inflation_rates."""
     lbl_start = Label(value="Start cost and year: ")
-    txt_start_cost = FloatText(value=start_cost, layout=wealth.plot.slim_text_layout)
-    txt_start_year = IntText(value=start_year, layout=wealth.plot.slim_text_layout)
+    txt_start_cost = FloatText(value=start_cost, layout=wealth.ui.plot.text_slim)
+    txt_start_year = IntText(value=start_year, layout=wealth.ui.plot.text_slim)
 
     lbl_end = Label(value="End cost and year: ")
-    txt_end_cost = FloatText(value=end_cost, layout=wealth.plot.slim_text_layout)
-    txt_end_year = IntText(value=end_year, layout=wealth.plot.slim_text_layout)
+    txt_end_cost = FloatText(value=end_cost, layout=wealth.ui.plot.text_slim)
+    txt_end_year = IntText(value=end_year, layout=wealth.ui.plot.text_slim)
     box = HBox(
         [
             VBox([lbl_start, lbl_end]),
@@ -171,7 +171,7 @@ def _calc_inflated_cost_from_widgets(
         )
     with out_fig:
         fig.clear()
-        wealth.plot.setup_yearly_plot_and_axes(
+        wealth.ui.plot.setup_yearly_plot_and_axes(
             fig, "Inflation Impact Over Time", xlabel="Year", ylabel="Value"
         )
         _plot_inflation_impact(
@@ -190,12 +190,14 @@ def future_worth(
 ):
     """Interactively estimate future costs subject to inflation."""
     lbl_start_cost = Label(value="Start cost: ")
-    txt_start_cost = FloatText(value=start_cost, layout=wealth.plot.slim_text_layout)
+    txt_start_cost = FloatText(value=start_cost, layout=wealth.ui.plot.text_slim)
     lbl_start_year = Label(value="Start year: ")
-    txt_start_year = IntText(value=start_year, layout=wealth.plot.slim_text_layout)
+    txt_start_year = IntText(value=start_year, layout=wealth.ui.plot.text_slim)
     lbl_end_year = Label(value="End year: ")
-    txt_end_year = IntText(value=end_year, layout=wealth.plot.slim_text_layout)
-    txt_inflation, hbox_inflation = wealth.plot.create_inflation_widgets(inflation_rate)
+    txt_end_year = IntText(value=end_year, layout=wealth.ui.plot.text_slim)
+    txt_inflation, hbox_inflation = wealth.ui.plot.create_inflation_widgets(
+        inflation_rate
+    )
     box = VBox(
         [
             HBox(

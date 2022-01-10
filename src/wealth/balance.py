@@ -20,7 +20,8 @@ from ipywidgets.widgets import (
 )
 
 import wealth
-from wealth.plot import create_account_checkboxes, display, style_red_green_fg
+import wealth.ui.layouts as layouts
+from wealth.ui.plot import create_account_checkboxes, display, style_red_green_fg
 from wealth.util.format import money_fmt
 
 
@@ -62,7 +63,7 @@ def balance(df: pd.DataFrame):
         description="Date: ",
         options=dates,
         value=df.index.date.max(),
-        layout=wealth.plot.dropdown_layout,
+        layout=layouts.dropdown,
     )
     update_balance = functools.partial(
         _display_balance,
@@ -75,7 +76,7 @@ def balance(df: pd.DataFrame):
     drp_date.observe(update_balance, "value")
 
     display("# Balance")
-    display(wealth.plot.account_checkboxes(checkboxes))
+    display(wealth.ui.plot.account_checkboxes(checkboxes))
     display(drp_date)
     display(out)
     update_balance(None)
@@ -127,7 +128,7 @@ def _plot_cumsum(
     sum_series = df[df["account"].isin(sum_accs)]["amount"].cumsum()
     with out:
         fig.clear()
-        wealth.plot.setup_plot_and_axes(fig, "Cumulative Sum of All transactions")
+        wealth.ui.plot.setup_plot_and_axes(fig, "Cumulative Sum of All transactions")
         if not sum_series.empty:
             _plot_df(sum_series, drp_freq.value, "Combined")
             show_legend = True
@@ -156,7 +157,7 @@ def graph(df: pd.DataFrame):
             ("Year", "365D"),
         ],
         value="<atomic>",
-        layout=wealth.plot.dropdown_layout,
+        layout=layouts.dropdown,
     )
     sum_accs_checkboxes, single_accs_checkboxes = [], []
 
@@ -197,7 +198,7 @@ def graph(df: pd.DataFrame):
                             ]
                         ),
                     ],
-                    layout=wealth.plot.box_layout,
+                    layout=layouts.box,
                 ),
             ]
         )
@@ -288,7 +289,7 @@ def _display_mean_balance_dataframes(
             12,
             min=1,
             max=10000,
-            layout=wealth.plot.slim_text_layout,
+            layout=wealth.ui.plot.text_slim,
         )
         update_out = functools.partial(
             _display_summary,
@@ -298,7 +299,7 @@ def _display_mean_balance_dataframes(
         )
         txt_n_periods.observe(update_out, "value")
         display("## Summary")
-        display(Box([lbl_n_periods, txt_n_periods], layout=wealth.plot.box_layout))
+        display(Box([lbl_n_periods, txt_n_periods], layout=layouts.box))
         display(inner_out)
         update_out(None)
 
@@ -311,9 +312,9 @@ def means(df: pd.DataFrame):
     out = Output()
     drp_freq = Dropdown(
         description="Frequency:",
-        options=wealth.plot.frequency_options,
+        options=wealth.ui.plot.frequency_options,
         value="MS",
-        layout=wealth.plot.dropdown_layout,
+        layout=layouts.dropdown,
     )
     checkboxes = []
     update_out = functools.partial(
@@ -330,8 +331,8 @@ def means(df: pd.DataFrame):
     display(
         VBox(
             [
-                HBox([drp_freq], layout=wealth.plot.box_layout),
-                wealth.plot.account_checkboxes(checkboxes),
+                HBox([drp_freq], layout=layouts.box),
+                wealth.ui.plot.account_checkboxes(checkboxes),
             ]
         )
     )

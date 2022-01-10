@@ -7,8 +7,8 @@ import ipywidgets as widgets
 import matplotlib.pyplot as plt
 import pandas as pd
 
-import wealth.plot
-from wealth.plot import display
+import wealth.ui.layouts as layouts
+from wealth.ui.plot import display
 from wealth.util.format import money_fmt, percent_fmt
 
 Positions = Dict[str, Dict[str, float]]
@@ -117,7 +117,7 @@ def info(buckets: Positions):
         min=1,
         max=9999,
         description="Multiplier:",
-        layout=wealth.plot.text_layout,
+        layout=layouts.text,
     )
 
     out = Output()
