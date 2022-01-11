@@ -21,8 +21,10 @@ def savings(
     """Load a savings account history from CSV file, build an account history
     with interest and inflation from it and display the results in an
     interactive manner as a graph and as a table."""
-    tax_rate = tax_rate or config["capital_gains_taxrate"]
-    inflation_rate = inflation_rate or config["inflation_rate"]
+    tax_rate = config["capital_gains_taxrate"] if tax_rate is None else tax_rate
+    inflation_rate = (
+        config["inflation_rate"] if inflation_rate is None else inflation_rate
+    )
 
     imported = import_csv(filename)
     df = build_account_history(

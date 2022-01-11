@@ -9,6 +9,7 @@ import pandas as pd
 import yaml
 
 import wealth
+from wealth.config import config
 from wealth.ui.display import display
 from wealth.ui.format import Money, money_fmt, percent_fmt
 from wealth.ui.styles import red_fg
@@ -138,7 +139,7 @@ class InvestmentSet:
         tax rate from the configs if the given tax rate is None."""
         if self.is_open() is True:
             return None
-        tax_rate = tax_rate or wealth.config["capital_gains_taxrate"]
+        tax_rate = config["capital_gains_taxrate"] if tax_rate is None else tax_rate
 
         buys = self._get_individual_shares_and_prices(TransactionType.buy)
         sells = self._get_individual_shares_and_prices(TransactionType.sell)
@@ -305,8 +306,10 @@ def bailout(
     gross_gains = []
     net_gains = []
 
-    inflation_rate = inflation_rate or wealth.config["inflation_rate"]
-    tax_rate = tax_rate or wealth.config["capital_gains_taxrate"]
+    inflation_rate = (
+        config["inflation_rate"] if inflation_rate is None else inflation_rate
+    )
+    tax_rate = config["capital_gains_taxrate"] if tax_rate is None else tax_rate
 
     for year in range(investment_year, investment_year + 10):
         inflated_value = wealth.inflation.calc_inflated_value(
