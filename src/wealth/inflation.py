@@ -93,7 +93,7 @@ def calc_inflated_value(
     start_cost: float, start_year: int, end_year: int, inflation_rate: float
 ) -> float:
     """Given the input values, return the according inflated cost."""
-    return start_cost * (1 + inflation_rate / 100) ** (end_year - start_year)
+    return start_cost * (1 + inflation_rate) ** (end_year - start_year)
 
 
 def _calc_remaining_rates(
@@ -149,7 +149,7 @@ def _calc_inflated_cost_from_widgets(
         txt_start_cost.value,
         txt_start_year.value,
         txt_end_year.value,
-        txt_inflation.value,
+        txt_inflation.value / 100,
     )
     inflated_cost = round(inflated_cost, 2)
     ratio = txt_start_cost.value / inflated_cost
@@ -169,7 +169,7 @@ def _calc_inflated_cost_from_widgets(
             txt_start_cost.value,
             txt_start_year.value,
             txt_end_year.value,
-            txt_inflation.value,
+            txt_inflation.value / 100,
         )
 
 
@@ -186,7 +186,7 @@ def future_worth(
     txt_start_year = IntText(value=start_year, layout=layouts.text_slim)
     lbl_end_year = Label(value="End year: ")
     txt_end_year = IntText(value=end_year, layout=layouts.text_slim)
-    txt_inflation, hbox_inflation = create_inflation_widgets(inflation_rate, max=20)
+    txt_inflation, hbox_inflation = create_inflation_widgets(inflation_rate, max=100)
     box = VBox(
         [
             HBox(

@@ -241,7 +241,7 @@ def _calc_interest_from_widgets(
         btn_deposit_time.value,
         additional_events,
     )
-    df = _calc_account_development(events, txt_inflation.value)
+    df = _calc_account_development(events, txt_inflation.value / 100)
 
     final_balance = df.iloc[-1]["balance"]
     increase_percent = (final_balance / txt_start_amount.value - 1) * 100
@@ -283,7 +283,7 @@ def _calc_interest_from_widgets(
     with out_figure:
         fig.clear()
         setup_yearly_plot_and_axes(fig, "Account Development")
-        _plot_account_development(df, txt_inflation.value)
+        _plot_account_development(df, txt_inflation.value / 100)
         plt.legend(loc="best", borderaxespad=0.1)
     out_df.clear_output()
     df["change"] = df["change"].map(money_fmt())
