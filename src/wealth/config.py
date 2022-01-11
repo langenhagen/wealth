@@ -6,7 +6,7 @@ from typing import Any, Dict
 import dateutil
 import yaml
 
-from wealth.util.deepupdate import deepcopy, deepupdate
+from wealth.util.deepupdate import deepupdate
 
 default = {
     "capital_gains_taxrate": 0.27,
