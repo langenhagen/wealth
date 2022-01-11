@@ -128,37 +128,21 @@ class InvestmentSet:
         member `transactions`."""
         transactions = [t for t in self.transactions if t.type_ == type_]
         prices = []
-        for transaction in transactions:
-            price = transaction.amount / transaction.shares
-            prices.extend([price] * transaction.shares)
+        for t in transactions:
+            price_per_share = t.amount / t.shares
+            prices.extend([price_per_share] * t.shares)
 
         return prices
 
     def net_profit(self, tax_rate: Optional[float] = None) -> Optional[float]:
         """The amount of profit after capital gains taxes on profits. Use the
         tax rate from the configs if the given tax rate is None."""
-        if self.is_open() is True:
-            return None
         tax_rate = config["capital_gains_taxrate"] if tax_rate is None else tax_rate
 
-        buys = self._get_individual_shares_and_prices(TransactionType.buy)
-        sells = self._get_individual_shares_and_prices(TransactionType.sell)
-        assert len(buys) == len(sells), "Number of bought and sold shares must be equal"
+        gross = self.gross_profit()
+        net = gross * (1 - tax_rate) if gross > 0 else gross
 
-        profit = 0.0
-        for buy, sell in zip(buys, sells):
-
-            amount = sell - buy
-            if amount > 0:
-                profit += amount * (1 - tax_rate)
-            else:
-                profit += amount
-
-        types = (TransactionType.capital_raise, TransactionType.dividend)
-        transactions = [t.amount for t in self.transactions if t.type_ in types]
-        profit += sum(transactions) * (1 - tax_rate)
-
-        return profit
+        return net
 
     def net_performance(self) -> Optional[float]:
         """Returns the net performance in percent if the investment set is not
