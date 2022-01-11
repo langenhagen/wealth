@@ -122,7 +122,7 @@ class InvestmentSet:
         Can be negative if investments are profitable."""
         return self.total_invested_sum() - self.total_returns()
 
-    def _get_individual_shares_and_prices(self, type_: TransactionType) -> list[float]:
+    def get_individual_shares_and_prices(self, type_: TransactionType) -> list[float]:
         """Return a list of individual share prices for all transactions with
         the given transaction type in the same order as the items are in the
         member `transactions`."""
