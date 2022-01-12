@@ -43,7 +43,7 @@ def build_account_history(
     after_tax = 1 - tax_rate
     df.loc[deposits, "net amount"] = df[deposits]["amount"]
     df.loc[interests, "net amount"] = df[interests]["amount"] * after_tax
-    factors = years_to_remaining_factors(start.year, end.year, inflation_rate * 100)
+    factors = years_to_remaining_factors(start.year, end.year, inflation_rate)
     inflation = df["date"].dt.year.map(factors)
     df["net amount after inflation"] = df["net amount"] * inflation
     df.loc[deposits, "deposit cumsum"] = df[deposits]["amount"].cumsum()
@@ -56,3 +56,40 @@ def build_account_history(
     df["net balance after inflation"] = df["net balance"] * inflation
 
     return df
+
+
+def summarize_history(df: pd.DataFrame) -> pd.DataFrame:
+    """Build a summary dataframe from the given account history dataframe."""
+
+    years = (df["date"].max() - df["date"].min()).days / 365
+    balance = df["balance"].iat[-1]
+    net_balance = df["net balance"].iat[-1]
+    net_balance_after_inflation = df["net balance after inflation"].iat[-1]
+    deposit = df["deposit cumsum"].iat[df["deposit cumsum"].last_valid_index()]
+    last_interest_index = df["interest cumsum"].last_valid_index()
+    interest = df["interest cumsum"].iat[last_interest_index]
+    net_interest = df["net interest cumsum"].iat[last_interest_index]
+    last_interest = df["amount"].iat[last_interest_index]
+    last_net_interest = df["net amount"].iat[last_interest_index]
+    last_net_interest_after_inflation = df["net amount after inflation"].iat[
+        last_interest_index
+    ]
+
+    return pd.DataFrame.from_dict(
+        {
+            "years": years,
+            "total accumulated amount": balance,
+            "total net accumulated amount": net_balance,
+            "total net accumulated amount after inflation": net_balance_after_inflation,
+            "total invested amount": deposit,
+            "total interest received": interest,
+            "total net interest received": net_interest,
+            "interest/deposit ratio": interest / deposit,
+            "net interest/deposit ratio": net_interest / deposit,
+            "last interest amount": last_interest,
+            "last net interest amount": last_net_interest,
+            "last net interest amount after inflation": last_net_interest_after_inflation,
+        },
+        orient="index",
+        columns=["value"],
+    )

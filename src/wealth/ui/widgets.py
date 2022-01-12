@@ -62,7 +62,26 @@ def create_inflation_widgets(
         min=0,
         max=max,
         step=0.1,
-        value=inflation_rate,
+        value=round(inflation_rate * 100, 1),
+        layout=text_slim,
+    )
+    slider = FloatSlider(readout=False, min=0, max=max, step=0.1)
+    box = HBox([label, textbox, slider])
+    jslink((textbox, "value"), (slider, "value"))
+    return (textbox, box)
+
+
+def create_interest_widgets(
+    interest_rate: float, max: float
+) -> Tuple[BoundedFloatText, HBox]:
+    """Create a Label, a bounded float text and a slider to adjust interest rate,
+    initially starting with the given inflation value in percent."""
+    label = Label(value="Interest rate %: ")
+    textbox = BoundedFloatText(
+        min=0,
+        max=max,
+        step=0.1,
+        value=round(interest_rate * 100, 1),
         layout=text_slim,
     )
     slider = FloatSlider(readout=False, min=0, max=max, step=0.1)

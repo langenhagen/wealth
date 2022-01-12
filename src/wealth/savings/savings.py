@@ -5,11 +5,10 @@ from typing import Optional
 import pandas as pd
 
 from wealth.config import config
-from wealth.ui.display import display
-from wealth.ui.format import date_fmt, money_fmt
 
-from .account_history import build_account_history
+from .account_history import build_account_history, summarize_history
 from .importer import import_csv
+from .ui import render
 
 
 def savings(
@@ -34,27 +33,12 @@ def savings(
         inflation_rate=inflation_rate,
     )
 
-    _display_account_history_df(df)
-
-    return df
-
-
-def _display_account_history_df(df: pd.DataFrame):
-    """Display the account history DataFrame."""
-    style = df.style.format(
-        formatter={
-            "date": date_fmt,
-            "amount": money_fmt(),
-            "net amount": money_fmt(),
-            "net amount after inflation": money_fmt(),
-            "balance": money_fmt(),
-            "net balance": money_fmt(),
-            "deposit cumsum": money_fmt(),
-            "interest cumsum": money_fmt(),
-            "net interest cumsum": money_fmt(),
-            "net balance after inflation": money_fmt(),
-        },
-        na_rep="",
+    summary = summarize_history(df)
+    render(
+        df=df,
+        summary=summary,
+        interest_rate=interest_rate,
+        inflation_rate=inflation_rate,
     )
 
-    display(style)
+    return df

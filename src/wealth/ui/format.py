@@ -19,3 +19,8 @@ def Money(value: float, currency: Optional[str] = None) -> str:
     If no currency symbol is given, use the symbol from the config."""
     currency = config["currency"] if currency is None else currency
     return money_fmt(currency)(value)
+
+
+def ratio_fmt(value: float) -> str:
+    """Return a percent string with the given ratio value."""
+    return percent_fmt(value * 100)
