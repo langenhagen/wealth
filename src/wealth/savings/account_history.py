@@ -58,7 +58,7 @@ def build_account_history(
     return df
 
 
-def summarize_history(df: pd.DataFrame) -> pd.DataFrame:
+def build_summary(df: pd.DataFrame) -> pd.DataFrame:
     """Build a summary dataframe from the given account history dataframe."""
 
     years = (df["date"].max() - df["date"].min()).days / 365

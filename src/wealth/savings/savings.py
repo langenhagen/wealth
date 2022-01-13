@@ -6,7 +6,7 @@ import pandas as pd
 
 from wealth.config import config
 
-from .account_history import build_account_history, summarize_history
+from .account_history import build_account_history, build_summary
 from .importer import import_csv
 from .ui import render
 
@@ -33,7 +33,7 @@ def savings(
         inflation_rate=inflation_rate,
     )
 
-    summary = summarize_history(df)
+    summary = build_summary(df)
     render(
         df=df,
         summary=summary,
