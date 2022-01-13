@@ -47,6 +47,9 @@ def build_account_history(
     inflation = df["date"].dt.year.map(factors)
     df["net amount after inflation"] = df["net amount"] * inflation
     df.loc[deposits, "deposit cumsum"] = df[deposits]["amount"].cumsum()
+    df.loc[deposits, "deposit cumsum after inflation"] = (
+        df["deposit cumsum"] * inflation
+    )
     df.loc[interests, "interest cumsum"] = df[interests]["amount"].cumsum()
     df.loc[interests, "net interest cumsum"] = (
         df[interests]["interest cumsum"] * after_tax
