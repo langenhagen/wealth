@@ -32,7 +32,6 @@ def savings(
         tax_rate=tax_rate,
         inflation_rate=inflation_rate,
     )
-
     summary = build_summary(df)
     render(
         df=df,
