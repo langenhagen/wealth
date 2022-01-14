@@ -19,7 +19,7 @@ default = {
 }
 
 
-def _read_config_yaml() -> Dict[str, Any]:
+def __read_config_yaml() -> Dict[str, Any]:
     """Read the file `config.yml` and write its contents to a dict."""
     filename = "config.yml"
     try:
@@ -30,10 +30,10 @@ def _read_config_yaml() -> Dict[str, Any]:
         return {}
 
 
-def _create_config() -> Dict[str, Any]:
+def __create_config() -> Dict[str, Any]:
     """Read the file `config.yml` from file and give defaults to values that the
     file doesn't specify."""
-    user = _read_config_yaml()
+    user = __read_config_yaml()
     config_ = deepupdate(default, user)
 
     retire = config_["retirement"]
@@ -44,4 +44,4 @@ def _create_config() -> Dict[str, Any]:
     return config_
 
 
-config = _create_config()
+config = __create_config()

@@ -16,7 +16,7 @@ from wealth.ui.widgets import (
 from wealth.util.transaction_type import TransactionType
 
 
-def _display_expense_dataframes(
+def __display_expense_dataframes(
     _,
     drp_freq: Dropdown,
     drp_date: Dropdown,
@@ -100,7 +100,7 @@ def biggest_expenses(df: pd.DataFrame):
         layout=checkbox_wide,
     )
     update_out = functools.partial(
-        _display_expense_dataframes,
+        __display_expense_dataframes,
         drp_freq=drp_freq,
         drp_date=drp_date,
         txt_n_periods=txt_n_periods,

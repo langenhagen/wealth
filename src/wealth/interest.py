@@ -63,7 +63,7 @@ def calc_compound_interest(P: float, r: float, t: int, n: int = 1) -> float:
     return P * (1 + r / n) ** (t * n)
 
 
-def _build_account_history(
+def __build_account_history(
     start_amount: float,
     start_date: dt.date,
     regular_deposit: float,
@@ -119,7 +119,7 @@ def _build_account_history(
     return events
 
 
-def _calc_account_development(
+def __calc_account_development(
     events: List[Event], inflation_rate: float
 ) -> pd.DataFrame:
     """Calculate the account development given the list of times and events and
@@ -172,7 +172,7 @@ def _calc_account_development(
     return df
 
 
-def _plot_account_development(df: pd.DataFrame, inflation_rate: float):
+def __plot_account_development(df: pd.DataFrame, inflation_rate: float):
     """Plot given dataframe to display its development both with its total
     balance and with only the self-deposited values without interest.
     Also plot inflation-discounted balances and deposits."""
@@ -211,7 +211,7 @@ def _plot_account_development(df: pd.DataFrame, inflation_rate: float):
     )
 
 
-def _calc_interest_from_widgets(
+def __calc_interest_from_widgets(
     _,
     out_summary: Output,
     out_figure: Output,
@@ -230,7 +230,7 @@ def _calc_interest_from_widgets(
 ):
     """Calculate the according account balances from the given widget's
     values and plot it."""
-    events = _build_account_history(
+    events = __build_account_history(
         txt_start_amount.value,
         txt_start_date.value,
         txt_regular_deposit.value,
@@ -241,7 +241,7 @@ def _calc_interest_from_widgets(
         btn_deposit_time.value,
         additional_events,
     )
-    df = _calc_account_development(events, txt_inflation.value / 100)
+    df = __calc_account_development(events, txt_inflation.value / 100)
 
     final_balance = df.iloc[-1]["balance"]
     increase_percent = (final_balance / txt_start_amount.value - 1) * 100
@@ -283,7 +283,7 @@ def _calc_interest_from_widgets(
     with out_figure:
         fig.clear()
         setup_yearly_plot_and_axes(fig, "Account Development")
-        _plot_account_development(df, txt_inflation.value / 100)
+        __plot_account_development(df, txt_inflation.value / 100)
         plt.legend(loc="best", borderaxespad=0.1)
     out_df.clear_output()
     df["change"] = df["change"].map(money_fmt())
@@ -293,7 +293,7 @@ def _calc_interest_from_widgets(
         display(df)
 
 
-def _change_transaction_table_visibility(
+def __change_transaction_table_visibility(
     _,
     out_table: Output,
     out_df: Output,
@@ -417,7 +417,7 @@ def interest(**kwargs):
     out_summary = Output()
     out_df = Output()
     update_interest = functools.partial(
-        _calc_interest_from_widgets,
+        __calc_interest_from_widgets,
         out_summary=out_summary,
         out_figure=out_figure,
         out_df=out_df,
@@ -451,7 +451,7 @@ def interest(**kwargs):
         layout=layouts.checkbox_wide,
     )
     change_transaction_table_visibility = functools.partial(
-        _change_transaction_table_visibility,
+        __change_transaction_table_visibility,
         out_table=out_table,
         out_df=out_df,
         chk_show_transaction_table=chk_show_transaction_table,

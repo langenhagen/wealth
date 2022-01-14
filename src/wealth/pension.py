@@ -7,7 +7,7 @@ import wealth
 
 
 # pylint:disable=redefined-builtin
-def _numeric_adjust_widgets(caption: str, min: float, max: float) -> HBox:
+def __numeric_adjust_widgets(caption: str, min: float, max: float) -> HBox:
     """Return a HBox with a label, a text box and a linked slider."""
     label = Label(value=caption)
     text = BoundedFloatText(min=min, max=max, layout=wealth.ui.plot.text)
@@ -22,7 +22,7 @@ def pension_info():
     # TODO
 
     # now = dt.datetime.now()
-    # retirement_year = _numeric_adjust_widgets(
+    # retirement_year = __numeric_adjust_widgets(
     #     "When do you retire?:", now.year, now.year + 100
     # )
 

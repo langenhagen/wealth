@@ -31,13 +31,13 @@ from wealth.ui.widgets import (
 )
 
 
-def _daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
+def __daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
     """Yield dates between, including given start and end dates."""
     for offset in range((end - start).days + 1):
         yield start + dt.timedelta(offset)
 
 
-def _display_balance(
+def __display_balance(
     _,
     checkboxes: List[Checkbox],
     drp_date: Dropdown,
@@ -64,7 +64,7 @@ def balance(df: pd.DataFrame):
 
     out = Output()
     checkboxes = []
-    dates = list(_daterange(df.index.date.min(), df.index.date.max()))
+    dates = list(__daterange(df.index.date.min(), df.index.date.max()))
     drp_date = Dropdown(
         description="Date: ",
         options=dates,
@@ -72,7 +72,7 @@ def balance(df: pd.DataFrame):
         layout=layouts.dropdown,
     )
     update_balance = functools.partial(
-        _display_balance,
+        __display_balance,
         checkboxes=checkboxes,
         out=out,
         drp_date=drp_date,
@@ -88,7 +88,7 @@ def balance(df: pd.DataFrame):
     update_balance(None)
 
 
-def _create_local_minimum_maximum_df(df: pd.DataFrame) -> pd.DataFrame:
+def __create_local_minimum_maximum_df(df: pd.DataFrame) -> pd.DataFrame:
     """Create a dataframe consisting of the local minima & maxima of the given
     dataframe as well as its first and last entrees."""
     return pd.concat(
@@ -103,18 +103,18 @@ def _create_local_minimum_maximum_df(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def _plot_df(df: pd.DataFrame, freq: str, label: str):
+def __plot_df(df: pd.DataFrame, freq: str, label: str):
     """Plot given dataframe with the given frequency and label."""
     if freq == "<atomic>":
         plt.step(df.index, df, label=label, where="post")
     elif freq == "<minmax>":
-        plt.plot(_create_local_minimum_maximum_df(df), label=label)
+        plt.plot(__create_local_minimum_maximum_df(df), label=label)
     else:
         df = df.rolling(freq).mean()
         plt.plot(df, label=label)
 
 
-def _plot_cumsum(
+def __plot_cumsum(
     _,
     sum_accs_checkboxes: List[Checkbox],
     single_accs_checkboxes: List[Checkbox],
@@ -136,11 +136,11 @@ def _plot_cumsum(
         fig.clear()
         wealth.ui.plot.setup_plot_and_axes(fig, "Cumulative Sum of All transactions")
         if not sum_series.empty:
-            _plot_df(sum_series, drp_freq.value, "Combined")
+            __plot_df(sum_series, drp_freq.value, "Combined")
             show_legend = True
         for account in single_accounts:
             single_series = df[df["account"] == account]["amount"].cumsum()
-            _plot_df(single_series, drp_freq.value, account)
+            __plot_df(single_series, drp_freq.value, account)
             show_legend = True
         if show_legend:
             plt.legend(loc="best", borderaxespad=0.1)
@@ -172,7 +172,7 @@ def graph(df: pd.DataFrame):
         fig = plt.figure(figsize=(12, 10), num="Cumulative Sum of All Transaction")
 
     plot = functools.partial(
-        _plot_cumsum,
+        __plot_cumsum,
         sum_accs_checkboxes=sum_accs_checkboxes,
         single_accs_checkboxes=single_accs_checkboxes,
         out=out,
@@ -213,7 +213,7 @@ def graph(df: pd.DataFrame):
     display(out)
 
 
-def _display_mean_and_median(df: pd.DataFrame, caption: str):
+def __display_mean_and_median(df: pd.DataFrame, caption: str):
     """Display mean, median and display mean and median without outliers."""
     filtered = df.dropna()[np.abs(scipy.stats.zscore(df.dropna())) < 2]
 
@@ -230,7 +230,7 @@ def _display_mean_and_median(df: pd.DataFrame, caption: str):
     return out
 
 
-def _display_summary(_, txt_n_periods: BoundedIntText, out: Output, df: pd.DataFrame):
+def __display_summary(_, txt_n_periods: BoundedIntText, out: Output, df: pd.DataFrame):
     """Display a summary for the given series."""
     n_periods = txt_n_periods.value
     out.clear_output()
@@ -238,11 +238,13 @@ def _display_summary(_, txt_n_periods: BoundedIntText, out: Output, df: pd.DataF
         display(
             HBox(
                 [
-                    _display_mean_and_median(df["diff"].tail(n_periods), "Differences"),
-                    _display_mean_and_median(
+                    __display_mean_and_median(
+                        df["diff"].tail(n_periods), "Differences"
+                    ),
+                    __display_mean_and_median(
                         df["min diff"].tail(n_periods), "Differences of Minima"
                     ),
-                    _display_mean_and_median(
+                    __display_mean_and_median(
                         df["max diff"].tail(n_periods), "Differences of Maxima"
                     ),
                 ]
@@ -250,7 +252,7 @@ def _display_summary(_, txt_n_periods: BoundedIntText, out: Output, df: pd.DataF
         )
 
 
-def _display_mean_balance_dataframes(
+def __display_mean_balance_dataframes(
     _,
     drp_freq: Dropdown,
     checkboxes: List[Checkbox],
@@ -296,7 +298,7 @@ def _display_mean_balance_dataframes(
             layout=layouts.text_slim,
         )
         update_out = functools.partial(
-            _display_summary,
+            __display_summary,
             txt_n_periods=txt_n_periods,
             out=inner_out,
             df=df_out,
@@ -322,7 +324,7 @@ def means(df: pd.DataFrame):
     )
     checkboxes = []
     update_out = functools.partial(
-        _display_mean_balance_dataframes,
+        __display_mean_balance_dataframes,
         drp_freq=drp_freq,
         checkboxes=checkboxes,
         out=out,

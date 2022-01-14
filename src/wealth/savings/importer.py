@@ -7,7 +7,7 @@ import pandas.api.types as ptypes
 from .type import TransactionType
 
 
-def _assert_df_integrity(df: pd.DataFrame):
+def __assert_df_integrity(df: pd.DataFrame):
     """Assert the given savings-import-DataFrame's integrity."""
     if not ptypes.is_datetime64_any_dtype(df["date"]):
         raise AssertionError(
@@ -35,7 +35,7 @@ def import_csv(filename: str) -> pd.DataFrame:
         parse_dates=["date"],
         sep=";",
     )
-    _assert_df_integrity(df)
+    __assert_df_integrity(df)
 
     df["type"] = TransactionType.DEPOSIT
 

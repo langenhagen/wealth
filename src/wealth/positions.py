@@ -14,7 +14,7 @@ from wealth.ui.format import money_fmt, percent_fmt
 Positions = Dict[str, Dict[str, float]]
 
 
-def _show_sums(
+def __show_sums(
     _,
     out: Output,
     df: pd.DataFrame,
@@ -64,7 +64,7 @@ def _show_sums(
         display(expense_sums)
 
 
-def _plot_piechart_of_expense_bucket_sums(bucket_sums: Dict[str, float]):
+def __plot_piechart_of_expense_bucket_sums(bucket_sums: Dict[str, float]):
     """Plot a pie chart that shows the relations of expense-related buckets."""
     bucket_sums = dict(filter(lambda item: item[1] < 0, bucket_sums.items()))
     bucket_sum_items = sorted(bucket_sums.items(), key=operator.itemgetter(1))
@@ -77,7 +77,7 @@ def _plot_piechart_of_expense_bucket_sums(bucket_sums: Dict[str, float]):
     plt.show()
 
 
-def _plot_piechart_of_expense_positons(posts: Dict[str, float]):
+def __plot_piechart_of_expense_positons(posts: Dict[str, float]):
     """Plot a pie chart that shows the relations of expense-positions."""
     posts = dict(filter(lambda item: item[1] < 0, posts.items()))
     post_items = sorted(posts.items(), key=operator.itemgetter(1))
@@ -119,7 +119,7 @@ def info(buckets: Positions):
 
     out = Output()
     show_sums = functools.partial(
-        _show_sums,
+        __show_sums,
         out=out,
         df=df,
         sums_df=sums_df,
@@ -132,5 +132,5 @@ def info(buckets: Positions):
     display(out)
     show_sums(None)
     display("## Ratios of Expenses")
-    _plot_piechart_of_expense_bucket_sums(bucket_sums)
-    _plot_piechart_of_expense_positons({k: v[0] for k, v in posts.items()})
+    __plot_piechart_of_expense_bucket_sums(bucket_sums)
+    __plot_piechart_of_expense_positons({k: v[0] for k, v in posts.items()})

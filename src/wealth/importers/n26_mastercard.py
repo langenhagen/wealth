@@ -7,12 +7,12 @@ from wealth.importers.common import add_all_data_column, to_lower, transfer_colu
 from wealth.util import TransactionType
 
 
-def _create_internal_transaction_type(row) -> TransactionType:
+def __create_internal_transaction_type(row) -> TransactionType:
     """Create a suitable transaction type according to the given row."""
     return TransactionType.from_row(row, is_internal=True)
 
 
-def _handle_transactions_between_n26_spaces(df: pd.DataFrame) -> pd.DataFrame:
+def __handle_transactions_between_n26_spaces(df: pd.DataFrame) -> pd.DataFrame:
     """Filter all rows that depict transactions between account-internal
     n26-spaces, rename their account name according to their sub-account and
     double book the according rows for completeness. Screws up the order of
@@ -32,13 +32,13 @@ def _handle_transactions_between_n26_spaces(df: pd.DataFrame) -> pd.DataFrame:
     internal.loc[(internal["amount"] > 0), "account"] = internal["account"] + spaces[1]
     internal.loc[(internal["amount"] <= 0), "account"] = internal["account"] + spaces[0]
     internal["transaction_type"] = internal.apply(
-        _create_internal_transaction_type, axis=1
+        __create_internal_transaction_type, axis=1
     )
     inverted.loc[(inverted["amount"] > 0), "account"] = inverted["account"] + spaces[0]
     inverted.loc[(inverted["amount"] <= 0), "account"] = inverted["account"] + spaces[1]
     inverted["amount"] = -inverted["amount"]
     inverted["transaction_type"] = inverted.apply(
-        _create_internal_transaction_type, axis=1
+        __create_internal_transaction_type, axis=1
     )
     df = df.append(internal).append(inverted)
     return df
@@ -70,6 +70,6 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
         )
         .dropna(subset=["date"])
         .pipe(to_lower)
-        .pipe(_handle_transactions_between_n26_spaces)[transfer_columns]
+        .pipe(__handle_transactions_between_n26_spaces)[transfer_columns]
     )
     return df

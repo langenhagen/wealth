@@ -39,7 +39,7 @@ def style_track(cols, special_indices) -> list[str]:
     return styles
 
 
-def _import_track_df() -> pd.DataFrame:
+def __import_track_df() -> pd.DataFrame:
     """Import the file `track.csv`."""
     df = pd.read_csv(
         "../csv/track.csv",
@@ -52,7 +52,7 @@ def _import_track_df() -> pd.DataFrame:
     return df
 
 
-def _assert_df_integrity(df: pd.DataFrame):
+def __assert_df_integrity(df: pd.DataFrame):
     """Assert the given track-DataFrame's integrity."""
     if not ptypes.is_datetime64_any_dtype(df["date"]):
         raise AssertionError(
@@ -78,8 +78,8 @@ def _assert_df_integrity(df: pd.DataFrame):
 
 def track() -> pd.DataFrame:
     """Import the file `track.csv` and return it as a DataFrame."""
-    df = _import_track_df()
-    _assert_df_integrity(df)
+    df = __import_track_df()
+    __assert_df_integrity(df)
 
     n_days = (df["date"].iloc[-1] - df["date"].iloc[0]).days
 

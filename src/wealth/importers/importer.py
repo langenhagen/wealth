@@ -1,6 +1,6 @@
 """Provides utilities to import the account *.csv files in the folder `csv`.
 The csv files have to match a certain naming pattern in order to map them to
-different importers. See `_read_account_csvs()`."""
+different importers. See `__read_account_csvs()`."""
 import pathlib
 import re
 from typing import Iterable
@@ -17,7 +17,7 @@ from wealth.importers.common import transfer_columns
 from wealth.util.transaction_type import TransactionType
 
 
-def _create_transaction_type(row: pd.Series) -> TransactionType:
+def __create_transaction_type(row: pd.Series) -> TransactionType:
     """Create a TransactionType object from a dataframe row."""
     if row["transaction_type"]:
         return row["transaction_type"]
@@ -29,14 +29,14 @@ def _create_transaction_type(row: pd.Series) -> TransactionType:
     return TransactionType.from_amount(row["amount"], is_internal=False)
 
 
-def _add_transaction_type_column(df: pd.DataFrame) -> pd.DataFrame:
+def __add_transaction_type_column(df: pd.DataFrame) -> pd.DataFrame:
     """Populate a column named transaction_type with values of type
     TransactionType to the given data frame and return the same DataFrame."""
-    df["transaction_type"] = df.apply(_create_transaction_type, axis=1)
+    df["transaction_type"] = df.apply(__create_transaction_type, axis=1)
     return df
 
 
-def _yield_files_with_suffix(
+def __yield_files_with_suffix(
     directory: pathlib.Path, suffix: str
 ) -> Iterable[pathlib.Path]:
     """Yield all files with the given suffix in the given folder."""
@@ -46,7 +46,7 @@ def _yield_files_with_suffix(
             yield file
 
 
-def _create_offset_df(account_name: str, df: pd.DataFrame) -> pd.DataFrame:
+def __create_offset_df(account_name: str, df: pd.DataFrame) -> pd.DataFrame:
     """Create a dataframe holding the account's configured initial offset."""
     accounts = wealth.config.get("accounts", {})
     return pd.DataFrame(
@@ -61,20 +61,20 @@ def _create_offset_df(account_name: str, df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def _delay_incomes(df: pd.DataFrame) -> pd.DataFrame:
+def __delay_incomes(df: pd.DataFrame) -> pd.DataFrame:
     """Guarantee that incomese virtually happen after all expenses at any given
     day."""
     df.loc[df["amount"] > 0, "date"] = df["date"] + pd.DateOffset(hours=1)
     return df
 
 
-def _strip_times(df: pd.DataFrame) -> pd.DataFrame:
+def __strip_times(df: pd.DataFrame) -> pd.DataFrame:
     """Strip the times from the column `date`."""
     df["date"] = df["date"].dt.date
     return df
 
 
-def _read_account_csvs() -> pd.DataFrame:
+def __read_account_csvs() -> pd.DataFrame:
     """Import all account-related *.csv files in the folder `csv`. The files
     must match a naming pattern that the map `namepattern_2_importer`
     specifies."""
@@ -87,7 +87,7 @@ def _read_account_csvs() -> pd.DataFrame:
     dataframes = []
     processed_accounts = set()
 
-    for file in _yield_files_with_suffix(pathlib.Path.cwd() / "../csv", ".csv"):
+    for file in __yield_files_with_suffix(pathlib.Path.cwd() / "../csv", ".csv"):
         match = re.match(r"\d{4}-(.+)-.*", file.stem)
         if match == None:
             continue
@@ -98,7 +98,7 @@ def _read_account_csvs() -> pd.DataFrame:
                 if account_name in processed_accounts:
                     dataframes.append(current_df)
                 else:
-                    offset_df = _create_offset_df(account_name, current_df)
+                    offset_df = __create_offset_df(account_name, current_df)
                     dataframes.extend([offset_df, current_df])
                     processed_accounts.add(account_name)
                 break
@@ -106,9 +106,9 @@ def _read_account_csvs() -> pd.DataFrame:
     df = (
         pd.concat(dataframes)
         .reset_index()
-        .pipe(_delay_incomes)
+        .pipe(__delay_incomes)
         .sort_values(by="date")
-        .pipe(_strip_times)
+        .pipe(__strip_times)
         .reset_index()[transfer_columns]
     )
     return df
@@ -119,8 +119,8 @@ def init() -> pd.DataFrame:
     as a DataFrame and add columns for to conveniently work working with the
     DataFrame. The resulting DataFrame contains the transaction information."""
     df = (
-        _read_account_csvs()
-        .pipe(_add_transaction_type_column)
+        __read_account_csvs()
+        .pipe(__add_transaction_type_column)
         .replace(np.nan, "", regex=True)[
             [
                 "date",

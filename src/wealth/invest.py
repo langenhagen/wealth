@@ -159,7 +159,7 @@ class InvestmentSet:
         return None if performance is None else performance / self.duration()
 
 
-def _load_stocks_yml() -> list[InvestmentSet]:
+def __load_stocks_yml() -> list[InvestmentSet]:
     """Read the file stocks.yml and return a list of InvestmentSets."""
     with open("../csv/stocks.yml", encoding="UTF-8") as file:
         investment_set_dicts = yaml.safe_load(file)
@@ -179,7 +179,7 @@ def _load_stocks_yml() -> list[InvestmentSet]:
     return investments
 
 
-def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFrame:
+def __summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFrame:
     """Convert the given investment sets to a df that contains a summary of each
     closed investment set."""
 
@@ -220,7 +220,7 @@ def _summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataFr
     display(style)
 
 
-def _summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFrame:
+def __summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFrame:
     """Convert the given investment sets to a df that contains a summary of each
     open investment set."""
 
@@ -243,7 +243,7 @@ def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
     """Render information about stock invesments, also in the light of given
     goals and fulfilled goals."""
     display("# Stock Investments")
-    investments = _load_stocks_yml()
+    investments = __load_stocks_yml()
 
     done_investments = [i for i in investments if i.is_open() is False]
     open_sum = sum([i.open_invested_sum() for i in investments if i.is_open() is True])
@@ -268,10 +268,10 @@ def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
     )
 
     display("<br>Open investments:")
-    _summarize_open_investments(investments)
+    __summarize_open_investments(investments)
 
     display("<br>Closed investments:")
-    _summarize_closed_investments(investments)
+    __summarize_closed_investments(investments)
 
 
 def bailout(

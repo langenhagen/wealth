@@ -17,7 +17,7 @@ from wealth.ui.styles import (
 from wealth.ui.widgets import create_inflation_widgets, create_interest_widgets
 
 
-def _plot_account_history(df: pd.DataFrame):
+def __plot_account_history(df: pd.DataFrame):
     """Plot given account history dataframe to display its development."""
     cols2colors = {
         "balance": "#550000",
@@ -37,7 +37,7 @@ def _plot_account_history(df: pd.DataFrame):
     plt.legend(loc="best", borderaxespad=0.1)
 
 
-def _display_summary(df: pd.DataFrame):
+def __display_summary(df: pd.DataFrame):
     """Display the summary dataframe."""
     style = (
         df.style.format(
@@ -67,7 +67,7 @@ def _display_summary(df: pd.DataFrame):
     display(style)
 
 
-def _display_account_history_df(df: pd.DataFrame):
+def __display_account_history_df(df: pd.DataFrame):
     """Display the account history DataFrame."""
     style = (
         df.style.format(
@@ -112,15 +112,15 @@ def render(
         fig = plt.figure(figsize=(10, 7), num="Account Development")
         fig.clear()
         setup_yearly_plot_and_axes(fig, "Account Development")
-        _plot_account_history(df)
+        __plot_account_history(df)
 
     out_summary = Output()
     with out_summary:
-        _display_summary(summary)
+        __display_summary(summary)
 
     out_df = Output()
     with out_df:
-        _display_account_history_df(df)
+        __display_account_history_df(df)
 
     display(widgets)
     display(out_fig)
