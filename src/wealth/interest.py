@@ -228,8 +228,8 @@ def __calc_interest_from_widgets(
     txt_inflation: FloatText,
     additional_events: List[Event],
 ):
-    """Calculate the according account balances from the given widget's
-    values and plot it."""
+    """Calculate the according account balances from the given widget's values
+    and plot it."""
     events = __build_account_history(
         txt_start_amount.value,
         txt_start_date.value,
