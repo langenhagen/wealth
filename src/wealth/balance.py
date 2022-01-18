@@ -23,7 +23,7 @@ import wealth
 import wealth.ui.layouts as layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.styles import red_green_fg
+from wealth.ui.styles import bar_color, red_green_fg
 from wealth.ui.widgets import (
     align_checkboxes,
     create_account_checkboxes,
@@ -281,6 +281,7 @@ def __display_mean_balance_dataframes(
         df_out.iloc[::-1]
         .style.format(formatter=money_fmt(), na_rep="")
         .applymap(red_green_fg)
+        .bar(color=bar_color, align="zero")
     )
 
     with out:

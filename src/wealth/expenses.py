@@ -8,6 +8,7 @@ from ipywidgets import BoundedIntText, Checkbox, Dropdown, HBox, Output, VBox
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
 from wealth.ui.layouts import checkbox_wide, dropdown, dropdown_slim, text
+from wealth.ui.styles import bar_color
 from wealth.ui.widgets import (
     align_checkboxes,
     create_account_checkboxes,
@@ -61,12 +62,17 @@ def __display_expense_dataframes(
             )
         )
 
-        df_out = df[mask].sort_values(by="amount").head(txt_n_rows.value)
+        df_out = (
+            df[mask]
+            .sort_values(by="amount")
+            .head(txt_n_rows.value)
+            .reset_index(drop=True)
+        )
         start = rng[i - 1].strftime(fmt)
         end = (rng[i] - day_off).strftime(fmt)
-        style = df_out.style.format(
-            formatter=money_fmt(), subset="amount"
-        ).hide_columns(["date"])
+        style = df_out.style.format(formatter=money_fmt(), subset="amount").bar(
+            align="zero", color=bar_color
+        )
 
         with out:
             display(f"## {start} – {end}")

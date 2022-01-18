@@ -12,7 +12,7 @@ import wealth
 from wealth.config import config
 from wealth.ui.display import display
 from wealth.ui.format import Money, money_fmt, percent_fmt
-from wealth.ui.styles import red_fg
+from wealth.ui.styles import bar_color, red_fg
 
 
 class TransactionType(Enum):
@@ -199,22 +199,26 @@ def __summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataF
         }
     )
 
-    style = df.style.format(
-        formatter={
-            "investment": money_fmt(),
-            "profit": money_fmt(),
-            "net profit": money_fmt(),
-            "net performance": percent_fmt,
-            "net daily performance": percent_fmt,
-        },
-    ).applymap(
-        red_fg,
-        subset=[
-            "profit",
-            "net profit",
-            "net performance",
-            "net daily performance",
-        ],
+    style = (
+        df.style.format(
+            formatter={
+                "investment": money_fmt(),
+                "profit": money_fmt(),
+                "net profit": money_fmt(),
+                "net performance": percent_fmt,
+                "net daily performance": percent_fmt,
+            },
+        )
+        .bar(color=bar_color, align="zero")
+        .applymap(
+            red_fg,
+            subset=[
+                "profit",
+                "net profit",
+                "net performance",
+                "net daily performance",
+            ],
+        )
     )
 
     display(style)
@@ -234,9 +238,11 @@ def __summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFra
         }
     )
 
-    df["investment"] = df["investment"].map(money_fmt())
-
-    display(df)
+    style = df.style.format(formatter={"investment": money_fmt()}).bar(
+        color=bar_color,
+        align="zero",
+    )
+    display(style)
 
 
 def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):

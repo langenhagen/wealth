@@ -32,3 +32,5 @@ deposit_border = {" border-left": "1.3px solid #00aa00"}
 interest_border = {" border-left": "1.3px solid #8888ff"}
 ratio_border = {" border-left": "1.3px solid #aaaa00"}
 soft_interest_border = {" border-left": "1.3px dotted #8888ff"}
+
+bar_color = "#d65fdf30"

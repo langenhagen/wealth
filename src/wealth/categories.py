@@ -4,6 +4,7 @@ import pandas as pd
 
 from wealth.ui.display import display_side_by_side
 from wealth.ui.format import money_fmt
+from wealth.ui.styles import bar_color
 
 
 def categories(df: pd.DataFrame, categories: dict[str, str]):
@@ -31,10 +32,14 @@ def categories(df: pd.DataFrame, categories: dict[str, str]):
 
         category_df = pd.DataFrame(amount)
         category_df.index = category_df.index.to_period("M")
-        style = category_df.style.format(
-            formatter=money_fmt(),
-            na_rep="",
-        ).set_caption(f"<br><h2>{key}</h2>")
+        style = (
+            category_df.style.format(
+                formatter=money_fmt(),
+                na_rep="",
+            )
+            .set_caption(f"<br><h2>{key}</h2>")
+            .bar(color=bar_color, align="zero")
+        )
         dfs.append(style)
 
     display_side_by_side(dfs)

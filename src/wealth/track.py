@@ -7,7 +7,7 @@ from ipywidgets import Output
 from wealth.importers.common import to_lower
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.styles import red_fg
+from wealth.ui.styles import bar_color, red_fg
 
 
 def style_track(cols, special_indices) -> list[str]:
@@ -107,9 +107,11 @@ def track() -> pd.DataFrame:
         )
     )
     monthly_end_balances.index = monthly_end_balances.index.to_period("M")
-    monthly_end_balances_style = monthly_end_balances.style.format(
-        formatter=money_fmt()
-    ).applymap(red_fg)
+    monthly_end_balances_style = (
+        monthly_end_balances.style.format(formatter=money_fmt())
+        .bar(color=bar_color, align="mid")
+        .applymap(red_fg)
+    )
 
     end_balance_indices = (
         pd.DataFrame()
@@ -118,16 +120,29 @@ def track() -> pd.DataFrame:
     ).index
 
     df["date"] = df["date"].apply(lambda x: x.date())
-    style = df.style.format(
-        formatter={
-            "price": money_fmt(),
-            "monthly shopping balance": money_fmt(),
-            "continuous shopping balance": money_fmt(),
-            "monthly wealth balance": money_fmt(),
-            "continuous wealth balance": money_fmt(),
-        },
-        na_rep="",
-    ).apply(style_track, special_indices=end_balance_indices, axis=1)
+    style = (
+        df.style.format(
+            formatter={
+                "price": money_fmt(),
+                "monthly shopping balance": money_fmt(),
+                "continuous shopping balance": money_fmt(),
+                "monthly wealth balance": money_fmt(),
+                "continuous wealth balance": money_fmt(),
+            },
+            na_rep="",
+        )
+        .bar(
+            subset=[
+                "monthly shopping balance",
+                "continuous shopping balance",
+                "monthly wealth balance",
+                "continuous wealth balance",
+            ],
+            color=bar_color,
+            align="zero",
+        )
+        .apply(style_track, special_indices=end_balance_indices, axis=1)
+    )
 
     numbers_by_bucket = (
         df.groupby(df[df["type"] != "budget"]["bucket"])["price"]
@@ -155,7 +170,10 @@ def track() -> pd.DataFrame:
     numbers_per_type["avg monthly amount"] = (
         numbers_per_type["total amount"] / n_days * 30
     )
-    numbers_per_type_style = numbers_per_type.style.format(formatter=money_fmt())
+    numbers_per_type_style = numbers_per_type.style.format(formatter=money_fmt()).bar(
+        subset="total amount",
+        color=bar_color,
+    )
 
     out = Output()
     with out:

@@ -9,6 +9,7 @@ from wealth.ui.plot import setup_yearly_plot_and_axes
 from wealth.ui.styles import (
     amount_border,
     balance_border,
+    bar_color,
     deposit_border,
     interest_border,
     ratio_border,
@@ -68,6 +69,7 @@ class UI:
             .set_properties(subset="interest", **interest_border)
             .set_properties(subset="interest cumsum", **soft_interest_border)
             .set_properties(subset="interest/deposit ratio", **ratio_border)
+            .bar(color=bar_color)
         )
         display(style)
 
@@ -75,7 +77,8 @@ class UI:
     def __display_account_history_df(df: pd.DataFrame):
         """Display the account history DataFrame."""
         style = (
-            df.style.format(
+            df.style.bar(color=bar_color)
+            .format(
                 formatter={
                     "date": date_fmt,
                     "amount": money_fmt(),

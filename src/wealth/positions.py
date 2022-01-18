@@ -10,6 +10,7 @@ from ipywidgets import BoundedIntText, Output
 import wealth.ui.layouts as layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt, percent_fmt
+from wealth.ui.styles import bar_color
 
 Positions = Dict[str, Dict[str, float]]
 
@@ -32,16 +33,25 @@ def __show_sums(
         display("### Incomes")
         incomes = df.loc[df["cost"] > 0].sort_values(by="cost", ascending=False)
         incomes["percent"] = (incomes["cost"] / incomes["cost"].sum()) * 100
-        incomes["cost"] = incomes["cost"].map(money_fmt())
-        incomes["percent"] = incomes["percent"].map(percent_fmt)
-        display(incomes)
+        incomes_style = incomes.style.format(
+            formatter={
+                "cost": money_fmt(),
+                "percent": percent_fmt,
+            }
+        ).bar(subset="cost", color=bar_color, align="mid")
+        display(incomes_style)
 
         display("### Expenses")
         expenses = df.loc[df["cost"] <= 0].sort_values(by="cost")
         expenses["percent"] = (expenses["cost"] / expenses["cost"].sum()) * 100
-        expenses["cost"] = expenses["cost"].map(money_fmt())
-        expenses["percent"] = expenses["percent"].map(percent_fmt)
-        display(expenses)
+
+        expenses_style = expenses.style.format(
+            formatter={
+                "cost": money_fmt(),
+                "percent": percent_fmt,
+            }
+        ).bar(subset="cost", color=bar_color, align="mid")
+        display(expenses_style)
 
         display("### Buckets")
 
@@ -50,18 +60,28 @@ def __show_sums(
             by="cost", ascending=False
         )
         income_sums["percent"] = (income_sums["cost"] / income_sums["cost"].sum()) * 100
-        income_sums["cost"] = income_sums["cost"].map(money_fmt())
-        income_sums["percent"] = income_sums["percent"].map(percent_fmt)
-        display(income_sums)
+
+        income_sums_style = income_sums.style.format(
+            formatter={
+                "cost": money_fmt(),
+                "percent": percent_fmt,
+            }
+        ).bar(subset="cost", color=bar_color, align="mid")
+        display(income_sums_style)
 
         display("#### Expenses")
         expense_sums = sums_df.loc[sums_df["cost"] <= 0].sort_values(by="cost")
         expense_sums["percent"] = (
             expense_sums["cost"] / expense_sums["cost"].sum()
         ) * 100
-        expense_sums["cost"] = expense_sums["cost"].map(money_fmt())
-        expense_sums["percent"] = expense_sums["percent"].map(percent_fmt)
-        display(expense_sums)
+
+        expense_sums_style = expense_sums.style.format(
+            formatter={
+                "cost": money_fmt(),
+                "percent": percent_fmt,
+            }
+        ).bar(subset="cost", color=bar_color, align="mid")
+        display(expense_sums_style)
 
 
 def __plot_piechart_of_expense_bucket_sums(bucket_sums: Dict[str, float]):
