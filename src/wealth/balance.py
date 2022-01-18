@@ -5,9 +5,7 @@ from typing import Generator, List
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import scipy.stats
 from ipywidgets.widgets import Box, Checkbox, Dropdown, HBox, Label, Output, VBox
 
 import wealth
