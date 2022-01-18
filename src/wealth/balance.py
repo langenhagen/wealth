@@ -8,16 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import scipy.stats
-from ipywidgets.widgets import (
-    BoundedIntText,
-    Box,
-    Checkbox,
-    Dropdown,
-    HBox,
-    Label,
-    Output,
-    VBox,
-)
+from ipywidgets.widgets import Box, Checkbox, Dropdown, HBox, Label, Output, VBox
 
 import wealth
 import wealth.ui.layouts as layouts
@@ -213,45 +204,6 @@ def graph(df: pd.DataFrame):
     display(out)
 
 
-def __display_mean_and_median(df: pd.DataFrame, caption: str):
-    """Display mean, median and display mean and median without outliers."""
-    filtered = df.dropna()[np.abs(scipy.stats.zscore(df.dropna())) < 2]
-
-    df_out = pd.DataFrame(
-        index=["mean", "median", "filtered mean", "filtered median"],
-        data={"values": [df.mean(), df.median(), filtered.mean(), filtered.median()]},
-    )
-    style = df_out.style.format(formatter=money_fmt(), na_rep="").applymap(red_green_fg)
-
-    out = Output()
-    with out:
-        display(f"### {caption}")
-        display(style)
-    return out
-
-
-def __display_summary(_, txt_n_periods: BoundedIntText, out: Output, df: pd.DataFrame):
-    """Display a summary for the given series."""
-    n_periods = txt_n_periods.value
-    out.clear_output()
-    with out:
-        display(
-            HBox(
-                [
-                    __display_mean_and_median(
-                        df["diff"].tail(n_periods), "Differences"
-                    ),
-                    __display_mean_and_median(
-                        df["min diff"].tail(n_periods), "Differences of Minima"
-                    ),
-                    __display_mean_and_median(
-                        df["max diff"].tail(n_periods), "Differences of Maxima"
-                    ),
-                ]
-            )
-        )
-
-
 def __display_mean_balance_dataframes(
     _,
     drp_freq: Dropdown,
@@ -270,11 +222,8 @@ def __display_mean_balance_dataframes(
     daily_cumsum_df = df[mask]["amount"].resample("D").sum().cumsum()
     resampler = daily_cumsum_df.resample(drp_freq.value)
     df_out["mean"] = resampler.mean()
-    df_out["diff"] = df_out["mean"].diff()
     df_out["min"] = resampler.min()
-    df_out["min diff"] = df_out["min"].diff()
     df_out["max"] = resampler.max()
-    df_out["max diff"] = df_out["max"].diff()
     df_out.index = df_out.index.strftime("%Y-%m-%d")
 
     style = (
@@ -286,29 +235,6 @@ def __display_mean_balance_dataframes(
 
     with out:
         display(style)
-
-        if len(df_out) <= 1:
-            return
-
-        inner_out = Output()
-        lbl_n_periods = Label("Consider recent Periods:")
-        txt_n_periods = BoundedIntText(
-            12,
-            min=1,
-            max=10000,
-            layout=layouts.text_slim,
-        )
-        update_out = functools.partial(
-            __display_summary,
-            txt_n_periods=txt_n_periods,
-            out=inner_out,
-            df=df_out,
-        )
-        txt_n_periods.observe(update_out, "value")
-        display("## Summary")
-        display(Box([lbl_n_periods, txt_n_periods], layout=layouts.box))
-        display(inner_out)
-        update_out(None)
 
 
 def means(df: pd.DataFrame):
