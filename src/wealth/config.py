@@ -1,9 +1,8 @@
 """Contains code to read the yaml-configuration."""
+import datetime as dt
 import logging
-from copy import deepcopy
 from typing import Any, Dict
 
-import dateutil
 import yaml
 
 from wealth.util.deepupdate import deepupdate
@@ -11,9 +10,9 @@ from wealth.util.deepupdate import deepupdate
 default = {
     "capital_gains_taxrate": 0.27,
     "currency": "€",
-    "inflation_rate": 2,
+    "inflation_rate": 0.02,
     "retirement": {
-        "birthday": "2000-01-01",
+        "birthday": dt.datetime(2000, 1, 1),
         "retirement_age": 67,
     },
 }
@@ -37,7 +36,6 @@ def __create_config() -> Dict[str, Any]:
     config_ = deepupdate(default, user)
 
     retire = config_["retirement"]
-    retire["birthday"] = dateutil.parser.parse(retire["birthday"])
     retire["retirement_year"] = retire["birthday"].year + retire["retirement_age"]
     config_["retirement"] = retire
 
