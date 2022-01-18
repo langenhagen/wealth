@@ -11,6 +11,7 @@ import wealth
 import wealth.ui.layouts as layouts
 from wealth.config import config
 from wealth.ui.display import display
+from wealth.ui.plot import setup_yearly_plot_and_axes
 from wealth.ui.widgets import create_inflation_widgets
 
 
@@ -162,7 +163,7 @@ def __calc_inflated_cost_from_widgets(
         )
     with out_figure:
         fig.clear()
-        wealth.ui.plot.setup_yearly_plot_and_axes(
+        setup_yearly_plot_and_axes(
             fig, "Inflation Impact Over Time", xlabel="Year", ylabel="Value"
         )
         __plot_inflation_impact(

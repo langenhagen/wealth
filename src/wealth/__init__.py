@@ -4,9 +4,9 @@ import wealth.categories
 import wealth.expenses
 import wealth.importers
 import wealth.inflation
-import wealth.interest
 import wealth.invest
 import wealth.positions
+import wealth.savings
 import wealth.track
 import wealth.transactions
 from wealth.config import config
