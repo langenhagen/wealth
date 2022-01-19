@@ -1,17 +1,19 @@
 """Inflation related functionality."""
 import datetime as dt
 import functools
-from typing import Dict, List
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import pandas as pd
 from ipywidgets import FloatText, HBox, IntText, Label, Output, VBox
 
 import wealth
 import wealth.ui.layouts as layouts
 from wealth.config import config
 from wealth.ui.display import display
+from wealth.ui.format import money_fmt, ratio_fmt, year_fmt
 from wealth.ui.plot import setup_yearly_plot_and_axes
+from wealth.ui.styles import bar_color
 from wealth.ui.widgets import create_inflation_widgets
 
 
@@ -99,7 +101,7 @@ def calc_inflated_value(
 
 def __calc_remaining_rates(
     start_year: int, end_year: int, inflation_rate: float
-) -> List[float]:
+) -> list[float]:
     """Given the input values, return a list of percents of the remaining value
     per year, including end_year."""
     results = []
@@ -111,7 +113,7 @@ def __calc_remaining_rates(
 
 def years_to_remaining_factors(
     start_year: int, end_year: int, inflation_rate: float
-) -> Dict[int, float]:
+) -> dict[int, float]:
     """Given the input values, return a map of year to remaining factores
     between [0, 1], including the end year."""
     remaining_rates = __calc_remaining_rates(start_year, end_year, inflation_rate)
@@ -124,20 +126,23 @@ def years_to_remaining_factors(
     return years_to_remaining_rates
 
 
-def __plot_inflation_impact(
-    start_cost: float, start_year: int, end_year: int, inflation_rate: float
-):
-    """Plot the impact of the inflation over time."""
-    years = [dt.datetime(year, 1, 1) for year in range(start_year, end_year + 1)]
-    remaining_rates = __calc_remaining_rates(start_year, end_year, inflation_rate)
-    results = [start_cost * rate for rate in remaining_rates]
-    plt.plot(years, results)
+def __display_future_worth_df(df: pd.DataFrame):
+    """Display the future worth dataframe."""
+    style = df.style.format(
+        formatter={
+            "year": year_fmt,
+            "worth": money_fmt(),
+            "rate": ratio_fmt,
+        }
+    ).bar(subset="worth", color=bar_color, vmin=0)
+    display(style)
 
 
 def __calc_inflated_cost_from_widgets(
     _,
     out: Output,
     out_figure: Output,
+    out_df: Output,
     fig: mpl.figure.Figure,
     txt_start_cost: FloatText,
     txt_start_year: IntText,
@@ -161,17 +166,36 @@ def __calc_inflated_cost_from_widgets(
         display(
             f"Money has {wealth.percent_fmt(ratio * 100)} of the value it had at start"
         )
+
+    start_year = txt_start_year.value
+    end_year = txt_end_year.value
+    inflation_rate = txt_inflation.value / 100
+    start_cost = txt_start_cost.value
+
+    years = [dt.datetime(year, 1, 1) for year in range(start_year, end_year + 1)]
+    remaining_rates = __calc_remaining_rates(
+        start_year=start_year, end_year=end_year, inflation_rate=inflation_rate
+    )
+    remaining_worth = [start_cost * rate for rate in remaining_rates]
+
     with out_figure:
         fig.clear()
         setup_yearly_plot_and_axes(
             fig, "Inflation Impact Over Time", xlabel="Year", ylabel="Value"
         )
-        __plot_inflation_impact(
-            txt_start_cost.value,
-            txt_start_year.value,
-            txt_end_year.value,
-            txt_inflation.value / 100,
-        )
+        plt.plot(years, remaining_worth)
+
+    df = pd.DataFrame(
+        data={
+            "year": years,
+            "worth": remaining_worth,
+            "rate": remaining_rates,
+        }
+    )
+
+    out_df.clear_output()
+    with out_df:
+        __display_future_worth_df(df)
 
 
 def future_worth(
@@ -207,11 +231,13 @@ def future_worth(
     out_figure = Output()
     with out_figure:
         fig = plt.figure(figsize=(10, 7), num="Inflation Impact Over Time")
+    out_df = Output()
 
     update_inflated_cost = functools.partial(
         __calc_inflated_cost_from_widgets,
         out=out,
         out_figure=out_figure,
+        out_df=out_df,
         fig=fig,
         txt_start_cost=txt_start_cost,
         txt_start_year=txt_start_year,
@@ -227,4 +253,5 @@ def future_worth(
     display(box)
     display(out)
     display(out_figure)
+    display(out_df)
     update_inflated_cost(None)
