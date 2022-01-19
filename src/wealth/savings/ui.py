@@ -108,7 +108,7 @@ class UI:
         tax_rate: float,
         interest_rate: float,
         inflation_rate: float,
-    ):  # -> tuple[pd.DataFrame, pd.DataFrame]:
+    ):
         """Run the UI callback system."""
         self.__imported = imported
         self.__tax_rate = tax_rate
