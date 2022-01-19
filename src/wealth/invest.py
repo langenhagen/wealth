@@ -2,6 +2,7 @@
 import datetime as dt
 from dataclasses import dataclass
 from enum import Enum
+from turtle import width
 from typing import Optional
 
 import dateutil.parser
@@ -317,12 +318,18 @@ def bailout(
     df = pd.DataFrame(
         {
             "year": years,
-            "bailout_value": bailout_values,
+            "bailout value": bailout_values,
             "gross gain": gross_gains,
             "net gain": net_gains,
         }
     )
-    df["bailout_value"] = df["bailout_value"].map(money_fmt())
-    df["gross gain"] = df["gross gain"].map(money_fmt())
-    df["net gain"] = df["net gain"].map(money_fmt())
-    display(df)
+
+    style = df.style.format(
+        subset=[
+            "bailout value",
+            "gross gain",
+            "net gain",
+        ],
+        formatter=money_fmt(),
+    ).bar(subset=["bailout value", "gross gain"], color=bar_color, vmin=0)
+    display(style)
