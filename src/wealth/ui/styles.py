@@ -26,11 +26,11 @@ def green_yellow_bg(cols) -> list[str]:
     return [color] * len(cols)
 
 
-amount_border = {" border-left": "1.3px solid #cccccc"}
-balance_border = {" border-left": "1.3px solid #ff0000"}
-deposit_border = {" border-left": "1.3px solid #00aa00"}
-interest_border = {" border-left": "1.3px solid #8888ff"}
-ratio_border = {" border-left": "1.3px solid #aaaa00"}
-soft_interest_border = {" border-left": "1.3px dotted #8888ff"}
+amount_border = {"border-left": "1.3px solid #cccccc"}
+balance_border = {"border-left": "1.3px solid #ff0000"}
+deposit_border = {"border-left": "1.3px solid #00aa00"}
+interest_border = {"border-left": "1.3px solid #8888ff"}
+ratio_border = {"border-left": "1.3px solid #aaaa00"}
+soft_interest_border = {"border-left": "1.3px dotted #8888ff"}
 
 bar_color = "#d65fdf30"
