@@ -81,14 +81,14 @@ class InvestmentSet:
         """Returns the date of the first transaction."""
         return min([t.date for t in self.transactions])
 
+    def end_date(self) -> dt.date:
+        """Returns the date of the last transaction."""
+        return max([t.date for t in self.transactions])
+
     def duration(self) -> int:
         """Denotes the duration of the holding in days, minimum 1 day."""
-        min_ = min([t.date for t in self.transactions])
-        if self.is_open() is True:
-            max_ = dt.date.today()
-        else:
-            max_ = max([t.date for t in self.transactions])
-        delta = max_ - min_
+        end_date_ = dt.date.today() if self.is_open() is True else self.end_date()
+        delta = end_date_ - self.start_date()
         return delta.days + 1
 
     def is_open(self) -> bool:
@@ -189,6 +189,7 @@ def __summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataF
         {
             "company": [i.company for i in past_investments],
             "start date": [i.start_date() for i in past_investments],
+            "end date": [i.end_date() for i in past_investments],
             "days": [i.duration() for i in past_investments],
             "investment": [i.total_invested_sum() for i in past_investments],
             "profit": [i.gross_profit() for i in past_investments],
