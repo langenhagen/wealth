@@ -1,5 +1,10 @@
 """Functionality to track expenses.
 Track expenses and cluster them according to type and subtype."""
+from turtle import color
+
+import matplotlib as mpl
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import pandas.api.types as ptypes
 from ipywidgets import Output
@@ -10,18 +15,28 @@ from wealth.ui.format import money_fmt
 from wealth.ui.styles import bar_color, red_fg
 
 
-def style_track(cols, special_indices) -> list[str]:
-    """Return a green back color if the given value is a budget and return a
-    red back color if the given value is an internal transactions."""
+def __style_track(
+    cols,
+    special_indices: pd.Index,
+    types2colors: dict[str],
+) -> list[str]:
+    """CSS-style the track DataFrame's cells with colors and font weight
+    depending on the bucket, type, the balance and whether a row is the last
+    entry in a month."""
+    styles = [None] * 9
+
+    wealth = "background: #e060e0dd; color: #000000ee;"
+    shopping = "background: #ffff00dd; color: #000000ee;"
+    styles[1] = shopping if cols["bucket"] == "shopping" else wealth
+
+    type_color = types2colors[cols["type"]]
+    styles[2] = styles[3] = f"background: {type_color}; color: #000000ee;"
+
     green = "color: #00ff00aa;"
     red = "color: #ff0000aa;"
-    wealth = "color: #800080cc;"
-    shopping = "color: #ffff00cc;"
 
-    styles = [None] * 9
-    styles[4] = shopping if cols["bucket"] == "shopping" else wealth
     if cols["price"] > 0:
-        styles[1] = styles[2] = styles[3] = green
+        styles[4] = green
     if cols["monthly shopping balance"] < 0:
         styles[5] = red
     if cols["continuous shopping balance"] < 0:
@@ -32,9 +47,9 @@ def style_track(cols, special_indices) -> list[str]:
         styles[8] = red
 
     if cols.name in special_indices:
-        bold = "font-weight:bold;"
-        for i in [0, 5, 6, 7, 8]:
-            styles[i] = bold if styles[i] is None else styles[i] + bold
+        topline = "border-top: 2px solid #cccccc;"
+        for i in range(9):
+            styles[i] = topline if styles[i] is None else styles[i] + topline
 
     return styles
 
@@ -49,7 +64,15 @@ def __import_track_df() -> pd.DataFrame:
     ).pipe(to_lower)
     df["price"] = df["price"] * -1
 
-    return df
+    return df[
+        [
+            "date",
+            "bucket",
+            "type",
+            "what",
+            "price",
+        ]
+    ]
 
 
 def __assert_df_integrity(df: pd.DataFrame):
@@ -113,11 +136,14 @@ def track() -> pd.DataFrame:
         .applymap(red_fg)
     )
 
-    end_balance_indices = (
-        pd.DataFrame()
-        .append(df[df["bucket"] == "shopping"].groupby(year_and_month).tail(1))
-        .append(df[df["bucket"] == "wealth"].groupby(year_and_month).tail(1))
-    ).index
+    first_indices_per_month = df.groupby(year_and_month).head(1).index
+
+    types = df["type"].unique()
+    types2colors = {}
+    cmap = plt.get_cmap("tab20", len(types))
+    for type_, i in zip(types, range(cmap.N)):
+        hex = mpl.colors.rgb2hex(cmap(i))
+        types2colors[type_] = hex
 
     df["date"] = df["date"].apply(lambda x: x.date())
     style = (
@@ -141,7 +167,12 @@ def track() -> pd.DataFrame:
             color=bar_color,
             align="zero",
         )
-        .apply(style_track, special_indices=end_balance_indices, axis=1)
+        .apply(
+            __style_track,
+            special_indices=first_indices_per_month,
+            types2colors=types2colors,
+            axis=1,
+        )
     )
 
     numbers_by_bucket = (
