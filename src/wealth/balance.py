@@ -38,9 +38,14 @@ def __display_balance(
     accounts = [c.description for c in checkboxes if c.value and c.description != "All"]
     series = df[df["account"].isin(accounts)]["amount"].resample("D").sum().cumsum()
     date = dt.datetime(drp_date.value.year, drp_date.value.month, drp_date.value.day)
-    value = series.iloc[series.index.get_loc(date, method="pad")]
 
     out.clear_output()
+
+    try:
+        value = series.iat[series.index.get_loc(date, method="pad")]
+    except KeyError:
+        return
+
     with out:
         display(f'<br><font size="6">{wealth.Money(value)}</font>')
 
@@ -120,7 +125,9 @@ def __plot_cumsum(
         if chk.value and chk.description != "All"
     ]
     show_legend = False
-    sum_series = df[df["account"].isin(sum_accs)]["amount"].cumsum()
+    sum_df = df[df["account"].isin(sum_accs)]
+    sum_df.index = sum_df["date"]
+    sum_series = sum_df["amount"].cumsum()
     with out:
         fig.clear()
         wealth.ui.plot.setup_plot_and_axes(fig, "Cumulative Sum of All transactions")
@@ -128,7 +135,9 @@ def __plot_cumsum(
             __plot_df(sum_series, drp_freq.value, "Combined")
             show_legend = True
         for account in single_accounts:
-            single_series = df[df["account"] == account]["amount"].cumsum()
+            single_df = df[df["account"] == account]
+            single_df.index = single_df["date"]
+            single_series = single_df["amount"].cumsum()
             __plot_df(single_series, drp_freq.value, account)
             show_legend = True
         if show_legend:
@@ -222,6 +231,10 @@ def __display_mean_balance_dataframes(
     df_out["mean"] = resampler.mean()
     df_out["min"] = resampler.min()
     df_out["max"] = resampler.max()
+
+    if df_out.empty:
+        return
+
     df_out.index = df_out.index.strftime("%Y-%m-%d")
 
     style = (
