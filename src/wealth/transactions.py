@@ -1,6 +1,5 @@
 """Transaction-related functionality."""
 import functools
-from typing import List
 
 import pandas as pd
 from ipywidgets import Checkbox, Output
@@ -11,7 +10,7 @@ from wealth.ui.styles import green_yellow_bg
 from wealth.ui.widgets import align_checkboxes, create_account_checkboxes
 
 
-def __update_out(_, df: pd.DataFrame, out: Output, checkboxes: List[Checkbox]):
+def __update_out(_, df: pd.DataFrame, out: Output, checkboxes: list[Checkbox]):
     """Update the displayed transaction dataframe."""
     accounts = [chk.description for chk in checkboxes if chk.value][1:]
     df_out = df[df["account"].isin(accounts)].iloc[::-1]

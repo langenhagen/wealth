@@ -1,7 +1,6 @@
 """Functionality to inspect regular income and expense postitions."""
 import functools
 import operator
-from typing import Dict
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -12,7 +11,7 @@ from wealth.ui.display import display
 from wealth.ui.format import money_fmt, percent_fmt
 from wealth.ui.styles import bar_color
 
-Positions = Dict[str, Dict[str, float]]
+Positions = dict[str, dict[str, float]]
 
 
 def __show_sums(
@@ -84,7 +83,7 @@ def __show_sums(
         display(expense_sums_style)
 
 
-def __plot_piechart_of_expense_bucket_sums(bucket_sums: Dict[str, float]):
+def __plot_piechart_of_expense_bucket_sums(bucket_sums: dict[str, float]):
     """Plot a pie chart that shows the relations of expense-related buckets."""
     bucket_sums = dict(filter(lambda item: item[1] < 0, bucket_sums.items()))
     bucket_sum_items = sorted(bucket_sums.items(), key=operator.itemgetter(1))
@@ -97,7 +96,7 @@ def __plot_piechart_of_expense_bucket_sums(bucket_sums: Dict[str, float]):
     plt.show()
 
 
-def __plot_piechart_of_expense_positons(posts: Dict[str, float]):
+def __plot_piechart_of_expense_positons(posts: dict[str, float]):
     """Plot a pie chart that shows the relations of expense-positions."""
     posts = dict(filter(lambda item: item[1] < 0, posts.items()))
     post_items = sorted(posts.items(), key=operator.itemgetter(1))

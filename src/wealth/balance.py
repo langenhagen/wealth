@@ -1,7 +1,7 @@
 """Balance-related functionality of `Wealth`."""
 import datetime as dt
 import functools
-from typing import Generator, List
+from typing import Generator
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -28,7 +28,7 @@ def __daterange(start: dt.date, end: dt.date) -> Generator[dt.date, None, None]:
 
 def __display_balance(
     _,
-    checkboxes: List[Checkbox],
+    checkboxes: list[Checkbox],
     drp_date: Dropdown,
     out: Output,
     df: pd.DataFrame,
@@ -105,8 +105,8 @@ def __plot_df(df: pd.DataFrame, freq: str, label: str):
 
 def __plot_cumsum(
     _,
-    sum_accs_checkboxes: List[Checkbox],
-    single_accs_checkboxes: List[Checkbox],
+    sum_accs_checkboxes: list[Checkbox],
+    single_accs_checkboxes: list[Checkbox],
     out: Output,
     fig: mpl.figure.Figure,
     df: pd.DataFrame,
@@ -205,7 +205,7 @@ def graph(df: pd.DataFrame):
 def __display_mean_balance_dataframes(
     _,
     drp_freq: Dropdown,
-    checkboxes: List[Checkbox],
+    checkboxes: list[Checkbox],
     out: Output,
     df: pd.DataFrame,
 ):

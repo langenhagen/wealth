@@ -1,7 +1,7 @@
 """Contains code to read the yaml-configuration."""
 import datetime as dt
 import logging
-from typing import Any, Dict
+from typing import Any
 
 import yaml
 
@@ -18,7 +18,7 @@ default = {
 }
 
 
-def __read_config_yaml() -> Dict[str, Any]:
+def __read_config_yaml() -> dict[str, Any]:
     """Read the file `config.yml` and write its contents to a dict."""
     filename = "config.yml"
     try:
@@ -29,7 +29,7 @@ def __read_config_yaml() -> Dict[str, Any]:
         return {}
 
 
-def __create_config() -> Dict[str, Any]:
+def __create_config() -> dict[str, Any]:
     """Read the file `config.yml` from file and give defaults to values that the
     file doesn't specify."""
     user = __read_config_yaml()

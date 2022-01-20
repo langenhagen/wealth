@@ -1,5 +1,5 @@
 """Common ipywidget arrangements."""
-from typing import Callable, List, Tuple
+from typing import Callable
 
 import pandas as pd
 from ipywidgets import (
@@ -26,11 +26,11 @@ frequency_options = [
 
 
 def create_account_checkboxes(
-    out_checkboxes: List[Checkbox],
+    out_checkboxes: list[Checkbox],
     df: pd.DataFrame,
     value: bool,
     callback: Callable,
-) -> List[Checkbox]:
+) -> list[Checkbox]:
     """Create checkboxes for every account in the given dataframe, assign the
     given callback to these checkboxes and add them to the given list."""
     chk_all = Checkbox(value=value, description="All", indent=False, layout=checkbox)
@@ -44,7 +44,7 @@ def create_account_checkboxes(
     return out_checkboxes
 
 
-def align_checkboxes(checkboxes: List[Checkbox]):
+def align_checkboxes(checkboxes: list[Checkbox]):
     """Return a HBox containing all given checkboxes."""
     return HBox(
         [Label("Accounts: ", layout=Layout(width="80px")), *checkboxes],
@@ -54,7 +54,7 @@ def align_checkboxes(checkboxes: List[Checkbox]):
 
 def create_inflation_widgets(
     inflation_rate: float, max: float
-) -> Tuple[BoundedFloatText, HBox]:
+) -> tuple[BoundedFloatText, HBox]:
     """Create a Label, a bounded float text and a slider to adjust inflation,
     initially starting with the given inflation value in percent."""
     label = Label(value="Inflation rate %: ")
@@ -73,7 +73,7 @@ def create_inflation_widgets(
 
 def create_interest_widgets(
     interest_rate: float, max: float
-) -> Tuple[BoundedFloatText, HBox]:
+) -> tuple[BoundedFloatText, HBox]:
     """Create a Label, a bounded float text and a slider to adjust interest rate,
     initially starting with the given inflation value in percent."""
     label = Label(value="Interest rate %: ")

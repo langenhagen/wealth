@@ -1,6 +1,5 @@
 """Functionality to contrast incomes and expenses of `Wealth`."""
 import functools
-from typing import List
 
 import pandas as pd
 from ipywidgets import BoundedIntText, Checkbox, Dropdown, HBox, Output, VBox
@@ -23,7 +22,7 @@ def __display_expense_dataframes(
     drp_date: Dropdown,
     txt_n_periods: BoundedIntText,
     txt_n_rows: BoundedIntText,
-    checkboxes: List[Checkbox],
+    checkboxes: list[Checkbox],
     chk_show_internal: Checkbox,
     out: Output,
     df: pd.DataFrame,
