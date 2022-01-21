@@ -6,10 +6,11 @@
 ignore =
     W503   # line break before binary operator
 
+# F401: 'foo' imported but unused
 per-file-ignores =
     __init__.py:F401
 
-max-line-length = 99
+max-line-length = 88
 
 # Max McCabe complexity
-max-complexity = 6
+max-complexity = 8

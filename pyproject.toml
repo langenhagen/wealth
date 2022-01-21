@@ -5,17 +5,11 @@ profile = "black"
 
 [tool.pylint."MESSAGES CONTROL"]
 disable = [
-    "C0103",
-    "C0121",
-    "C0330",
-    "C0412",
-    "E0401",
-    "R0801",
-    "R0903",
-    "R0913",
-    "R0914",
-    "W0603",
-    "W1203",
+    'C0103',  # Module name doesn't conform to snake_case naming style
+    'R0903',  # (too-few-public-methods) Too few public methods (1/2)
+    'R0913',  # (too-many-arguments) Too many arguments (7/5)
+    'R0914',  # (too-many-locals) Too many local variables (16/15)
+    'R0902',  # (too-many-instance-attributes) Too many instance attributes (10/7)
 ]
 
 [tool.pylint.format]
