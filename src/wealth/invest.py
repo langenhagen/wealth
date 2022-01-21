@@ -199,7 +199,7 @@ def __summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataF
                 i.net_performance_per_day() for i in past_investments
             ],
         }
-    )
+    ).sort_values(by="end date")
 
     style = (
         df.style.format(
