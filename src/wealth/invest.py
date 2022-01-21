@@ -2,7 +2,6 @@
 import datetime as dt
 from dataclasses import dataclass
 from enum import Enum
-from turtle import width
 from typing import Optional
 
 import dateutil.parser
@@ -261,25 +260,28 @@ def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
     )
     display(f"I finished {len(done_investments)} investments.")
 
-    net_profits = sum([i.net_profit() for i in done_investments])
-    display(f"The net profits are {Money(net_profits)}.")
+    if len(done_investments) != 0:
+        net_profits = sum([i.net_profit() for i in done_investments])
+        display(f"The net profits are {Money(net_profits)}.")
 
-    net_profits_after_goals = net_profits - sum(fulfilled_goals.values())
-    display(
-        "**The net profits after fulfilled goals are "
-        f"{Money(net_profits_after_goals)}.**"
-    )
+        net_profits_after_goals = net_profits - sum(fulfilled_goals.values())
+        display(
+            "**The net profits after fulfilled goals are "
+            f"{Money(net_profits_after_goals)}.**"
+        )
 
-    display(f"The sum of all open goals is {Money(sum(goals.values()))}.")
-    display(
-        "The sum of all fulfilled goals is " f"{Money(sum(fulfilled_goals.values()))}."
-    )
+        display(f"The sum of all open goals is {Money(sum(goals.values()))}.")
+        display(
+            "The sum of all fulfilled goals is "
+            f"{Money(sum(fulfilled_goals.values()))}."
+        )
 
     display("<br>Open investments:")
     __summarize_open_investments(investments)
 
-    display("<br>Closed investments:")
-    __summarize_closed_investments(investments)
+    if len(done_investments) != 0:
+        display("<br>Closed investments:")
+        __summarize_closed_investments(investments)
 
 
 def bailout(

@@ -1,10 +1,9 @@
 """Functionality to track expenses.
 Track expenses and cluster them according to type and subtype."""
-from turtle import color
+from typing import Optional
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
 import pandas.api.types as ptypes
 from ipywidgets import Output
@@ -18,12 +17,12 @@ from wealth.ui.styles import bar_color, red_fg
 def __style_track(
     cols,
     special_indices: pd.Index,
-    types2colors: dict[str],
-) -> list[str]:
+    types2colors: dict[str, str],
+) -> list[Optional[str]]:
     """CSS-style the track DataFrame's cells with colors and font weight
     depending on the bucket, type, the balance and whether a row is the last
     entry in a month."""
-    styles = [None] * 9
+    styles: list[Optional[str]] = [None] * 9
 
     wealth = "background: #e060e0dd; color: #000000ee;"
     shopping = "background: #ffff00dd; color: #000000ee;"
@@ -142,8 +141,8 @@ def track() -> pd.DataFrame:
     types2colors = {}
     cmap = plt.get_cmap("tab20", len(types))
     for type_, i in zip(types, range(cmap.N)):
-        hex = mpl.colors.rgb2hex(cmap(i))
-        types2colors[type_] = hex
+        hex_ = mpl.colors.rgb2hex(cmap(i))
+        types2colors[type_] = hex_
 
     df["date"] = df["date"].apply(lambda x: x.date())
     style = (

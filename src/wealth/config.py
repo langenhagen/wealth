@@ -25,7 +25,7 @@ def __read_config_yaml() -> dict[str, Any]:
         with open(f"../config/{filename}", encoding="UTF-8") as file:
             return yaml.safe_load(file)
     except FileNotFoundError:
-        logging.getLogger().warning(f"Could not open {filename}.")
+        logging.getLogger().warning("Could not open %s.", filename)
         return {}
 
 

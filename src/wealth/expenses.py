@@ -97,7 +97,7 @@ def biggest_expenses(df: pd.DataFrame):
         layout=text,
     )
     txt_n_rows = BoundedIntText(5, description="Rows:", min=1, layout=text)
-    checkboxes = []
+    checkboxes: list[Checkbox] = []
     chk_show_internal = Checkbox(
         value=True,
         description="Show Internal Transactions",

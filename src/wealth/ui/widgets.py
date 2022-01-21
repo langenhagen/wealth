@@ -52,6 +52,7 @@ def align_checkboxes(checkboxes: list[Checkbox]):
     )
 
 
+# pylint:disable=redefined-builtin
 def create_inflation_widgets(
     inflation_rate: float, max: float
 ) -> tuple[BoundedFloatText, HBox]:
@@ -66,11 +67,12 @@ def create_inflation_widgets(
         layout=text_slim,
     )
     slider = FloatSlider(readout=False, min=0, max=max, step=0.1)
-    box = HBox([label, textbox, slider])
+    hbox = HBox([label, textbox, slider])
     jslink((textbox, "value"), (slider, "value"))
-    return (textbox, box)
+    return (textbox, hbox)
 
 
+# pylint:disable=redefined-builtin
 def create_interest_widgets(
     interest_rate: float, max: float
 ) -> tuple[BoundedFloatText, HBox]:
@@ -85,6 +87,6 @@ def create_interest_widgets(
         layout=text_slim,
     )
     slider = FloatSlider(readout=False, min=0, max=max, step=0.1)
-    box = HBox([label, textbox, slider])
+    hbox = HBox([label, textbox, slider])
     jslink((textbox, "value"), (slider, "value"))
-    return (textbox, box)
+    return (textbox, hbox)

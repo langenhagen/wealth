@@ -89,12 +89,12 @@ def __read_account_csvs() -> pd.DataFrame:
 
     for file in __yield_files_with_suffix(pathlib.Path.cwd() / "../csv", ".csv"):
         match = re.match(r"\d{4}-(.+)-.*", file.stem)
-        if match == None:
+        if match is None:
             continue
         account_name = match.group(1)
         for regex, read_csv in namepattern_2_importer.items():
             if re.match(regex, file.stem):
-                current_df = read_csv(file, account_name)
+                current_df = read_csv(str(file), account_name)
                 if account_name in processed_accounts:
                     dataframes.append(current_df)
                 else:

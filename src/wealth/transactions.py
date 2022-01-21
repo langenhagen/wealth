@@ -27,7 +27,7 @@ def transactions(df: pd.DataFrame):
     """Plot some columns of the dataframe sorted in descending order and allow
     to filter accounts via checkboxes."""
     out = Output()
-    checkboxes = []
+    checkboxes: list[Checkbox] = []
     update_out = functools.partial(__update_out, df=df, checkboxes=checkboxes, out=out)
     create_account_checkboxes(checkboxes, df, True, update_out)
 

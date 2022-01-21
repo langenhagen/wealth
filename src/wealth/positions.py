@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from ipywidgets import BoundedIntText, Output
 
-import wealth.ui.layouts as layouts
+from wealth.ui import layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt, percent_fmt
 from wealth.ui.styles import bar_color

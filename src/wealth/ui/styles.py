@@ -4,7 +4,7 @@ from wealth.util.transaction_type import TransactionType
 
 def red_fg(value) -> str:
     """Return a red font color if the given value is smaller than 0."""
-    return "color: #ff0000aa;" if value < 0 else None
+    return "color: #ff0000aa;" if value < 0 else ""
 
 
 def red_green_fg(value) -> str:

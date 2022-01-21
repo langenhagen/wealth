@@ -9,7 +9,7 @@ import pandas as pd
 from ipywidgets.widgets import Box, Checkbox, Dropdown, HBox, Label, Output, VBox
 
 import wealth
-import wealth.ui.layouts as layouts
+from wealth.ui import layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
 from wealth.ui.styles import bar_color, red_fg
@@ -163,7 +163,8 @@ def graph(df: pd.DataFrame):
         value="<atomic>",
         layout=layouts.dropdown,
     )
-    sum_accs_checkboxes, single_accs_checkboxes = [], []
+    sum_accs_checkboxes: list[Checkbox] = []
+    single_accs_checkboxes: list[Checkbox] = []
 
     out = Output()
     with out:
@@ -259,7 +260,7 @@ def means(df: pd.DataFrame):
         value="MS",
         layout=layouts.dropdown,
     )
-    checkboxes = []
+    checkboxes: list[Checkbox] = []
     update_out = functools.partial(
         __display_mean_balance_dataframes,
         drp_freq=drp_freq,

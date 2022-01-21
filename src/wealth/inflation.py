@@ -8,8 +8,8 @@ import pandas as pd
 from ipywidgets import FloatText, HBox, IntText, Label, Output, VBox
 
 import wealth
-import wealth.ui.layouts as layouts
 from wealth.config import config
+from wealth.ui import layouts
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt, ratio_fmt, year_fmt
 from wealth.ui.plot import setup_yearly_plot_and_axes

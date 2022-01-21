@@ -41,4 +41,4 @@ def test_deepupdate_with_nested_dict(d):
     """Test that `deepupdate()` on a dict with an dict with a nested dict
     works."""
     result = deepupdate(d, {"b": {"e": "bar"}})
-    {"a": 42, "b": {"c": {"d": 23}, "e": "bar"}}
+    assert result == {"a": 42, "b": {"c": {"d": 23}, "e": "bar"}}

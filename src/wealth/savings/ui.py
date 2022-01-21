@@ -138,7 +138,7 @@ class UI:
 
         self.__on_widgets_change()
 
-    def __on_widgets_change(self, *args) -> tuple[pd.DataFrame, pd.DataFrame]:
+    def __on_widgets_change(self, *_):
         """On observer change, recalculate the the results, update the output
         and return the results."""
         df, summary = savings(
