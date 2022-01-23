@@ -7,15 +7,15 @@ from wealth.ui.format import money_fmt
 from wealth.ui.styles import bar_color
 
 
-def categories(df: pd.DataFrame, categories: dict[str, str]):
-    """Examine all given df's rows that match given categories.
+def categories(df: pd.DataFrame, categories2regexes: dict[str, str]):
+    """Examine all given df's rows that match given categories2regexes.
     Display a dataframe per each given category with monthly sums,
     quarterly sums and averages and yearly sums and averages.
     Extrapolate average values to full quarters or years."""
     df["date"] = pd.to_datetime(df["date"])
     df = df.reset_index(drop=True).set_index("date")
     dfs = []
-    for key, regex in categories.items():
+    for key, regex in categories2regexes.items():
         rows = df[df["all_data"].str.contains(regex)]
         amount = {}
 

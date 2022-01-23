@@ -1,6 +1,7 @@
 """Inflation related functionality."""
 import datetime as dt
 import functools
+from typing import Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -34,6 +35,7 @@ def __calc_inflation_rate_from_widgets(
 ):
     """Calculate the according linear inflation rate from the given widgets'
     values."""
+    rate: Union[float, int, str]
     if txt_start_cost.value == 0 or txt_end_year.value == txt_start_year.value:
         rate = "n/a"
     else:

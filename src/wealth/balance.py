@@ -57,7 +57,7 @@ def balance(df: pd.DataFrame):
     df = df.reset_index(drop=True).set_index("date")
 
     out = Output()
-    checkboxes = []
+    checkboxes: list[Checkbox] = []
     dates = list(__daterange(df.index.date.min(), df.index.date.max()))
     drp_date = Dropdown(
         description="Date: ",

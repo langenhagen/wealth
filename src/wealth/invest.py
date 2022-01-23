@@ -262,6 +262,7 @@ def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
 
     if len(done_investments) != 0:
         net_profits = sum([i.net_profit() for i in done_investments])
+        assert net_profits is not None
         display(f"The net profits are {Money(net_profits)}.")
 
         net_profits_after_goals = net_profits - sum(fulfilled_goals.values())

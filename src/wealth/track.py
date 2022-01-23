@@ -48,7 +48,8 @@ def __style_track(
     if cols.name in special_indices:
         topline = "border-top: 2px solid #cccccc;"
         for i in range(9):
-            styles[i] = topline if styles[i] is None else styles[i] + topline
+            style = styles[i]
+            styles[i] = topline if style is None else style + topline
 
     return styles
 
