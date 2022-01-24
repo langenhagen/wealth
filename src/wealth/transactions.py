@@ -12,13 +12,13 @@ from wealth.ui.widgets import align_checkboxes, create_account_checkboxes
 
 def __update_out(_, df: pd.DataFrame, out: Output, checkboxes: list[Checkbox]):
     """Update the displayed transaction dataframe."""
-    accounts = [chk.description for chk in checkboxes if chk.value][1:]
+    accounts = [c.description for c in checkboxes if c.value and c.value != "All"]
     df_out = df[df["account"].isin(accounts)].iloc[::-1]
-    out.clear_output()
     style = df_out.style.format(formatter=money_fmt(), subset="amount").apply(
         green_yellow_bg, axis=1
     )
 
+    out.clear_output()
     with out:
         display(style)
 
