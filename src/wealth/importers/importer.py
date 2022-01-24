@@ -68,12 +68,6 @@ def __delay_incomes(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def __strip_times(df: pd.DataFrame) -> pd.DataFrame:
-    """Strip the times from the column `date`."""
-    df["date"] = df["date"].dt.date
-    return df
-
-
 def __read_account_csvs() -> pd.DataFrame:
     """Import all account-related *.csv files in the folder `csv`. The files
     must match a naming pattern that the map `namepattern_2_importer`
@@ -108,7 +102,6 @@ def __read_account_csvs() -> pd.DataFrame:
         .reset_index()
         .pipe(__delay_incomes)
         .sort_values(by="date")
-        .pipe(__strip_times)
         .reset_index()[transfer_columns]
     )
     return df

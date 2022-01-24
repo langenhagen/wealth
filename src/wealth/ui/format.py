@@ -5,6 +5,7 @@ from wealth.config import config
 
 date_fmt = "{:%Y-%m-%d}".format
 percent_fmt = "{:,.2f}%".format
+weekday_date_fmt = "%a, %Y-%m-%d"
 year_fmt = "{:%Y}".format
 
 

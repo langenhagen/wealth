@@ -5,7 +5,7 @@ import pandas as pd
 from ipywidgets import BoundedIntText, Checkbox, Dropdown, HBox, Output, VBox
 
 from wealth.ui.display import display
-from wealth.ui.format import money_fmt
+from wealth.ui.format import date_fmt, money_fmt, weekday_date_fmt
 from wealth.ui.layouts import checkbox_wide, dropdown, dropdown_slim, text
 from wealth.ui.styles import bar_color
 from wealth.ui.widgets import (
@@ -41,8 +41,9 @@ def __display_expense_dataframes(
             )
         ]
     rng = pd.date_range(df.index.min() - off, df.index.max() + off, freq=drp_freq.value)
-    fmt = "%a, %Y-%m-%d"
-    drp_date.options = rng[0:-1].sort_values(ascending=False).strftime(fmt).to_list()
+    drp_date.options = (
+        rng[0:-1].sort_values(ascending=False).strftime(weekday_date_fmt).to_list()
+    )
     rng = rng[rng <= pd.Timestamp(drp_date.value) + off]
     day_off = pd.tseries.frequencies.to_offset("D")
     accounts = [c.description for c in checkboxes if c.value and c.description != "All"]
@@ -51,8 +52,8 @@ def __display_expense_dataframes(
         return
     for i in range(len(rng) - 1, max(len(rng) - 1 - txt_n_periods.value, 0), -1):
         mask = (
-            (df.index >= rng[i - 1].date())
-            & (df["date"] < rng[i].date())
+            (df.index >= rng[i - 1])
+            & (df["date"] < rng[i])
             & (df["account"].isin(accounts))
             & (
                 df["transaction_type"]
@@ -67,11 +68,14 @@ def __display_expense_dataframes(
             .head(txt_n_rows.value)
             .reset_index(drop=True)
         )
-        start = rng[i - 1].strftime(fmt)
-        end = (rng[i] - day_off).strftime(fmt)
-        style = df_out.style.format(formatter=money_fmt(), subset="amount").bar(
-            align="zero", color=bar_color
-        )
+        start = rng[i - 1].strftime(weekday_date_fmt)
+        end = (rng[i] - day_off).strftime(weekday_date_fmt)
+        style = df_out.style.format(
+            formatter={
+                "amount": money_fmt(),
+                "date": date_fmt,
+            }
+        ).bar(align="zero", color=bar_color)
 
         with out:
             display(f"## {start} – {end}")
