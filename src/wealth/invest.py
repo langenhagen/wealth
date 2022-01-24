@@ -8,8 +8,8 @@ import dateutil.parser
 import pandas as pd
 import yaml
 
-import wealth
 from wealth.config import config
+from wealth.inflation import calc_inflated_value
 from wealth.ui.display import display
 from wealth.ui.format import Money, money_fmt, percent_fmt
 from wealth.ui.styles import bar_color, red_fg
@@ -307,7 +307,7 @@ def bailout(
     tax_rate = config["capital_gains_taxrate"] if tax_rate is None else tax_rate
 
     for year in range(investment_year, investment_year + 10):
-        inflated_value = wealth.inflation.calc_inflated_value(
+        inflated_value = calc_inflated_value(
             investment, investment_year, year, inflation_rate
         )
         gross_gain = (inflated_value * target_value_rate - investment) * (1 + tax_rate)

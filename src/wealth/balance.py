@@ -8,10 +8,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from ipywidgets.widgets import Box, Checkbox, Dropdown, HBox, Label, Output, VBox
 
-import wealth
 from wealth.ui import layouts
 from wealth.ui.display import display
-from wealth.ui.format import money_fmt
+from wealth.ui.format import Money, money_fmt
+from wealth.ui.plot import setup_plot_and_axes
 from wealth.ui.styles import bar_color, red_fg
 from wealth.ui.widgets import (
     align_checkboxes,
@@ -47,7 +47,7 @@ def __display_balance(
         return
 
     with out:
-        display(f'<br><font size="6">{wealth.Money(value)}</font>')
+        display(f'<br><font size="6">{Money(value)}</font>')
 
 
 def balance(df: pd.DataFrame):
@@ -130,7 +130,7 @@ def __plot_cumsum(
     sum_series = sum_df["amount"].cumsum()
     with out:
         fig.clear()
-        wealth.ui.plot.setup_plot_and_axes(fig, "Cumulative Sum of All transactions")
+        setup_plot_and_axes(fig, "Cumulative Sum of All transactions")
         if not sum_series.empty:
             __plot_df(sum_series, drp_freq.value, "Combined")
             show_legend = True

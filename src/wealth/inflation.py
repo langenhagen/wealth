@@ -8,11 +8,10 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from ipywidgets import FloatText, HBox, IntText, Label, Output, VBox
 
-import wealth
 from wealth.config import config
 from wealth.ui import layouts
 from wealth.ui.display import display
-from wealth.ui.format import money_fmt, ratio_fmt, year_fmt
+from wealth.ui.format import Money, money_fmt, ratio_fmt, year_fmt
 from wealth.ui.plot import setup_yearly_plot_and_axes
 from wealth.ui.styles import bar_color
 from wealth.ui.widgets import create_inflation_widgets
@@ -164,10 +163,8 @@ def __calc_inflated_cost_from_widgets(
 
     out.clear_output()
     with out:
-        display(f"<br>The inflated cost is {wealth.Money(inflated_cost)}")
-        display(
-            f"Money has {wealth.percent_fmt(ratio * 100)} of the value it had at start"
-        )
+        display(f"<br>The inflated cost is {Money(inflated_cost)}")
+        display(f"Money has {ratio_fmt(ratio)} of the value it had at start")
 
     start_year = txt_start_year.value
     end_year = txt_end_year.value
