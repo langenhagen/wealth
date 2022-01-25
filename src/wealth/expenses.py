@@ -5,7 +5,7 @@ import pandas as pd
 from ipywidgets import BoundedIntText, Checkbox, Dropdown, HBox, Output, VBox
 
 from wealth.ui.display import display
-from wealth.ui.format import date_fmt, money_fmt, weekday_date_fmt
+from wealth.ui.format import date_fmt, money_fmt, weekday_date
 from wealth.ui.layouts import checkbox_wide, dropdown, dropdown_slim, text
 from wealth.ui.styles import bar_color
 from wealth.ui.widgets import (
@@ -42,7 +42,7 @@ def __display_expense_dataframes(
         ]
     rng = pd.date_range(df.index.min() - off, df.index.max() + off, freq=drp_freq.value)
     drp_date.options = (
-        rng[0:-1].sort_values(ascending=False).strftime(weekday_date_fmt).to_list()
+        rng[0:-1].sort_values(ascending=False).strftime(weekday_date).to_list()
     )
     rng = rng[rng <= pd.Timestamp(drp_date.value) + off]
     day_off = pd.tseries.frequencies.to_offset("D")
@@ -68,8 +68,8 @@ def __display_expense_dataframes(
             .head(txt_n_rows.value)
             .reset_index(drop=True)
         )
-        start = rng[i - 1].strftime(weekday_date_fmt)
-        end = (rng[i] - day_off).strftime(weekday_date_fmt)
+        start = rng[i - 1].strftime(weekday_date)
+        end = (rng[i] - day_off).strftime(weekday_date)
         style = df_out.style.format(
             formatter={
                 "amount": money_fmt(),
