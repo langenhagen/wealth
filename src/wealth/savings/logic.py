@@ -17,7 +17,7 @@ def savings(
     tax_rate: float,
     inflation_rate: float,
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Build the account history dataframe and the summary return both."""
+    """Build the account history DataFrame and the summary and return both."""
     df = build_account_history(
         imported,
         interest_rate=interest_rate,
