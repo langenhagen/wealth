@@ -1,5 +1,5 @@
 """Functions to display all kinds of Python objects in `Wealth`."""
-from typing import Any, Iterable
+from typing import Any, Iterable, Union
 
 import pandas as pd
 from IPython.display import Markdown
@@ -27,12 +27,14 @@ def display(o: Any):
 
 
 # pylint:disable=protected-access
-def display_side_by_side(dfs: Iterable[pd.DataFrame]):
+def display_side_by_side(
+    objs: Iterable[Union[pd.DataFrame, pd.io.formats.style.Styler]]
+):
     """Display the given dataframes/styles and the given titles side by side in
     an inline manner."""
     html_str = ""
-    for df in dfs:
-        style = df if isinstance(df, pd.io.formats.style.Styler) else df.style
+    for o in objs:
+        style = o if isinstance(o, pd.io.formats.style.Styler) else o.style
         style.set_table_attributes("style='display: inline; padding: 10px;'")
         html_str += style._repr_html_()
 
