@@ -33,10 +33,10 @@ lint_python_files() {
 
 root_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/../src/"
 
-printf '\e[1msetup.py...\e[0m\n'
+printf '\e[1mLint setup.py...\e[0m\n'
 lint_python_files "$root_path/setup.py"
 
-printf '\e[1mOther Python code...\e[0m\n'
+printf '\e[1mLint other Python code...\e[0m\n'
 lint_python_files "$root_path/wealth/"
 
 printf -- '\e[1mShellcheck...\e[0m\n'
