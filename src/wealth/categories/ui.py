@@ -6,7 +6,7 @@ from pandas.io.formats.style import Styler
 
 from wealth.ui.display import display_side_by_side
 from wealth.ui.format import money_fmt
-from wealth.ui.styles import bar_color
+from wealth.ui.styles import bar_color, monthly_border, quarterly_border, yearly_border
 
 from .logic import categories
 
@@ -21,6 +21,9 @@ def __display_dfs(keys: Iterable[str], dfs: list[pd.DataFrame]):
                 formatter=money_fmt(),
                 na_rep="",
             )
+            .set_properties(subset="monthly", **monthly_border)
+            .set_properties(subset="quarterly", **quarterly_border)
+            .set_properties(subset="yearly", **yearly_border)
             .set_caption(f"<br><h2>{key}</h2>")
             .bar(color=bar_color, align="zero")
         )
