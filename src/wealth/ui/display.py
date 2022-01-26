@@ -5,6 +5,7 @@ import pandas as pd
 from IPython.display import Markdown
 from IPython.display import display as ipython_display
 from IPython.display import display_html
+from pandas.io.formats.style import Styler
 
 
 def display(o: Any):
@@ -26,16 +27,14 @@ def display(o: Any):
             ipython_display(o)
 
 
-# pylint:disable=protected-access
-def display_side_by_side(
-    objs: Iterable[Union[pd.DataFrame, pd.io.formats.style.Styler]]
-):
+def display_side_by_side(objs: Iterable[Union[pd.DataFrame, Styler]]):
     """Display the given dataframes/styles and the given titles side by side in
     an inline manner."""
     html_str = ""
     for o in objs:
-        style = o if isinstance(o, pd.io.formats.style.Styler) else o.style
+        style = o if isinstance(o, Styler) else o.style
         style.set_table_attributes("style='display: inline; padding: 10px;'")
+        # pylint:disable=protected-access
         html_str += style._repr_html_()
 
     display_html(html_str, raw=True)
