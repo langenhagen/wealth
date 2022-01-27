@@ -1,6 +1,7 @@
 black[jupyter]
 bpython
 flake8
+ipykernel
 isort
 mypy
 pylint
