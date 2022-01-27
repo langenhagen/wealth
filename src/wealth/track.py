@@ -1,7 +1,5 @@
 """Functionality to track expenses.
 Track expenses and cluster them according to type and subtype."""
-from typing import Optional
-
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -11,47 +9,52 @@ from ipywidgets import Output
 from wealth.importers.common import to_lower
 from wealth.ui.display import display
 from wealth.ui.format import money_fmt
-from wealth.ui.styles import bar_color, red_fg
+from wealth.ui.styles import (
+    bar_color,
+    css_str,
+    green_foreground,
+    red_fg,
+    red_foreground,
+    shopping_bg,
+    shopping_border,
+    wealth_bg,
+    wealth_border,
+)
 
 
 def __style_track(
     cols,
     special_indices: pd.Index,
     types2colors: dict[str, str],
-) -> list[Optional[str]]:
+) -> list[dict[str, str]]:
     """CSS-style the track DataFrame's cells with colors and font weight
     depending on the bucket, type, the balance and whether a row is the last
     entry in a month."""
-    styles: list[Optional[str]] = [None] * 9
+    styles: list[dict[str, str]] = [{}] * 9
 
-    wealth = "background: #e060e0dd; color: #000000ee;"
-    shopping = "background: #ffff00dd; color: #000000ee;"
-    styles[1] = shopping if cols["bucket"] == "shopping" else wealth
+    styles[1] = shopping_bg if cols["bucket"] == "shopping" else wealth_bg
 
     type_color = types2colors[cols["type"]]
-    styles[2] = styles[3] = f"background: {type_color}; color: #000000ee;"
-
-    green = "color: #00ff00aa;"
-    red = "color: #ff0000aa;"
+    styles[2] = {"background": type_color, "color": "#000000ee"}.copy()
+    styles[3] = {"background": type_color, "color": "#000000ee"}.copy()
 
     if cols["price"] > 0:
-        styles[4] = green
+        styles[4] = green_foreground.copy()
     if cols["monthly shopping balance"] < 0:
-        styles[5] = red
+        styles[5] = red_foreground.copy()
     if cols["continuous shopping balance"] < 0:
-        styles[6] = red
+        styles[6] = red_foreground.copy()
     if cols["monthly wealth balance"] < 0:
-        styles[7] = red
+        styles[7] = red_foreground.copy()
     if cols["continuous wealth balance"] < 0:
-        styles[8] = red
+        styles[8] = red_foreground.copy()
 
     if cols.name in special_indices:
-        topline = "border-top: 2px solid #cccccc;"
+        topline = {"border-top": "2px solid #cccccc"}
         for i in range(9):
-            style = styles[i]
-            styles[i] = topline if style is None else style + topline
+            styles[i].update(topline.copy())
 
-    return styles
+    return [css_str(**s) for s in styles]
 
 
 def __import_track_df() -> pd.DataFrame:
@@ -157,6 +160,8 @@ def track() -> pd.DataFrame:
             },
             na_rep="",
         )
+        .set_properties(subset="monthly shopping balance", **shopping_border)
+        .set_properties(subset="monthly wealth balance", **wealth_border)
         .bar(
             subset=[
                 "monthly shopping balance",
