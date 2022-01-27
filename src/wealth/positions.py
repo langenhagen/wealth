@@ -109,7 +109,7 @@ def __plot_piechart_of_expense_positons(posts: dict[str, float]):
     plt.show()
 
 
-def info(buckets: Positions):
+def positions(buckets: Positions):
     """Show the sums of positions and relations of positions."""
     plt.close("all")
 
