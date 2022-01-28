@@ -152,7 +152,7 @@ class UI:
         self.df = df
         self.summary = summary
 
-    def __update_output(self, df: pd.DataFrame, summary: pd.DataFrame) -> pd.DataFrame:
+    def __update_output(self, df: pd.DataFrame, summary: pd.DataFrame):
         """Render the DataFrames."""
         with self.__out_fig:
             fig = plt.figure(figsize=(10, 7), num="Account Development")
