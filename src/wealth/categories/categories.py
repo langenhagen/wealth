@@ -1,4 +1,4 @@
-"""Functionality to examine expenses via categories."""
+"""Functionality to examine expense bank transactions via categories."""
 from wealth.importers import init
 
 from .ui import ui

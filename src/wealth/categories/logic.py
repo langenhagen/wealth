@@ -1,4 +1,4 @@
-"""Aggregates the business logic for the subpackage `categories`."""
+"""Contains the business logic for the subpackage `categories`."""
 from typing import Iterable
 
 import pandas as pd
