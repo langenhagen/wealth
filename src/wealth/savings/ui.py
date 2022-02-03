@@ -139,8 +139,8 @@ class UI:
         self.__on_widgets_change()
 
     def __on_widgets_change(self, *_):
-        """On observer change, recalculate the the results, update the output
-        and return the results."""
+        """On observer change, recalculate the the results, update the
+        output."""
         df, summary = savings(
             imported=self.__imported,
             tax_rate=self.__tax_rate,
@@ -153,7 +153,7 @@ class UI:
         self.summary = summary
 
     def __update_output(self, df: pd.DataFrame, summary: pd.DataFrame):
-        """Render the DataFrames."""
+        """Render the output."""
         with self.__out_fig:
             fig = plt.figure(figsize=(10, 7), num="Account Development")
             fig.clear()
