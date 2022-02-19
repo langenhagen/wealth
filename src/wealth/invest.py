@@ -23,10 +23,6 @@ class TransactionType(Enum):
     dividend = "dividend"
     capital_raise = "capital raise"
 
-    def __str__(self):
-        """Print the enum's value nicely."""
-        return self.value
-
     @staticmethod
     def profit_types() -> tuple[
         "TransactionType", "TransactionType", "TransactionType"
@@ -37,6 +33,10 @@ class TransactionType(Enum):
             TransactionType.dividend,
             TransactionType.sell,
         )
+
+    def __str__(self):
+        """Print the enum's value nicely."""
+        return self.value
 
 
 class Transaction:
@@ -84,12 +84,6 @@ class InvestmentSet:
         """Returns the date of the last transaction."""
         return max([t.date for t in self.transactions])
 
-    def duration(self) -> int:
-        """Denotes the duration of the holding in days, minimum 1 day."""
-        end_date_ = dt.date.today() if self.is_open() is True else self.end_date()
-        delta = end_date_ - self.start_date()
-        return delta.days + 1
-
     def is_open(self) -> bool:
         """Indicates whether all shares belonging to the investment set have
         been sold or not."""
@@ -102,6 +96,12 @@ class InvestmentSet:
 
         assert share_balance >= 0, "Cannot sell more shares than bought"
         return bool(share_balance)
+
+    def duration(self) -> int:
+        """Denotes the duration of the holding in days, minimum 1 day."""
+        end_date_ = dt.date.today() if self.is_open() is True else self.end_date()
+        delta = end_date_ - self.start_date()
+        return delta.days + 1
 
     def total_invested_sum(self) -> float:
         """The total amount of money invested."""
@@ -118,9 +118,11 @@ class InvestmentSet:
         return self.total_returns() - self.total_invested_sum()
 
     def open_invested_sum(self) -> float:
-        """The amount of money still invested - money paid out.
+        """The amount of money still invested after sales.
         Can be negative if investments are profitable."""
-        return self.total_invested_sum() - self.total_returns()
+        sell = TransactionType.sell
+        sell_profits = sum([t.amount for t in self.transactions if t.type_ is sell])
+        return self.total_invested_sum() - sell_profits
 
     def get_individual_shares_and_prices(self, type_: TransactionType) -> list[float]:
         """Return a list of individual share prices for all transactions with
@@ -184,21 +186,25 @@ def __summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataF
     closed investment set."""
 
     past_investments = [i for i in investments if not i.is_open()]
-    df = pd.DataFrame(
-        {
-            "company": [i.company for i in past_investments],
-            "start date": [i.start_date() for i in past_investments],
-            "end date": [i.end_date() for i in past_investments],
-            "days": [i.duration() for i in past_investments],
-            "investment": [i.total_invested_sum() for i in past_investments],
-            "profit": [i.gross_profit() for i in past_investments],
-            "net profit": [i.net_profit() for i in past_investments],
-            "net performance": [i.net_performance() for i in past_investments],
-            "net daily performance": [
-                i.net_performance_per_day() for i in past_investments
-            ],
-        }
-    ).sort_values(by="end date")
+    df = (
+        pd.DataFrame(
+            {
+                "company": [i.company for i in past_investments],
+                "start date": [i.start_date() for i in past_investments],
+                "end date": [i.end_date() for i in past_investments],
+                "days": [i.duration() for i in past_investments],
+                "investment": [i.total_invested_sum() for i in past_investments],
+                "profit": [i.gross_profit() for i in past_investments],
+                "net profit": [i.net_profit() for i in past_investments],
+                "net performance": [i.net_performance() for i in past_investments],
+                "net daily performance": [
+                    i.net_performance_per_day() for i in past_investments
+                ],
+            }
+        )
+        .sort_values(by="end date")
+        .reset_index(drop=True)
+    )
 
     style = (
         df.style.format(
@@ -235,11 +241,17 @@ def __summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFra
             "company": [i.company for i in past_investments],
             "start date": [i.start_date() for i in past_investments],
             "days": [i.duration() for i in past_investments],
-            "investment": [i.total_invested_sum() for i in past_investments],
+            "open investment": [i.open_invested_sum() for i in past_investments],
+            "total investment": [i.total_invested_sum() for i in past_investments],
         }
     )
 
-    style = df.style.format(formatter={"investment": money_fmt()}).bar(
+    style = df.style.format(
+        formatter={
+            "open investment": money_fmt(),
+            "total investment": money_fmt(),
+        }
+    ).bar(
         color=bar_color,
         align="zero",
     )
