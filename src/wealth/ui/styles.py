@@ -42,12 +42,6 @@ def conditional_negative_style(value) -> str:
     return f"color: {red_color};" if value < 0 else ""
 
 
-def red_green_fg(value) -> str:
-    """Return a green font color if the given value is greater or equal than 0,
-    else return a red font."""
-    return f"color: {red_color};" if value < 0 else f"color: {green_color};"
-
-
 def transaction_type_style(cols) -> list[str]:
     """Return a green back color if the given value is an income and return a
     yellow back color if the given value is an internal transactions."""
