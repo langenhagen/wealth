@@ -4,7 +4,7 @@ from ipywidgets import Checkbox, Output
 
 from wealth.ui.display import display
 from wealth.ui.format import date_fmt, money_fmt
-from wealth.ui.styles import green_yellow_bg
+from wealth.ui.styles import transaction_type_style
 from wealth.ui.widgets import align_checkboxes, create_account_checkboxes
 
 
@@ -18,7 +18,7 @@ class UI:
                 "amount": money_fmt(),
                 "date": date_fmt,
             }
-        ).apply(green_yellow_bg, axis=1)
+        ).apply(transaction_type_style, axis=1)
 
         self.__out.clear_output()
         with self.__out:

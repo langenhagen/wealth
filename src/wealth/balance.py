@@ -12,7 +12,7 @@ from wealth.ui import layouts
 from wealth.ui.display import display
 from wealth.ui.format import Money, money_fmt
 from wealth.ui.plot import setup_plot_and_axes
-from wealth.ui.styles import bar_color, red_fg
+from wealth.ui.styles import bar_color, conditional_negative_style
 from wealth.ui.widgets import (
     align_checkboxes,
     create_account_checkboxes,
@@ -240,7 +240,7 @@ def __display_mean_balance_dataframes(
 
     style = (
         df_out.style.format(formatter=money_fmt(), na_rep="")
-        .applymap(red_fg)
+        .applymap(conditional_negative_style)
         .bar(color=bar_color, align="zero")
     )
 

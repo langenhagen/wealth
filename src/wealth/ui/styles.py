@@ -22,8 +22,8 @@ yearly_border = {"border-left": "1px solid #ecc371"}
 shopping_border = {"border-left": f"1px solid {shopping_color}"}
 wealth_border = {"border-left": f"1px solid {wealth_color}"}
 
-green_foreground = {"color": green_color}
-red_foreground = {"color": red_color}
+green_fg = {"color": green_color}
+red_fg = {"color": red_color}
 
 shopping_bg = {"background": shopping_color, "color": "#000000ee"}
 wealth_bg = {"background": wealth_color, "color": "#000000ee"}
@@ -37,7 +37,7 @@ def css_str(**kwargs):
     return s
 
 
-def red_fg(value) -> str:
+def conditional_negative_style(value) -> str:
     """Return a red font color if the given value is smaller than 0."""
     return f"color: {red_color};" if value < 0 else ""
 
@@ -48,7 +48,7 @@ def red_green_fg(value) -> str:
     return f"color: {red_color};" if value < 0 else f"color: {green_color};"
 
 
-def green_yellow_bg(cols) -> list[str]:
+def transaction_type_style(cols) -> list[str]:
     """Return a green back color if the given value is an income and return a
     yellow back color if the given value is an internal transactions."""
     type_ = cols["transaction_type"]

@@ -12,7 +12,7 @@ from wealth.config import config
 from wealth.inflation import calc_inflated_value
 from wealth.ui.display import display
 from wealth.ui.format import Money, money_fmt, percent_fmt
-from wealth.ui.styles import bar_color, red_fg
+from wealth.ui.styles import bar_color, conditional_negative_style
 
 
 class TransactionType(Enum):
@@ -218,7 +218,7 @@ def __summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataF
         )
         .bar(color=bar_color, align="zero")
         .applymap(
-            red_fg,
+            conditional_negative_style,
             subset=[
                 "profit",
                 "net profit",
