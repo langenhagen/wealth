@@ -176,7 +176,7 @@ def track() -> pd.DataFrame:
             __style_track,
             special_indices=first_indices_per_month,
             types2colors=types2colors,
-            axis=1,
+            axis="columns",
         )
     )
 

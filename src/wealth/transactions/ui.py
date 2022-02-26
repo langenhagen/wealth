@@ -18,7 +18,7 @@ class UI:
                 "amount": money_fmt(),
                 "date": date_fmt,
             }
-        ).apply(transaction_type_column_styles, axis=1)
+        ).apply(transaction_type_column_styles, axis="columns")
 
         self.__out.clear_output()
         with self.__out:

@@ -32,7 +32,7 @@ def __create_transaction_type(row: pd.Series) -> TransactionType:
 def __add_transaction_type_column(df: pd.DataFrame) -> pd.DataFrame:
     """Populate a column named transaction_type with values of type
     TransactionType to the given data frame and return the same DataFrame."""
-    df["transaction_type"] = df.apply(__create_transaction_type, axis=1)
+    df["transaction_type"] = df.apply(__create_transaction_type, axis="columns")
     return df
 
 

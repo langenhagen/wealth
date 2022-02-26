@@ -32,13 +32,13 @@ def __handle_transactions_between_n26_spaces(df: pd.DataFrame) -> pd.DataFrame:
     internal.loc[(internal["amount"] > 0), "account"] = internal["account"] + spaces[1]
     internal.loc[(internal["amount"] <= 0), "account"] = internal["account"] + spaces[0]
     internal["transaction_type"] = internal.apply(
-        __create_internal_transaction_type, axis=1
+        __create_internal_transaction_type, axis="columns"
     )
     inverted.loc[(inverted["amount"] > 0), "account"] = inverted["account"] + spaces[0]
     inverted.loc[(inverted["amount"] <= 0), "account"] = inverted["account"] + spaces[1]
     inverted["amount"] = -inverted["amount"]
     inverted["transaction_type"] = inverted.apply(
-        __create_internal_transaction_type, axis=1
+        __create_internal_transaction_type, axis="columns"
     )
     df = df.append(internal).append(inverted)
     return df
