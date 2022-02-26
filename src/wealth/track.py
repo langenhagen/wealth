@@ -12,8 +12,9 @@ from wealth.ui.format import money_fmt
 from wealth.ui.styles import (
     bar_color,
     conditional_negative_style,
+    conditional_positive_bg_style,
     css_str,
-    green_fg,
+    css_str_wrap,
     red_fg,
     shopping_bg,
     shopping_border,
@@ -38,8 +39,7 @@ def __style_track(
     styles[2] = {"background": type_color, "color": "#000000ee"}.copy()
     styles[3] = {"background": type_color, "color": "#000000ee"}.copy()
 
-    if cols["price"] > 0:
-        styles[4] = green_fg.copy()
+    styles[4] = conditional_positive_bg_style(cols["price"])
     if cols["monthly shopping balance"] < 0:
         styles[5] = red_fg.copy()
     if cols["continuous shopping balance"] < 0:
@@ -54,7 +54,7 @@ def __style_track(
         for i in range(9):
             styles[i].update(topline.copy())
 
-    return [css_str(**s) for s in styles]
+    return [css_str(s) for s in styles]
 
 
 def __import_track_df() -> pd.DataFrame:
@@ -136,7 +136,7 @@ def track() -> pd.DataFrame:
     monthly_end_balances_style = (
         monthly_end_balances.style.format(formatter=money_fmt())
         .bar(color=bar_color, align="mid")
-        .applymap(conditional_negative_style)
+        .applymap(css_str_wrap(conditional_negative_style))
     )
 
     first_indices_per_month = df.groupby(year_and_month).head(1).index
@@ -193,7 +193,7 @@ def track() -> pd.DataFrame:
     numbers_by_bucket["avg monthly end balance"] = monthly_end_balances.mean()
     numbers_by_bucket_style = numbers_by_bucket.style.format(
         formatter=money_fmt()
-    ).applymap(conditional_negative_style)
+    ).applymap(css_str_wrap(conditional_negative_style))
 
     numbers_per_type = (
         df.groupby(df["type"])["price"]

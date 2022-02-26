@@ -1,9 +1,13 @@
 """Common Dataframe styler definitions."""
+import functools
+from typing import Any, Callable
+
 from wealth.util.transaction_type import TransactionType
 
 bar_color = "#d65fdf30"
 shopping_color = "#ffff00dd"
 wealth_color = "#e060e0dd"
+black_color = "#000000"
 green_color = "#00ff00aa"
 red_color = "#ff0000aa"
 yellow_color = "#ffff0044"
@@ -29,20 +33,34 @@ shopping_bg = {"background": shopping_color, "color": "#000000ee"}
 wealth_bg = {"background": wealth_color, "color": "#000000ee"}
 
 
-def css_str(**kwargs):
-    """Convert the given kwargs to a css style string."""
-    s = ""
-    for k, v in kwargs.items():
-        s += f"{k}: {v};"
-    return s
+def css_str(css_dict: dict[str, str]) -> str:
+    """Convert the given css-dict to a css style string."""
+    return "".join([f"{k}: {v};" for k, v in css_dict.items()])
 
 
-def conditional_negative_style(value) -> str:
+def css_str_wrap(fun: Callable[[Any], dict[str, str]]) -> Callable[[Any], str]:
+    """Return the given function wrapped around css_str()
+    so that it returns a string."""
+
+    def __css_str(val: Any, fun: Callable[[Any], dict[str, str]]) -> str:
+        """Call the given function with the given value and convert its result
+        to a css style string."""
+        return css_str(fun(val))
+
+    return functools.partial(__css_str, fun=fun)
+
+
+def conditional_positive_bg_style(value) -> dict[str, str]:
     """Return a red font color if the given value is smaller than 0."""
-    return f"color: {red_color};" if value < 0 else ""
+    return {"background": green_color, "color": black_color} if value > 0 else {}
 
 
-def transaction_type_style(cols) -> list[str]:
+def conditional_negative_style(value) -> dict[str, str]:
+    """Return a red font color if the given value is smaller than 0."""
+    return {"color": red_color} if value < 0 else {}
+
+
+def transaction_type_column_styles(cols) -> list[str]:
     """Return a green back color if the given value is an income and return a
     yellow back color if the given value is an internal transactions."""
     type_ = cols["transaction_type"]
