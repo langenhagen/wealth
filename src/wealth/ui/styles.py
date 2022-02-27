@@ -19,6 +19,7 @@ interest_border = {"border-left": "1.3px solid #8888ff"}
 ratio_border = {"border-left": "1.3px solid #aaaa00"}
 soft_interest_border = {"border-left": "1.3px dotted #8888ff"}
 
+total_border = {"border-left": "1px solid #dddddd"}
 monthly_border = {"border-left": "1px solid #e9435e"}
 quarterly_border = {"border-left": "1px solid #d67d70"}
 yearly_border = {"border-left": "1px solid #ecc371"}

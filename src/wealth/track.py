@@ -15,6 +15,8 @@ from wealth.ui.styles import (
     conditional_positive_bg_style,
     css_str,
     css_str_wrap,
+    monthly_border,
+    total_border,
     red_fg,
     shopping_bg,
     shopping_border,
@@ -181,19 +183,30 @@ def track() -> pd.DataFrame:
     )
 
     numbers_by_bucket = (
-        df.groupby(df[df["type"] != "budget"]["bucket"])["price"]
+        df.groupby(df[df["type"] == "budget"]["bucket"])[["bucket", "price"]]
         .sum()
-        .mul(-1)
-        .to_frame()
-        .rename(columns={"price": "total cost"})
+        .rename(columns={"price": "total budget"})
+    )
+    numbers_by_bucket["total cost"] = (
+        df.groupby(df[df["type"] != "budget"]["bucket"])["price"].sum().mul(-1)
+    )
+    numbers_by_bucket["total balance"] = (
+        numbers_by_bucket["total budget"] - numbers_by_bucket["total cost"]
+    )
+    numbers_by_bucket["avg monthly budget"] = (
+        numbers_by_bucket["total budget"] / n_days * 30
     )
     numbers_by_bucket["avg monthly cost"] = (
         numbers_by_bucket["total cost"] / n_days * 30
     )
-    numbers_by_bucket["avg monthly end balance"] = monthly_end_balances.mean()
-    numbers_by_bucket_style = numbers_by_bucket.style.format(
-        formatter=money_fmt()
-    ).applymap(css_str_wrap(conditional_negative_style))
+    numbers_by_bucket["avg monthly end balance"] = numbers_by_bucket["avg monthly budget"] - numbers_by_bucket["avg monthly cost"]
+
+    numbers_by_bucket_style = (
+        numbers_by_bucket.style.format(formatter=money_fmt())
+        .set_properties(subset="total budget", **total_border)
+        .set_properties(subset="avg monthly budget", **monthly_border)
+        .applymap(css_str_wrap(conditional_negative_style))
+    )
 
     numbers_per_type = (
         df.groupby(df["type"])["price"]
@@ -203,9 +216,7 @@ def track() -> pd.DataFrame:
         .rename(columns={"price": "total cost"})
         .sort_values(by=["total cost"], ascending=False)
     )
-    numbers_per_type["avg monthly cost"] = (
-        numbers_per_type["total cost"] / n_days * 30
-    )
+    numbers_per_type["avg monthly cost"] = numbers_per_type["total cost"] / n_days * 30
     numbers_per_type_style = numbers_per_type.style.format(formatter=money_fmt()).bar(
         subset="total cost",
         color=bar_color,
