@@ -185,10 +185,10 @@ def track() -> pd.DataFrame:
         .sum()
         .mul(-1)
         .to_frame()
-        .rename(columns={"price": "total amount"})
+        .rename(columns={"price": "total cost"})
     )
-    numbers_by_bucket["avg monthly amount"] = (
-        numbers_by_bucket["total amount"] / n_days * 30
+    numbers_by_bucket["avg monthly cost"] = (
+        numbers_by_bucket["total cost"] / n_days * 30
     )
     numbers_by_bucket["avg monthly end balance"] = monthly_end_balances.mean()
     numbers_by_bucket_style = numbers_by_bucket.style.format(
@@ -200,14 +200,14 @@ def track() -> pd.DataFrame:
         .sum()
         .mul(-1)
         .to_frame()
-        .rename(columns={"price": "total amount"})
-        .sort_values(by=["total amount"], ascending=False)
+        .rename(columns={"price": "total cost"})
+        .sort_values(by=["total cost"], ascending=False)
     )
-    numbers_per_type["avg monthly amount"] = (
-        numbers_per_type["total amount"] / n_days * 30
+    numbers_per_type["avg monthly cost"] = (
+        numbers_per_type["total cost"] / n_days * 30
     )
     numbers_per_type_style = numbers_per_type.style.format(formatter=money_fmt()).bar(
-        subset="total amount",
+        subset="total cost",
         color=bar_color,
     )
 
