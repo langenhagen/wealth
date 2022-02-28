@@ -16,10 +16,10 @@ from wealth.ui.styles import (
     css_str,
     css_str_wrap,
     monthly_border,
-    total_border,
     red_fg,
     shopping_bg,
     shopping_border,
+    total_border,
     wealth_bg,
     wealth_border,
 )
@@ -199,7 +199,9 @@ def track() -> pd.DataFrame:
     numbers_by_bucket["avg monthly cost"] = (
         numbers_by_bucket["total cost"] / n_days * 30
     )
-    numbers_by_bucket["avg monthly end balance"] = numbers_by_bucket["avg monthly budget"] - numbers_by_bucket["avg monthly cost"]
+    numbers_by_bucket["avg monthly end balance"] = (
+        numbers_by_bucket["avg monthly budget"] - numbers_by_bucket["avg monthly cost"]
+    )
 
     numbers_by_bucket_style = (
         numbers_by_bucket.style.format(formatter=money_fmt())
