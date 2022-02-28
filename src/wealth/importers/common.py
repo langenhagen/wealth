@@ -31,7 +31,7 @@ def add_all_data_column(df: pd.DataFrame, delimiter: str = "; ") -> pd.DataFrame
 
 
 def to_lower(df: pd.DataFrame) -> pd.DataFrame:
-    """Make all cells in a given DataFrame"s column of type "object" lowercase
+    """Make all cells in a given DataFrame's columns of type "object" lowercase
     and return the DataFrame."""
     for col in df:
         if df[col].dtype.char == "O":
