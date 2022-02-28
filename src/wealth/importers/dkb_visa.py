@@ -23,8 +23,8 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             thousands=".",
         )
         .assign(account=account_name, account_type="dkb-visa")
-        .pipe(add_all_data_column)
         .rename(columns=columns)
+        .pipe(add_all_data_column)
         .dropna(subset=["date"])
         .pipe(to_lower)[[*columns.values(), "account", "account_type", "all_data"]]
     )

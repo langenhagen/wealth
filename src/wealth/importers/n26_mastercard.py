@@ -47,6 +47,13 @@ def __handle_transactions_between_n26_spaces(df: pd.DataFrame) -> pd.DataFrame:
 def read_csv(path: str, account_name: str) -> pd.DataFrame:
     """Import csv data from N26 giro/mastercard accounts and consider n26's
     sub-accounts."""
+    columns = {
+        "Amount (EUR)": "amount",
+        "Date": "date",
+        "Payee": "correspondent",
+        "Payment reference": "description",
+        "Account number": "iban",
+    }
     df = (
         pd.read_csv(
             path,
@@ -58,16 +65,8 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             thousands=None,
         )
         .assign(account=account_name, account_type="n26", transaction_type=None)
+        .rename(columns=columns)
         .pipe(add_all_data_column)
-        .rename(
-            columns={
-                "Amount (EUR)": "amount",
-                "Date": "date",
-                "Payee": "correspondent",
-                "Payment reference": "description",
-                "Account number": "iban",
-            }
-        )
         .dropna(subset=["date"])
         .pipe(to_lower)
         .pipe(__handle_transactions_between_n26_spaces)[transfer_columns]
