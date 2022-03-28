@@ -137,7 +137,7 @@ def track() -> pd.DataFrame:
     monthly_end_balances.index = monthly_end_balances.index.to_period("M")
     monthly_end_balances_style = (
         monthly_end_balances.style.format(formatter=money_fmt())
-        .bar(color=bar_color, align="mid")
+        .bar(color=bar_color, align="left", vmin=0)
         .applymap(css_str_wrap(conditional_negative_style))
     )
 
@@ -220,8 +220,10 @@ def track() -> pd.DataFrame:
     )
     numbers_per_type["avg monthly cost"] = numbers_per_type["total cost"] / n_days * 30
     numbers_per_type_style = numbers_per_type.style.format(formatter=money_fmt()).bar(
-        subset="total cost",
+        align="left",
         color=bar_color,
+        subset="total cost",
+        vmin=0,
     )
 
     out = Output()
