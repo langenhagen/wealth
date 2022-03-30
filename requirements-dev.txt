@@ -1,5 +1,6 @@
 black[jupyter]
 bpython
+darker
 flake8
 ipykernel
 isort
