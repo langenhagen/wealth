@@ -141,6 +141,18 @@ def track() -> pd.DataFrame:
         .applymap(css_str_wrap(conditional_negative_style))
     )
 
+    monthly_costs = df[df["type"] != "budget"][["date", "bucket"]]
+    monthly_costs["shopping"] = -df[df["bucket"] == "shopping"]["price"]
+    monthly_costs["wealth"] = -df[df["bucket"] == "wealth"]["price"]
+    monthly_costs.fillna(0, inplace=True)
+    monthly_costs = monthly_costs.groupby(year_and_month).sum()
+
+    monthly_costs_style = (
+        monthly_costs.style.format(formatter=money_fmt())
+        .bar(color=bar_color, align="left", vmin=0)
+        .applymap(css_str_wrap(conditional_negative_style))
+    )
+
     first_indices_per_month = df.groupby(year_and_month).head(1).index
 
     types = df["type"].unique()
@@ -235,6 +247,8 @@ def track() -> pd.DataFrame:
         display(numbers_per_type_style)
         display("<br>End balances per month:")
         display(monthly_end_balances_style)
+        display("<br>Costs per month:")
+        display(monthly_costs_style)
 
     display(out)
 
