@@ -1,4 +1,6 @@
 """Contains logic to import DKB Visa csv files format."""
+import datetime as dt
+
 import pandas as pd
 
 from wealth.importers.common import add_all_data_column, to_lower
@@ -14,7 +16,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
     df = (
         pd.read_csv(
             path,
-            date_parser=lambda x: pd.datetime.strptime(x, "%d%m%Y"),
+            date_parser=lambda x: dt.datetime.strptime(x, "%d%m%Y"),
             decimal=",",
             engine="python",
             parse_dates=["Belegdatum"],
