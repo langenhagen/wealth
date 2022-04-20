@@ -104,6 +104,30 @@ def __assert_df_integrity(df: pd.DataFrame):
         )
 
 
+def __make_average_month(df: pd.DataFrame) -> pd.DataFrame:
+    """Create an average track month dataframe."""
+
+    dfs = []
+    for col in ("monthly shopping balance", "monthly wealth balance"):
+        c = df[["date", col]].copy()
+        c.dropna(inplace=True)
+
+        c["date"] = pd.to_datetime(c["date"])
+        c = c.reset_index(drop=True).set_index("date")
+        c = c.groupby(c.index).last()
+
+        idx = pd.date_range(c.index.min(), c.index.max())
+        c = c.reindex(idx)
+
+        c.fillna(method="pad", inplace=True)
+        c = c.groupby(c.index.day).mean()
+
+        dfs.append(c)
+
+    result = pd.concat(dfs, axis="columns")
+    return result
+
+
 def track() -> pd.DataFrame:
     """Import the file `track.csv` and return it as a DataFrame."""
     df = __import_track_df()
@@ -194,6 +218,21 @@ def track() -> pd.DataFrame:
         )
     )
 
+    average_month = __make_average_month(df)
+    average_month_style = (
+        average_month.style.format(formatter=money_fmt())
+        .set_properties(subset="monthly shopping balance", **shopping_border)
+        .set_properties(subset="monthly wealth balance", **wealth_border)
+        .bar(
+            subset=[
+                "monthly shopping balance",
+                "monthly wealth balance",
+            ],
+            color=bar_color,
+            align="zero",
+        )
+    )
+
     numbers_by_bucket = (
         df.groupby(df[df["type"] == "budget"]["bucket"])[["bucket", "price"]]
         .sum()
@@ -241,6 +280,8 @@ def track() -> pd.DataFrame:
     out = Output()
     with out:
         display(style)
+        display("<br>Average month:")
+        display(average_month_style)
         display("<br>Numbers per bucket:")
         display(numbers_by_bucket_style)
         display("<br>Numbers per type:")
