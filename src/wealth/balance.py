@@ -38,11 +38,12 @@ def __display_balance(
     accounts = [c.description for c in checkboxes if c.value and c.description != "All"]
     series = df[df["account"].isin(accounts)]["amount"].resample("D").sum().cumsum()
     date = dt.datetime(drp_date.value.year, drp_date.value.month, drp_date.value.day)
+    index = series.index.get_indexer([date.strftime("%Y-%m-%d")], method="pad")[0]
 
     out.clear_output()
 
     try:
-        value = series.iat[series.index.get_loc(date, method="pad")]
+        value = series.iat[index]
     except KeyError:
         return
 

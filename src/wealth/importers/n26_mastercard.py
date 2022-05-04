@@ -40,7 +40,7 @@ def __handle_transactions_between_n26_spaces(df: pd.DataFrame) -> pd.DataFrame:
     inverted["transaction_type"] = inverted.apply(
         __create_internal_transaction_type, axis="columns"
     )
-    df = df.append(internal).append(inverted)
+    df = pd.concat([df, internal, inverted])
     return df
 
 

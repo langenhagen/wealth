@@ -27,8 +27,7 @@ def build_account_history(
         "note": None,
     }
     df = (
-        pd.DataFrame(data=interests_data)
-        .append(imported)
+        pd.concat([pd.DataFrame(data=interests_data), imported])
         .sort_values(by=["date"], kind="stable")
         .reset_index(drop=True)
     )
