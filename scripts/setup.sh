@@ -29,7 +29,7 @@ check_semver_le() {
 }
 
 min_python_version='3.9'
-python_version="$(python -c "from sys import version_info as i; print(f'{i.major}.{i.minor}')")"
+python_version="$(python -c 'from sys import version_info as i; print(f"{i.major}.{i.minor}")')"
 check_semver_le "$min_python_version" "$python_version" \
     || { >&2 echo "Error: Python version should be at least ${min_python_version}."; exit 1; }
 
