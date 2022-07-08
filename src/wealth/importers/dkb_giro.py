@@ -3,7 +3,7 @@ import datetime as dt
 
 import pandas as pd
 
-from wealth.importers.common import add_all_data_column, to_lower
+from wealth.importers.common import add_all_data_column, to_lower, transfer_columns
 
 
 def read_csv(path: str, account_name: str) -> pd.DataFrame:
@@ -26,10 +26,10 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             skiprows=5,
             thousands=".",
         )
-        .assign(account=account_name, account_type="dkb-giro")
+        .assign(account=account_name, account_type="dkb-giro", transaction_type=None)
         .rename(columns=columns)
         .pipe(add_all_data_column)
         .dropna(subset=["date"])
-        .pipe(to_lower)[[*columns.values(), "account", "account_type", "all_data"]]
+        .pipe(to_lower)[transfer_columns]
     )
     return df
