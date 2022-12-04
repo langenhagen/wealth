@@ -136,6 +136,7 @@ def track() -> pd.DataFrame:
     n_days = (df["date"].iloc[-1] - df["date"].iloc[0]).days
 
     year_and_month = df["date"].astype(str).apply(lambda x: x[:7])
+
     df["monthly shopping balance"] = (
         df[df["bucket"] == "shopping"].groupby(year_and_month)["price"].cumsum()
     )
@@ -173,6 +174,14 @@ def track() -> pd.DataFrame:
 
     monthly_costs_style = (
         monthly_costs.style.format(formatter=money_fmt())
+        .bar(color=bar_color, align="left", vmin=0)
+        .applymap(css_str_wrap(conditional_negative_style))
+    )
+
+    year = monthly_costs.index.to_series().astype(str).apply(lambda x: x[:4])
+    yearly_costs = monthly_costs.groupby(year).sum()
+    yearly_costs_style = (
+        yearly_costs.style.format(formatter=money_fmt())
         .bar(color=bar_color, align="left", vmin=0)
         .applymap(css_str_wrap(conditional_negative_style))
     )
@@ -290,6 +299,8 @@ def track() -> pd.DataFrame:
         display(monthly_end_balances_style)
         display("<br>Costs per month:")
         display(monthly_costs_style)
+        display("<br>Costs per year:")
+        display(yearly_costs_style)
 
     display(out)
 
