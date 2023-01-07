@@ -64,11 +64,13 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             sep=",",
             thousands=None,
         )
-        .assign(account=account_name, account_type="n26", transaction_type=None)
+        .assign(account=account_name, account_type="n26")
         .rename(columns=columns)
         .pipe(add_all_data_column)
         .dropna(subset=["date"])
         .pipe(to_lower)
-        .pipe(__handle_transactions_between_n26_spaces)[transfer_columns]
+        .pipe(__handle_transactions_between_n26_spaces)[
+            transfer_columns + ["transaction_type"]
+        ]
     )
     return df

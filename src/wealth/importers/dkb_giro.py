@@ -26,7 +26,7 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             skiprows=5,
             thousands=".",
         )
-        .assign(account=account_name, account_type="dkb-giro", transaction_type=None)
+        .assign(account=account_name, account_type="dkb-giro")
         .rename(columns=columns)
         .pipe(add_all_data_column)
         .dropna(subset=["date"])

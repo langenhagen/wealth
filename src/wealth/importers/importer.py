@@ -19,7 +19,7 @@ from wealth.util.transaction_type import TransactionType
 
 def __create_transaction_type(row: pd.Series) -> TransactionType:
     """Create a TransactionType object from a dataframe row."""
-    if row["transaction_type"]:
+    if isinstance(row["transaction_type"], TransactionType):
         return row["transaction_type"]
 
     accounts = wealth.config.get("accounts", {})
@@ -33,6 +33,19 @@ def __add_transaction_type_column(df: pd.DataFrame) -> pd.DataFrame:
     """Populate a column named transaction_type with values of type
     TransactionType to the given data frame and return the same DataFrame."""
     df["transaction_type"] = df.apply(__create_transaction_type, axis="columns")
+    return df
+
+
+def _append_all_data_column_with_transaction_type(
+    df: pd.DataFrame, delimiter: str = "; "
+) -> pd.DataFrame:
+    """Append the transaction type value to the all_data."""
+    df["all_data"] = (
+        df["all_data"]
+        + delimiter
+        + " transaction_type: "
+        + df["transaction_type"].astype(str)
+    )
     return df
 
 
@@ -102,7 +115,7 @@ def __read_account_csvs() -> pd.DataFrame:
         .reset_index()
         .pipe(__delay_incomes)
         .sort_values(by="date")
-        .reset_index()[transfer_columns]
+        .reset_index()[transfer_columns + ["transaction_type"]]
     )
     return df
 
@@ -114,6 +127,7 @@ def init() -> pd.DataFrame:
     df = (
         __read_account_csvs()
         .pipe(__add_transaction_type_column)
+        .pipe(_append_all_data_column_with_transaction_type)
         .replace(np.nan, "", regex=True)[
             [
                 "date",

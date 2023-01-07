@@ -8,7 +8,6 @@ transfer_columns = [
     "amount",
     "description",
     "account_type",
-    "transaction_type",
     "all_data",
     "correspondent",
     "iban",
