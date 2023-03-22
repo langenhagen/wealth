@@ -6,6 +6,7 @@ from wealth.config import config
 weekday_date = "%a, %Y-%m-%d"
 
 date_fmt = "{:%Y-%m-%d}".format
+float_fmt = "{:,.1f}".format
 percent_fmt = "{:,.2f}%".format
 year_fmt = "{:%Y}".format
 

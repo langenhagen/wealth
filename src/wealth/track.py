@@ -8,7 +8,7 @@ from ipywidgets import Output
 
 from wealth.importers.common import to_lower
 from wealth.ui.display import display
-from wealth.ui.format import money_fmt
+from wealth.ui.format import float_fmt, money_fmt
 from wealth.ui.styles import (
     bar_color,
     conditional_negative_style,
@@ -271,18 +271,40 @@ def track() -> pd.DataFrame:
     )
 
     numbers_per_type = (
-        df.groupby(df["type"])["price"]
-        .sum()
-        .mul(-1)
-        .to_frame()
-        .rename(columns={"price": "total cost"})
-        .sort_values(by=["total cost"], ascending=False)
+        df.groupby(df["type"])
+        .price.agg(["sum", "count"])
+        .mul({"sum": -1, "count": 1})
     )
-    numbers_per_type["avg monthly cost"] = numbers_per_type["total cost"] / n_days * 30
-    numbers_per_type_style = numbers_per_type.style.format(formatter=money_fmt()).bar(
+    numbers_per_type["avg monthly cost"] = numbers_per_type["sum"] / n_days * 30
+    numbers_per_type["avg monthly entries"] = numbers_per_type["count"] / n_days * 30
+    numbers_per_type["avg entry cost"] = (
+        numbers_per_type["sum"] / numbers_per_type["count"]
+    )
+
+    numbers_per_type = numbers_per_type.sort_values(by=["sum"], ascending=False).rename(
+        columns={
+            "sum": "total cost",
+            "count": "# entries",
+        }
+    )[[
+        "total cost",
+        "avg monthly cost",
+        "# entries",
+        "avg monthly entries",
+        "avg entry cost",
+    ]]
+
+    numbers_per_type_style = numbers_per_type.style.format(
+        formatter={
+            "total cost": money_fmt(),
+            "avg monthly cost": money_fmt(),
+            "avg monthly entries": float_fmt,
+            "avg entry cost": money_fmt(),
+        }
+    ).bar(
         align="left",
         color=bar_color,
-        subset="total cost",
+        subset=["total cost", "# entries", "avg entry cost"],
         vmin=0,
     )
 
