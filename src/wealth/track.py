@@ -4,6 +4,7 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
 import pandas.api.types as ptypes
+from dateutil.relativedelta import relativedelta
 from ipywidgets import Output
 
 from wealth.importers.common import to_lower
@@ -128,6 +129,46 @@ def __make_average_month(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
+def __style(df: pd.DataFrame, first_indices_per_month: pd.Index):
+    """Get track-suitable Styler for the given DataFrame."""
+    types = df["type"].unique()
+    types2colors = {}
+    cmap = plt.get_cmap("tab20", len(types))
+    for type_, i in zip(types, range(cmap.N)):
+        hex_ = mpl.colors.rgb2hex(cmap(i))
+        types2colors[type_] = hex_
+
+    return (
+        df.style.format(
+            formatter={
+                "price": money_fmt(),
+                "monthly shopping balance": money_fmt(),
+                "continuous shopping balance": money_fmt(),
+                "monthly wealth balance": money_fmt(),
+                "continuous wealth balance": money_fmt(),
+            },
+            na_rep="",
+        )
+        .set_properties(subset="monthly shopping balance", **shopping_border)
+        .set_properties(subset="monthly wealth balance", **wealth_border)
+        .bar(
+            subset=[
+                "monthly shopping balance",
+                "continuous shopping balance",
+                "monthly wealth balance",
+                "continuous wealth balance",
+            ],
+            color=bar_color,
+            align="zero",
+        )
+        .apply(
+            __style_track,
+            special_indices=first_indices_per_month,
+            types2colors=types2colors,
+            axis="columns",
+        )
+    )
+
 def track() -> pd.DataFrame:
     """Import the file `track.csv` and return it as a DataFrame."""
     df = __import_track_df()
@@ -188,44 +229,13 @@ def track() -> pd.DataFrame:
 
     first_indices_per_month = df.groupby(year_and_month).head(1).index
 
-    types = df["type"].unique()
-    types2colors = {}
-    cmap = plt.get_cmap("tab20", len(types))
-    for type_, i in zip(types, range(cmap.N)):
-        hex_ = mpl.colors.rgb2hex(cmap(i))
-        types2colors[type_] = hex_
-
     df["date"] = df["date"].apply(lambda x: x.date())
-    style = (
-        df.style.format(
-            formatter={
-                "price": money_fmt(),
-                "monthly shopping balance": money_fmt(),
-                "continuous shopping balance": money_fmt(),
-                "monthly wealth balance": money_fmt(),
-                "continuous wealth balance": money_fmt(),
-            },
-            na_rep="",
-        )
-        .set_properties(subset="monthly shopping balance", **shopping_border)
-        .set_properties(subset="monthly wealth balance", **wealth_border)
-        .bar(
-            subset=[
-                "monthly shopping balance",
-                "continuous shopping balance",
-                "monthly wealth balance",
-                "continuous wealth balance",
-            ],
-            color=bar_color,
-            align="zero",
-        )
-        .apply(
-            __style_track,
-            special_indices=first_indices_per_month,
-            types2colors=types2colors,
-            axis="columns",
-        )
-    )
+    all_months_style = __style(df, first_indices_per_month)
+
+    max_date = df["date"].max()
+    current_month_df = df[df["date"] > max_date - relativedelta(days=max_date.day)]
+
+    current_month_style = __style(current_month_df, first_indices_per_month)
 
     average_month = __make_average_month(df)
     average_month_style = (
@@ -310,7 +320,8 @@ def track() -> pd.DataFrame:
 
     out = Output()
     with out:
-        display(style)
+        display("<br>Current month:")
+        display(current_month_style)
         display("<br>Average month:")
         display(average_month_style)
         display("<br>Numbers per bucket:")
@@ -323,6 +334,8 @@ def track() -> pd.DataFrame:
         display(monthly_costs_style)
         display("<br>Costs per year:")
         display(yearly_costs_style)
+        display("<br>All entries:")
+        display(all_months_style)
 
     display(out)
 
