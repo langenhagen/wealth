@@ -1,10 +1,10 @@
 """The setup.py for the Python code of the project `Wealth`."""
-import pathlib
+from pathlib import Path
 
 import setuptools
 
-readme_path = pathlib.Path.cwd().parent.joinpath("README.md")
-with open(readme_path, encoding="UTF-8") as file:
+readme_path = Path.cwd().parent.joinpath("README.md")
+with readme_path.open(encoding="UTF-8") as file:
     long_description = file.read()
 
 setuptools.setup(
