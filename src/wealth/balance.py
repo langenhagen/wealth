@@ -32,7 +32,7 @@ def __display_balance(
     drp_date: Dropdown,
     out: Output,
     df: pd.DataFrame,
-):
+) -> None:
     """Plot the balance, i.e. the cumulative sum, of the given dataframe's
     column `amount` at the date of the given dropdown's value."""
     accounts = [c.description for c in checkboxes if c.value and c.description != "All"]
@@ -51,7 +51,7 @@ def __display_balance(
         display(f'<br><font size="6">{Money(value)}</font>')
 
 
-def balance(df: pd.DataFrame):
+def balance(df: pd.DataFrame) -> None:
     """Show account-related cumulative sum of the dataframe's column `amount` at
     a specified date."""
     df["date"] = pd.to_datetime(df["date"])
@@ -98,7 +98,7 @@ def __create_local_minimum_maximum_df(df: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-def __plot_df(df: pd.DataFrame, freq: str, label: str):
+def __plot_df(df: pd.DataFrame, freq: str, label: str) -> None:
     """Plot given dataframe with the given frequency and label."""
     if freq == "<atomic>":
         plt.step(df.index, df, label=label, where="post")
@@ -117,7 +117,7 @@ def __plot_cumsum(
     fig: mpl.figure.Figure,
     df: pd.DataFrame,
     drp_freq: Dropdown,
-):
+) -> None:
     """Plot cumsum graphs with the given params."""
     sum_accs = [chk.description for chk in sum_accs_checkboxes if chk.value]
     single_accounts = [
@@ -145,7 +145,7 @@ def __plot_cumsum(
             plt.legend(loc="best", borderaxespad=0.1)
 
 
-def graph(df: pd.DataFrame):
+def graph(df: pd.DataFrame) -> None:
     """Show an account-related cumulative sum graph of the dataframe's column
     `amount`."""
     drp_freq = Dropdown(
@@ -219,7 +219,7 @@ def __display_mean_balance_dataframes(
     checkboxes: list[Checkbox],
     out: Output,
     df: pd.DataFrame,
-):
+) -> None:
     """List the balances per timeframes with the given frequency."""
     out.clear_output()
     if df.empty:
@@ -249,7 +249,7 @@ def __display_mean_balance_dataframes(
         display(style)
 
 
-def means(df: pd.DataFrame):
+def means(df: pd.DataFrame) -> None:
     """Display dataframes containing balances for a given frequency."""
     df["date"] = pd.to_datetime(df["date"])
     df = df.reset_index(drop=True).set_index("date")

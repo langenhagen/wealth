@@ -23,7 +23,7 @@ from .logic import savings
 class UI:
     """User interface for the savings feature."""
 
-    def __update_output(self, df: pd.DataFrame, summary: pd.DataFrame):
+    def __update_output(self, df: pd.DataFrame, summary: pd.DataFrame) -> None:
         """Render the output."""
         with self.__out_fig:
             fig = plt.figure(figsize=(10, 7), num="Account Development")
@@ -39,7 +39,7 @@ class UI:
         with self.__out_df:
             UI.__display_account_history_df(df)
 
-    def __on_widgets_change(self, *_):
+    def __on_widgets_change(self, *_) -> None:
         """On observer change, recalculate the the results, update the
         output."""
         df, summary = savings(
@@ -90,7 +90,7 @@ class UI:
         self.__on_widgets_change()
 
     @staticmethod
-    def __plot_account_history(df: pd.DataFrame):
+    def __plot_account_history(df: pd.DataFrame) -> None:
         """Plot given account history dataframe to display its development."""
         cols2colors = {
             "balance": "#550000",
@@ -109,7 +109,7 @@ class UI:
         plt.legend(loc="best", borderaxespad=0.1)
 
     @staticmethod
-    def __display_summary(df: pd.DataFrame):
+    def __display_summary(df: pd.DataFrame) -> None:
         """Display the summary dataframe."""
         style = (
             df.style.format(
@@ -140,7 +140,7 @@ class UI:
         display(style)
 
     @staticmethod
-    def __display_account_history_df(df: pd.DataFrame):
+    def __display_account_history_df(df: pd.DataFrame) -> None:
         """Display the account history DataFrame."""
         style = (
             df.style.bar(color=bar_color)

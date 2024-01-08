@@ -11,7 +11,7 @@ from wealth.ui.widgets import align_checkboxes, create_account_checkboxes
 class UI:
     """User interface for the transactions feature."""
 
-    def __update_output(self, df: pd.DataFrame):
+    def __update_output(self, df: pd.DataFrame) -> None:
         """Render the DataFrame."""
         style = df.style.format(
             formatter={
@@ -24,7 +24,7 @@ class UI:
         with self.__out:
             display(style)
 
-    def __on_widgets_change(self, *_):
+    def __on_widgets_change(self, *_) -> None:
         """On observer change, recalculate the the results, update the output
         and return the results."""
         accounts = [

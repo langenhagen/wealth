@@ -7,7 +7,7 @@ import pandas.api.types as ptypes
 from .type import TransactionType
 
 
-def __assert_df_integrity(df: pd.DataFrame):
+def __assert_df_integrity(df: pd.DataFrame) -> None:
     """Assert the given savings-import-DataFrame's integrity."""
     if not ptypes.is_datetime64_any_dtype(df["date"]):
         raise AssertionError(

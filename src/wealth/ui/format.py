@@ -1,5 +1,5 @@
 """Contains string-formatting functions and utilities."""
-from typing import Optional
+from typing import Callable, Optional
 
 from wealth.config import config
 
@@ -11,7 +11,7 @@ percent_fmt = "{:,.2f}%".format
 year_fmt = "{:%Y}".format
 
 
-def money_fmt(currency: Optional[str] = None):
+def money_fmt(currency: Optional[str] = None) -> Callable:
     """Return a currency string format function with given currency symbol.
     If no currency symbol is given, use the symbol from the config."""
     currency = config["currency"] if currency is None else currency

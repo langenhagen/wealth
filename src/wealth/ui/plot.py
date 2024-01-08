@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 def setup_plot_and_axes(
     fig: mpl.figure.Figure, title: str, xlabel="Time", ylabel="Euros"
-):
+) -> None:
     """Set up the plot, axes and title for the given figure for a plot."""
     plt.title(title)
     plt.grid(color="k", linestyle="-", linewidth=0.1)
@@ -23,7 +23,7 @@ def setup_plot_and_axes(
 
 def setup_yearly_plot_and_axes(
     fig: mpl.figure.Figure, title: str, xlabel="Time", ylabel="Euros"
-):
+) -> None:
     """Set up the plot, axes and title for the given figure for a plot."""
     plt.title(title)
     plt.grid(color="k", linestyle="-", linewidth=0.1)

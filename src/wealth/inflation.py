@@ -31,7 +31,7 @@ def __calc_inflation_rate_from_widgets(
     txt_start_year: IntText,
     txt_end_cost: FloatText,
     txt_end_year: IntText,
-):
+) -> None:
     """Calculate the according linear inflation rate from the given widgets'
     values."""
     rate: Union[float, int, str]
@@ -56,7 +56,7 @@ def inflation(
     start_year: int = dt.datetime.now().year,
     end_cost: float = 200,
     end_year: int = config["retirement"]["retirement_year"],
-):
+) -> None:
     """Interactively calculate inflation_rates."""
     lbl_start = Label(value="Start cost and year: ")
     txt_start_cost = FloatText(value=start_cost, layout=layouts.text_slim)
@@ -127,7 +127,7 @@ def years_to_remaining_factors(
     return years_to_remaining_rates
 
 
-def __display_future_worth_df(df: pd.DataFrame):
+def __display_future_worth_df(df: pd.DataFrame) -> None:
     """Display the future worth dataframe."""
     style = df.style.format(
         formatter={
@@ -149,7 +149,7 @@ def __calc_inflated_cost_from_widgets(
     txt_start_year: IntText,
     txt_end_year: IntText,
     txt_inflation: FloatText,
-):
+) -> None:
     """Calculate the according inflated cost from the given widgets' values and
     display it."""
     inflated_cost = calc_inflated_value(
@@ -202,8 +202,8 @@ def future_worth(
     start_year: int = dt.datetime.now().year,
     end_year: int = config["retirement"]["retirement_year"],
     inflation_rate: float = config["inflation_rate"],
-):
-    """Interactively estimate future costs subject to inflation."""
+) -> None:
+    """InterCallableactively estimate future costs subject to inflation."""
     lbl_start_cost = Label(value="Start cost: ")
     txt_start_cost = FloatText(value=start_cost, layout=layouts.text_slim)
     lbl_start_year = Label(value="Start year: ")

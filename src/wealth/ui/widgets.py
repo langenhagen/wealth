@@ -44,7 +44,7 @@ def create_account_checkboxes(
     return out_checkboxes
 
 
-def align_checkboxes(checkboxes: list[Checkbox]):
+def align_checkboxes(checkboxes: list[Checkbox]) -> HBox:
     """Return a HBox containing all given checkboxes."""
     return HBox(
         [Label("Accounts: ", layout=Layout(width="80px")), *checkboxes],

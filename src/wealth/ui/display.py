@@ -8,7 +8,7 @@ from IPython.display import display_html
 from pandas.io.formats.style import Styler
 
 
-def display(o: Any):
+def display(o: Any) -> None:
     """Display an object.
     Print strings as Markdown.
     Print dataframes and styles with `max_rows` set to None aka infinity,
@@ -27,7 +27,7 @@ def display(o: Any):
             ipython_display(o)
 
 
-def display_side_by_side(objs: Iterable[Union[pd.DataFrame, Styler]]):
+def display_side_by_side(objs: Iterable[Union[pd.DataFrame, Styler]]) -> None:
     """Display the given dataframes/styles and the given titles side by side in
     an inline manner."""
     html_str = ""

@@ -9,6 +9,7 @@ import pandas as pd
 import pandas.api.types as ptypes
 from dateutil.relativedelta import relativedelta
 from ipywidgets import Output
+from pandas.io.formats.style import Styler
 
 from wealth.importers.common import to_lower
 from wealth.ui.display import display
@@ -84,7 +85,7 @@ def __import_track_df() -> pd.DataFrame:
     ]
 
 
-def __assert_df_integrity(df: pd.DataFrame):
+def __assert_df_integrity(df: pd.DataFrame) -> None:
     """Assert the given track-DataFrame's integrity."""
     if not ptypes.is_datetime64_any_dtype(df["date"]):
         raise AssertionError(
@@ -132,7 +133,7 @@ def __make_average_month(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def __style(df: pd.DataFrame, first_indices_per_month: pd.Index):
+def __style(df: pd.DataFrame, first_indices_per_month: pd.Index) -> Styler:
     """Get track-suitable Styler for the given DataFrame."""
     types = df["type"].unique()
     types2colors = {}

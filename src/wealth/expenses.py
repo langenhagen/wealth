@@ -26,7 +26,7 @@ def __display_expense_dataframes(
     chk_show_internal: Checkbox,
     out: Output,
     df: pd.DataFrame,
-):
+) -> None:
     """List the biggest expenses per timeframes with the given frequency."""
     off = pd.tseries.frequencies.to_offset(drp_freq.value)
     if chk_show_internal.value is False and not df.empty:
@@ -82,7 +82,7 @@ def __display_expense_dataframes(
             display(style)
 
 
-def biggest_expenses(df: pd.DataFrame):
+def biggest_expenses(df: pd.DataFrame) -> None:
     """Display dataframes containing the biggest expenses."""
     df.set_index("date", drop=False, inplace=True)
     out = Output()

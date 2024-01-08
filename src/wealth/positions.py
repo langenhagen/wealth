@@ -20,7 +20,7 @@ def __show_sums(
     df: pd.DataFrame,
     sums_df: pd.DataFrame,
     txt_multiplier: BoundedIntText,
-):
+) -> None:
     """Display the sums of all the Position groups."""
     df = df.copy()
     df["cost"] *= txt_multiplier.value
@@ -82,7 +82,7 @@ def __show_sums(
         display(expense_sums_style)
 
 
-def __plot_piechart_of_expense_bucket_sums(bucket_sums: dict[str, float]):
+def __plot_piechart_of_expense_bucket_sums(bucket_sums: dict[str, float]) -> None:
     """Plot a pie chart that shows the relations of expense-related buckets."""
     bucket_sums = dict(filter(lambda item: item[1] < 0, bucket_sums.items()))
     bucket_sum_items = sorted(bucket_sums.items(), key=operator.itemgetter(1))
@@ -95,7 +95,7 @@ def __plot_piechart_of_expense_bucket_sums(bucket_sums: dict[str, float]):
     plt.show()
 
 
-def __plot_piechart_of_expense_positons(posts: dict[str, float]):
+def __plot_piechart_of_expense_positons(posts: dict[str, float]) -> None:
     """Plot a pie chart that shows the relations of expense-positions."""
     posts = dict(filter(lambda item: item[1] < 0, posts.items()))
     post_items = sorted(posts.items(), key=operator.itemgetter(1))
@@ -108,7 +108,7 @@ def __plot_piechart_of_expense_positons(posts: dict[str, float]):
     plt.show()
 
 
-def positions(buckets: Positions):
+def positions(buckets: Positions) -> None:
     """Show the sums of positions and relations of positions."""
     bucket_sums = {}
     posts = {}

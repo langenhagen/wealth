@@ -11,7 +11,7 @@ from wealth.ui.styles import bar_color, monthly_border, quarterly_border, yearly
 from .logic import categories
 
 
-def __display_dfs(keys: Iterable[str], dfs: list[pd.DataFrame]):
+def __display_dfs(keys: Iterable[str], dfs: list[pd.DataFrame]) -> None:
     """Display all category DataFrames side-by-side."""
 
     styles: list[Styler] = []
@@ -32,7 +32,7 @@ def __display_dfs(keys: Iterable[str], dfs: list[pd.DataFrame]):
     display_side_by_side(styles)
 
 
-def ui(df: pd.DataFrame, categories2regexes: dict[str, str]):
+def ui(df: pd.DataFrame, categories2regexes: dict[str, str]) -> None:
     """Create category-DataFrames and display them side by side."""
     dfs = categories(df, categories2regexes.values())
 

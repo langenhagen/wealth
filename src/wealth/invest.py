@@ -34,7 +34,7 @@ class TransactionType(Enum):
             TransactionType.sell,
         )
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Print the enum's value nicely."""
         return self.value
 
@@ -258,7 +258,7 @@ def __summarize_open_investments(investments: list[InvestmentSet]) -> pd.DataFra
     display(style)
 
 
-def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]):
+def stock(goals: dict[str, int], fulfilled_goals: dict[str, int]) -> None:
     """Render information about stock invesments, also in the light of given
     goals and fulfilled goals."""
     display("# Stock Investments")
@@ -303,7 +303,7 @@ def bailout(
     target_value_rate: float,
     inflation_rate: Optional[float] = None,
     tax_rate: Optional[float] = None,
-):
+) -> None:
     """List a dataframe with years and amounts that make sense when to bail out.
 
     You want to bail out when you, after inflation and taxes, get

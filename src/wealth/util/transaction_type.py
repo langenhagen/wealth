@@ -37,6 +37,6 @@ class TransactionType(Flag):
         """Determine if the given TransactionType is an internal transaction."""
         return self in (TransactionType.INTERNAL_IN, TransactionType.INTERNAL_OUT)
 
-    def __str__(self):
+    def __str__(self) -> str:
         """Print the transaction type nicely."""
         return str.lower(self.name)

@@ -4,7 +4,7 @@ from wealth.importers import init
 from .ui import ui
 
 
-def categories(categories2regexes: dict[str, str]):
+def categories(categories2regexes: dict[str, str]) -> None:
     """Match all bank transaction DataFrame's rows against given
     categories2regexes.
     Display a dataframe per each given category with monthly sums,
