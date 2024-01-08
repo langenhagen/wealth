@@ -1,5 +1,8 @@
 """Functionality to track expenses.
 Track expenses and cluster them according to type and subtype."""
+import calendar
+import datetime as dt
+
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -238,6 +241,33 @@ def track() -> pd.DataFrame:
 
     current_month_style = __style(current_month_df, first_indices_per_month)
 
+    shop_col = df["monthly shopping balance"].dropna()
+    wealth_col = df["monthly wealth balance"].dropna()
+    remaining_for_current_month = pd.DataFrame(
+        {
+            "remaining": [
+                shop_col.iloc[-1] if not shop_col.empty else None,
+                wealth_col.iloc[-1] if not wealth_col.empty else None,
+            ],
+        },
+        index=["shopping", "wealth"],
+    )
+
+    now = dt.datetime.now()
+    max_days_in_month = calendar.monthrange(now.year, now.month)[1]
+    remaining_days = max_days_in_month - now.day
+    remaining_for_current_month["remaining per week"] = (
+        remaining_for_current_month["remaining"] / remaining_days * 7
+    )
+
+    remaining_for_current_month_style = (
+        remaining_for_current_month.style.format(formatter=money_fmt())
+        .set_properties(subset="remaining", **total_border)
+        .applymap(css_str_wrap(conditional_negative_style))
+    )
+
+    current_month_style = __style(current_month_df, first_indices_per_month)
+
     average_month = __make_average_month(df)
     average_month_style = (
         average_month.style.format(formatter=money_fmt())
@@ -323,6 +353,8 @@ def track() -> pd.DataFrame:
     with out:
         display("<br>Current month:")
         display(current_month_style)
+        display("<br>Left for this month:")
+        display(remaining_for_current_month_style)
         display("<br>Average month:")
         display(average_month_style)
         display("<br>Numbers per bucket:")
