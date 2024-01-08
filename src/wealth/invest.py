@@ -24,9 +24,9 @@ class TransactionType(Enum):
     capital_raise = "capital raise"
 
     @staticmethod
-    def profit_types() -> tuple[
-        "TransactionType", "TransactionType", "TransactionType"
-    ]:
+    def profit_types() -> (
+        tuple["TransactionType", "TransactionType", "TransactionType"]
+    ):
         """Return all transaction types that denote incomes."""
         return (
             TransactionType.capital_raise,

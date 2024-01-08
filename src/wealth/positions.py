@@ -28,7 +28,6 @@ def __show_sums(
     sums_df["cost"] *= txt_multiplier.value
     out.clear_output()
     with out, pd.option_context("display.max_rows", None, "display.precision", 2):
-
         display("### Incomes")
         incomes = df.loc[df["cost"] > 0].sort_values(by="cost", ascending=False)
         incomes["percent"] = (incomes["cost"] / incomes["cost"].sum()) * 100

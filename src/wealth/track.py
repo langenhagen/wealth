@@ -169,6 +169,7 @@ def __style(df: pd.DataFrame, first_indices_per_month: pd.Index):
         )
     )
 
+
 def track() -> pd.DataFrame:
     """Import the file `track.csv` and return it as a DataFrame."""
     df = __import_track_df()
@@ -281,9 +282,7 @@ def track() -> pd.DataFrame:
     )
 
     numbers_per_type = (
-        df.groupby(df["type"])
-        .price.agg(["sum", "count"])
-        .mul({"sum": -1, "count": 1})
+        df.groupby(df["type"]).price.agg(["sum", "count"]).mul({"sum": -1, "count": 1})
     )
     numbers_per_type["avg monthly cost"] = numbers_per_type["sum"] / n_days * 30
     numbers_per_type["avg monthly entries"] = numbers_per_type["count"] / n_days * 30
@@ -296,13 +295,15 @@ def track() -> pd.DataFrame:
             "sum": "total cost",
             "count": "# entries",
         }
-    )[[
-        "total cost",
-        "avg monthly cost",
-        "# entries",
-        "avg monthly entries",
-        "avg entry cost",
-    ]]
+    )[
+        [
+            "total cost",
+            "avg monthly cost",
+            "# entries",
+            "avg monthly entries",
+            "avg entry cost",
+        ]
+    ]
 
     numbers_per_type_style = numbers_per_type.style.format(
         formatter={
