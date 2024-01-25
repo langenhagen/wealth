@@ -5,6 +5,7 @@ import datetime as dt
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
 import pandas.api.types as ptypes
 from dateutil.relativedelta import relativedelta
@@ -257,8 +258,11 @@ def track() -> pd.DataFrame:
     now = dt.datetime.now()
     max_days_in_month = calendar.monthrange(now.year, now.month)[1]
     remaining_days = max_days_in_month - now.day
-    remaining_for_current_month["remaining per week"] = (
-        remaining_for_current_month["remaining"] / remaining_days * 7
+
+    remaining_for_current_month["remaining per week"] = np.where(
+        remaining_days > 7 and remaining_for_current_month["remaining"] > 0,
+        remaining_for_current_month["remaining"] / remaining_days * 7,
+        remaining_for_current_month["remaining"],
     )
 
     remaining_for_current_month_style = (
