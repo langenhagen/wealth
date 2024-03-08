@@ -265,6 +265,10 @@ def track() -> pd.DataFrame:
         remaining_for_current_month["remaining"],
     )
 
+    remaining_for_current_month["remaining per day"] = (
+        remaining_for_current_month["remaining"] / remaining_days
+    )
+
     remaining_for_current_month_style = (
         remaining_for_current_month.style.format(formatter=money_fmt())
         .set_properties(subset="remaining", **total_border)
