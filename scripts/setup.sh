@@ -42,4 +42,4 @@ source .venv/bin/activate
 pip install --upgrade pip
 pip install --upgrade -r requirements.txt
 
-[[ "$*" =~ '--dev' ]] && pip install --upgrade -r requirements-dev.txt
+[[ "$*" =~ '--dev' ]] && pip install --upgrade -r requirements-dev.txt || true
