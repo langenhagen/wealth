@@ -1,8 +1,8 @@
 """Provides utilities to import the account *.csv files in the folder `csv`.
 The csv files have to match a certain naming pattern in order to map them to
 different importers. See `__read_account_csvs()`."""
-import pathlib
 import re
+from pathlib import Path
 from typing import Iterable
 
 import numpy as np
@@ -50,8 +50,8 @@ def _append_all_data_column_with_transaction_type(
 
 
 def __yield_files_with_suffix(
-    directory: pathlib.Path, suffix: str
-) -> Iterable[pathlib.Path]:
+    directory: Path, suffix: str
+) -> Iterable[Path]:
     """Yield all files with the given suffix in the given folder."""
     suffix_lower = suffix.lower()
     for file in directory.iterdir():
@@ -94,7 +94,7 @@ def __read_account_csvs() -> pd.DataFrame:
     dataframes = []
     processed_accounts = set()
 
-    for file in __yield_files_with_suffix(pathlib.Path.cwd() / "../csv", ".csv"):
+    for file in __yield_files_with_suffix(Path.cwd() / "../csv", ".csv"):
         match = re.match(r"\d{4}-(.+)-.*", file.stem)
         if match is None:
             continue
