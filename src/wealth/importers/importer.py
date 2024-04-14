@@ -1,6 +1,7 @@
 """Provides utilities to import the account *.csv files in the folder `csv`.
 The csv files have to match a certain naming pattern in order to map them to
 different importers. See `__read_account_csvs()`."""
+
 import re
 from pathlib import Path
 from typing import Iterable
@@ -9,6 +10,7 @@ import numpy as np
 import pandas as pd
 
 import wealth.config
+import wealth.importers.dkb_giro
 import wealth.importers.dkb_v23_giro
 import wealth.importers.dkb_v23_visa
 import wealth.importers.n26_mastercard
@@ -49,9 +51,7 @@ def _append_all_data_column_with_transaction_type(
     return df
 
 
-def __yield_files_with_suffix(
-    directory: Path, suffix: str
-) -> Iterable[Path]:
+def __yield_files_with_suffix(directory: Path, suffix: str) -> Iterable[Path]:
     """Yield all files with the given suffix in the given folder."""
     suffix_lower = suffix.lower()
     for file in directory.iterdir():
@@ -86,6 +86,7 @@ def __read_account_csvs() -> pd.DataFrame:
     must match a naming pattern that the map `namepattern_2_importer`
     specifies."""
     namepattern_2_importer = {
+        ".*dkb-giro.*": wealth.importers.dkb_giro.read_csv,
         ".*dkb-v23-giro.*": wealth.importers.dkb_v23_giro.read_csv,
         ".*dkb-v23-visa.*": wealth.importers.dkb_v23_visa.read_csv,
         ".*n26-mastercard.*": wealth.importers.n26_mastercard.read_csv,
