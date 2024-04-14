@@ -1,4 +1,4 @@
-"""Contains logic to import DKB giro csv files format."""
+"""Contains logic to import DKB giro CSV file format up to 2023."""
 import datetime as dt
 
 import pandas as pd
