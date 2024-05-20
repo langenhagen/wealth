@@ -4,4 +4,4 @@
 cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 
 source .venv/bin/activate
-jupyter lab
+jupyter lab --JupyterApp.answer_yes=True
