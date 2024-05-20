@@ -1,6 +1,7 @@
 """Functionality to track expenses.
 Track expenses and cluster them according to type and subtype."""
 import calendar
+from math import ceil
 import datetime as dt
 
 import matplotlib as mpl
@@ -265,7 +266,7 @@ def track() -> pd.DataFrame:
 
     remaining_for_current_month["remaining per week"] = np.where(
         remaining_days > 7 and remaining_for_current_month["remaining"] > 0,
-        remaining_for_current_month["remaining"] / remaining_days * 7,
+        remaining_for_current_month["remaining"] / ceil(remaining_days/7),
         remaining_for_current_month["remaining"],
     )
 
