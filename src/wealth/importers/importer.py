@@ -11,8 +11,6 @@ import pandas as pd
 
 import wealth.config
 import wealth.importers.dkb_giro
-import wealth.importers.dkb_v23_giro
-import wealth.importers.dkb_v23_visa
 import wealth.importers.n26_mastercard
 import wealth.importers.sparkasse_giro
 from wealth.importers.common import transfer_columns
@@ -87,8 +85,6 @@ def __read_account_csvs() -> pd.DataFrame:
     specifies."""
     namepattern_2_importer = {
         ".*dkb-giro.*": wealth.importers.dkb_giro.read_csv,
-        ".*dkb-v23-giro.*": wealth.importers.dkb_v23_giro.read_csv,
-        ".*dkb-v23-visa.*": wealth.importers.dkb_v23_visa.read_csv,
         ".*n26-mastercard.*": wealth.importers.n26_mastercard.read_csv,
         ".*sparkasse-giro.*": wealth.importers.sparkasse_giro.read_csv,
     }
