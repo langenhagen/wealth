@@ -1,4 +1,4 @@
-"""Contains logic to import DKB CSV file format from 2024 on."""
+"""Contains logic to import DKB CSV file format from last half of 2024 onwards."""
 
 import datetime as dt
 
@@ -24,8 +24,9 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
             decimal=",",
             engine="python",
             parse_dates=["Buchungsdatum"],
-            sep=";",
+            sep=",",
             skiprows=4,
+            skip_blank_lines=True,
             thousands=".",
         )
         .assign(account=account_name, account_type="dkb-giro")
