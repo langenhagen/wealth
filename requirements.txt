@@ -1,7 +1,8 @@
 -e src/
-ipympl==0.7.0
-ipywidgets
+ipympl>=0.9.5,<1
+ipywidgets>=8,<9
 jupyterlab
+jupyterlab_widgets>=3,<4
 matplotlib
 pandas
 pip

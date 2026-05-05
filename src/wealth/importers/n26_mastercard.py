@@ -1,5 +1,4 @@
 """Contains logic to import N26 giro csv files."""
-import datetime as dt
 
 import pandas as pd
 
@@ -61,13 +60,12 @@ def read_csv(path: str, account_name: str) -> pd.DataFrame:
     df = (
         pd.read_csv(
             path,
-            date_parser=lambda x: dt.datetime.strptime(x, "%Y-%m-%d"),
             decimal=".",
             engine="python",
-            parse_dates=["Booking Date"],
             sep=",",
             thousands=None,
         )
+        .assign(**{"Booking Date": lambda x: pd.to_datetime(x["Booking Date"], format="%Y-%m-%d", errors="coerce")})
         .assign(account=account_name, account_type="n26")
         .rename(columns=columns)
         .pipe(add_all_data_column)

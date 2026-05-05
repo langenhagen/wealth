@@ -74,6 +74,7 @@ def __import_track_df() -> pd.DataFrame:
         parse_dates=["date"],
         sep=";",
     ).pipe(to_lower)
+    df["date"] = pd.to_datetime(df["date"], errors="raise")
     df["price"] = df["price"] * -1
 
     return df[
@@ -94,7 +95,7 @@ def __assert_df_integrity(df: pd.DataFrame) -> None:
             'Column "date" must contain only date values. '
             f'Column "date" looks like:\n{df["date"]}'
         )
-    if not df["date"].is_monotonic:
+    if not df["date"].is_monotonic_increasing:
         raise AssertionError(
             'Column "date" must be monotonic increasing. '
             f'Column "date" looks like:\n{df["date"]}'
@@ -126,7 +127,7 @@ def __make_average_month(df: pd.DataFrame) -> pd.DataFrame:
         idx = pd.date_range(c.index.min(), c.index.max())
         c = c.reindex(idx)
 
-        c.fillna(method="pad", inplace=True)
+        c = c.ffill()
         c = c.groupby(c.index.day).mean()
 
         dfs.append(c)
@@ -211,19 +212,19 @@ def track() -> pd.DataFrame:
     monthly_end_balances_style = (
         monthly_end_balances.style.format(formatter=money_fmt())
         .bar(color=bar_color, align="left", vmin=0)
-        .applymap(css_str_wrap(conditional_negative_style))
+        .map(css_str_wrap(conditional_negative_style))
     )
 
     monthly_costs = df[df["type"] != "budget"][["date", "bucket"]]
     monthly_costs["shopping"] = -df[df["bucket"] == "shopping"]["price"]
     monthly_costs["wealth"] = -df[df["bucket"] == "wealth"]["price"]
     monthly_costs.fillna(0, inplace=True)
-    monthly_costs = monthly_costs.groupby(year_and_month).sum()
+    monthly_costs = monthly_costs.groupby(year_and_month)[["shopping", "wealth"]].sum()
 
     monthly_costs_style = (
         monthly_costs.style.format(formatter=money_fmt())
         .bar(color=bar_color, align="left", vmin=0)
-        .applymap(css_str_wrap(conditional_negative_style))
+        .map(css_str_wrap(conditional_negative_style))
     )
 
     year = monthly_costs.index.to_series().astype(str).apply(lambda x: x[:4])
@@ -231,7 +232,7 @@ def track() -> pd.DataFrame:
     yearly_costs_style = (
         yearly_costs.style.format(formatter=money_fmt())
         .bar(color=bar_color, align="left", vmin=0)
-        .applymap(css_str_wrap(conditional_negative_style))
+        .map(css_str_wrap(conditional_negative_style))
     )
 
     first_indices_per_month = df.groupby(year_and_month).head(1).index
@@ -277,7 +278,7 @@ def track() -> pd.DataFrame:
     remaining_for_current_month_style = (
         remaining_for_current_month.style.format(formatter=money_fmt())
         .set_properties(subset="remaining", **total_border)
-        .applymap(css_str_wrap(conditional_negative_style))
+        .map(css_str_wrap(conditional_negative_style))
     )
 
     current_month_style = __style(current_month_df, first_indices_per_month)
@@ -298,7 +299,7 @@ def track() -> pd.DataFrame:
     )
 
     numbers_by_bucket = (
-        df.groupby(df[df["type"] == "budget"]["bucket"])[["bucket", "price"]]
+        df.groupby(df[df["type"] == "budget"]["bucket"])[["price"]]
         .sum()
         .rename(columns={"price": "total budget"})
     )
@@ -322,7 +323,7 @@ def track() -> pd.DataFrame:
         numbers_by_bucket.style.format(formatter=money_fmt())
         .set_properties(subset="total budget", **total_border)
         .set_properties(subset="avg monthly budget", **monthly_border)
-        .applymap(css_str_wrap(conditional_negative_style))
+        .map(css_str_wrap(conditional_negative_style))
     )
 
     numbers_per_type = (

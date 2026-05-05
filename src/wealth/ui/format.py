@@ -1,11 +1,19 @@
 """Contains string-formatting functions and utilities."""
 from typing import Callable, Optional
 
+import pandas as pd
+
 from wealth.config import config
 
 weekday_date = "%a, %Y-%m-%d"
 
-date_fmt = "{:%Y-%m-%d}".format
+def date_fmt(value) -> str:
+    """Return a stable YYYY-MM-DD string for date-like values."""
+    if pd.isna(value):
+        return ""
+    return value.strftime("%Y-%m-%d")
+
+
 float_fmt = "{:,.1f}".format
 percent_fmt = "{:,.2f}%".format
 year_fmt = "{:%Y}".format

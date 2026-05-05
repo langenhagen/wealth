@@ -49,6 +49,26 @@ def _append_all_data_column_with_transaction_type(
     return df
 
 
+def __rebuild_all_data_column(df: pd.DataFrame, delimiter: str = "; ") -> pd.DataFrame:
+    """Build a consistent all_data column from normalized output columns."""
+    cols = [
+        "date",
+        "account",
+        "amount",
+        "description",
+        "account_type",
+        "correspondent",
+        "iban",
+        "transaction_type",
+    ]
+    all_data = None
+    for col in cols:
+        part = col + ": " + df[col].astype(str)
+        all_data = part if all_data is None else all_data + delimiter + part
+    df["all_data"] = all_data
+    return df
+
+
 def __yield_files_with_suffix(directory: Path, suffix: str) -> Iterable[Path]:
     """Yield all files with the given suffix in the given folder."""
     suffix_lower = suffix.lower()
@@ -60,12 +80,14 @@ def __yield_files_with_suffix(directory: Path, suffix: str) -> Iterable[Path]:
 def __create_offset_df(account_name: str, df: pd.DataFrame) -> pd.DataFrame:
     """Create a dataframe holding the account's configured initial offset."""
     accounts = wealth.config.get("accounts", {})
+    account_type = df["account_type"].iloc[0] if not df.empty else ""
+    min_date = df["date"].min() if not df.empty else pd.NaT
     return pd.DataFrame(
         {
             "account": account_name,
-            "account_type": df["account_type"].iloc[0],
+            "account_type": account_type,
             "amount": accounts.get(account_name, {}).get("offset", 0),
-            "date": df["date"].min(),
+            "date": min_date,
             "description": "<initial offset>",
         },
         index=[0],
@@ -99,6 +121,9 @@ def __read_account_csvs() -> pd.DataFrame:
         for regex, read_csv in namepattern_2_importer.items():
             if re.match(regex, file.stem):
                 current_df = read_csv(str(file), account_name)
+                if current_df.empty:
+                    print(f"Warning: skipped empty import for {file.name}")
+                    break
                 if account_name in processed_accounts:
                     dataframes.append(current_df)
                 else:
@@ -109,6 +134,7 @@ def __read_account_csvs() -> pd.DataFrame:
 
     df = (
         pd.concat(dataframes)
+        .dropna(subset=["date"])
         .reset_index()
         .pipe(__delay_incomes)
         .sort_values(by="date")
@@ -124,7 +150,6 @@ def init() -> pd.DataFrame:
     df = (
         __read_account_csvs()
         .pipe(__add_transaction_type_column)
-        .pipe(_append_all_data_column_with_transaction_type)
         .replace(np.nan, "", regex=True)[
             [
                 "date",
@@ -138,5 +163,6 @@ def init() -> pd.DataFrame:
                 "all_data",
             ]
         ]
+        .pipe(__rebuild_all_data_column)
     )
     return df

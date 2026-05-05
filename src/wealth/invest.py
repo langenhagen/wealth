@@ -217,7 +217,7 @@ def __summarize_closed_investments(investments: list[InvestmentSet]) -> pd.DataF
             },
         )
         .bar(color=bar_color, align="zero")
-        .applymap(
+        .map(
             css_str_wrap(conditional_negative_style),
             subset=[
                 "profit",

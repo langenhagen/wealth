@@ -33,6 +33,6 @@ def to_lower(df: pd.DataFrame) -> pd.DataFrame:
     """Make all cells in a given DataFrame's columns of type "object" lowercase
     and return the DataFrame."""
     for col in df:
-        if df[col].dtype.char == "O":
+        if pd.api.types.is_object_dtype(df[col]) or pd.api.types.is_string_dtype(df[col]):
             df[col] = df[col].str.lower()
     return df

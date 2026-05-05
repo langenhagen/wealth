@@ -13,6 +13,8 @@
 set -e
 
 default_workspace_dir="${HOME}/wealth/workspace"
+script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd "${script_dir}/.." && pwd)"
 
 show_help() {
     script_name="${0##*/}"
@@ -76,15 +78,12 @@ printf 'Installing workspace to: %s\n' "$workspace_dir"
 python3 -m venv "${workspace_dir}/.venv"
 # shellcheck disable=SC1090
 source "${workspace_dir}/.venv/bin/activate"
-script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 pip install --upgrade pip
-pip install --upgrade -r "${script_dir}/../requirements.txt"
+(cd "${repo_root}" && pip install --upgrade -r requirements.txt)
 [ "$install_dev_packages" == true ] \
-    && pip install --upgrade -r "${script_dir}/../requirements-dev.txt"
+    && (cd "${repo_root}" && pip install --upgrade -r requirements-dev.txt)
 pip freeze > "${workspace_dir}/requirements.txt"
-jupyter nbextension enable --py widgetsnbextension --sys-prefix
-jupyter labextension install @jupyter-widgets/jupyterlab-manager
 deactivate
 
 # copy folders into workspace directory
-cp --recursive prototype/* "$workspace_dir"
+cp --recursive "${repo_root}/prototype"/* "$workspace_dir"

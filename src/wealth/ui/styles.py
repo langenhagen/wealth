@@ -58,7 +58,10 @@ def conditional_positive_bg_style(value) -> dict[str, str]:
 
 def conditional_negative_style(value) -> dict[str, str]:
     """Return a red font color if the given value is smaller than 0."""
-    return {"color": red_color} if value < 0 else {}
+    try:
+        return {"color": red_color} if value < 0 else {}
+    except TypeError:
+        return {}
 
 
 def transaction_type_column_styles(cols) -> list[str]:

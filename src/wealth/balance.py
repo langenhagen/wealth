@@ -130,7 +130,9 @@ def __plot_cumsum(
     sum_df.index = sum_df["date"]
     sum_series = sum_df["amount"].cumsum()
     with out:
+        out.clear_output(wait=True)
         fig.clear()
+        fig.add_subplot(111)
         setup_plot_and_axes(fig, "Cumulative Sum of All transactions")
         if not sum_series.empty:
             __plot_df(sum_series, drp_freq.value, "Combined")
@@ -143,6 +145,7 @@ def __plot_cumsum(
             show_legend = True
         if show_legend:
             plt.legend(loc="best", borderaxespad=0.1)
+        display(fig)
 
 
 def graph(df: pd.DataFrame) -> None:
@@ -209,8 +212,8 @@ def graph(df: pd.DataFrame) -> None:
             ]
         )
     )
-    plot(None)
     display(out)
+    plot(None)
 
 
 def __display_mean_balance_dataframes(
@@ -241,7 +244,7 @@ def __display_mean_balance_dataframes(
 
     style = (
         df_out.style.format(formatter=money_fmt(), na_rep="")
-        .applymap(css_str_wrap(conditional_negative_style))
+        .map(css_str_wrap(conditional_negative_style))
         .bar(color=bar_color, align="zero")
     )
 
