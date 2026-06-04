@@ -14,7 +14,7 @@ def __assert_df_integrity(df: pd.DataFrame) -> None:
             'Column "date" must contain only date values. '
             f'Column "date" looks like:\n{df["date"]}'
         )
-    if not df["date"].is_monotonic:
+    if not df["date"].is_monotonic_increasing:
         raise AssertionError(
             'Column "date" must be monotonic increasing. '
             f'Column "date" looks like:\n{df["date"]}'
