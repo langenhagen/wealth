@@ -3,6 +3,7 @@ Track expenses and cluster them according to type and subtype."""
 import calendar
 from math import ceil
 import datetime as dt
+from typing import Optional
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -36,10 +37,15 @@ def __style_track(
     cols,
     special_indices: pd.Index,
     types2colors: dict[str, str],
+    price_vmin: Optional[float] = None,
 ) -> list[dict[str, str]]:
     """CSS-style the track DataFrame's cells with colors and font weight
     depending on the bucket, type, the balance and whether a row is the last
-    entry in a month."""
+    entry in a month.
+
+    When `price_vmin` is given (the most negative price in the table), draw a
+    purple magnitude bar behind negative price cells, scaled relative to
+    `price_vmin`. Positive prices keep their green background and get no bar."""
     styles: list[dict[str, str]] = [{}] * 9
 
     styles[1] = shopping_bg if cols["bucket"] == "shopping" else wealth_bg
@@ -48,7 +54,16 @@ def __style_track(
     styles[2] = {"background": type_color, "color": "#000000ee"}.copy()
     styles[3] = {"background": type_color, "color": "#000000ee"}.copy()
 
-    styles[4] = conditional_positive_bg_style(cols["price"])
+    price = cols["price"]
+    if price_vmin is not None and price_vmin < 0 and price < 0:
+        pct = min(price / price_vmin, 1.0) * 100
+        styles[4] = {
+            "background": (
+                f"linear-gradient(90deg, {bar_color} {pct}%, transparent {pct}%)"
+            )
+        }
+    else:
+        styles[4] = conditional_positive_bg_style(price)
     if cols["monthly shopping balance"] < 0:
         styles[5] = red_fg.copy()
     if cols["continuous shopping balance"] < 0:
@@ -136,14 +151,23 @@ def __make_average_month(df: pd.DataFrame) -> pd.DataFrame:
     return result
 
 
-def __style(df: pd.DataFrame, first_indices_per_month: pd.Index) -> Styler:
-    """Get track-suitable Styler for the given DataFrame."""
+def __style(
+    df: pd.DataFrame,
+    first_indices_per_month: pd.Index,
+    price_bars: bool = False,
+) -> Styler:
+    """Get track-suitable Styler for the given DataFrame.
+
+    When `price_bars` is True, draw purple magnitude bars behind negative
+    price cells, scaled relative to the most negative price in `df`."""
     types = df["type"].unique()
     types2colors = {}
     cmap = plt.get_cmap("tab20", len(types))
     for type_, i in zip(types, range(cmap.N)):
         hex_ = mpl.colors.rgb2hex(cmap(i))
         types2colors[type_] = hex_
+
+    price_vmin = df["price"].min() if price_bars else None
 
     return (
         df.style.format(
@@ -172,6 +196,7 @@ def __style(df: pd.DataFrame, first_indices_per_month: pd.Index) -> Styler:
             __style_track,
             special_indices=first_indices_per_month,
             types2colors=types2colors,
+            price_vmin=price_vmin,
             axis="columns",
         )
     )
@@ -243,8 +268,6 @@ def track() -> pd.DataFrame:
     max_date = df["date"].max()
     current_month_df = df[df["date"] > max_date - relativedelta(days=max_date.day)]
 
-    current_month_style = __style(current_month_df, first_indices_per_month)
-
     shop_col = df["monthly shopping balance"].dropna()
     wealth_col = df["monthly wealth balance"].dropna()
     remaining_for_current_month = pd.DataFrame(
@@ -281,7 +304,9 @@ def track() -> pd.DataFrame:
         .map(css_str_wrap(conditional_negative_style))
     )
 
-    current_month_style = __style(current_month_df, first_indices_per_month)
+    current_month_style = __style(
+        current_month_df, first_indices_per_month, price_bars=True
+    )
 
     average_month = __make_average_month(df)
     average_month_style = (
