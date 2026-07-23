@@ -25,18 +25,24 @@ class UI:
 
     def __update_output(self, df: pd.DataFrame, summary: pd.DataFrame) -> None:
         """Render the output."""
-        with self.__out_fig:
-            fig = plt.figure(figsize=(10, 7), num="Account Development")
-            fig.clear()
-            setup_yearly_plot_and_axes(fig, "Account Development")
+        # Redraw into the existing canvas in place instead of re-displaying it;
+        # re-displaying an ipympl canvas each update caused intermittent
+        # oversized/clipped figures. ioff() keeps pyplot from auto-showing a
+        # second copy while we rebuild the axes on the (activated) figure.
+        with plt.ioff():
+            plt.figure(self.__fig.number)
+            self.__fig.clear()
+            self.__fig.add_subplot(111)
+            setup_yearly_plot_and_axes(self.__fig, "Account Development")
             UI.__plot_account_history(df)
+        self.__fig.canvas.draw_idle()
 
-        self.__out_summary.clear_output()
         with self.__out_summary:
+            self.__out_summary.clear_output(wait=True)
             UI.__display_summary(summary)
 
-        self.__out_df.clear_output()
         with self.__out_df:
+            self.__out_df.clear_output(wait=True)
             UI.__display_account_history_df(df)
 
     def __on_widgets_change(self, *_) -> None:
@@ -76,6 +82,17 @@ class UI:
         self.__out_summary = Output()
         self.__out_df = Output()
 
+        # Create the figure once and display its canvas a single time so it
+        # stays attached to __out_fig. `layout="constrained"` keeps the rotated
+        # ticks and legend inside the canvas (no clipping). ioff() prevents a
+        # duplicate auto-display, and omitting a shared `num` gives every run a
+        # fresh canvas instead of reusing a torn-down one.
+        with plt.ioff():
+            self.__fig = plt.figure(figsize=(10, 7), layout="constrained")
+        self.__fig.canvas.header_visible = False
+        with self.__out_fig:
+            display(self.__fig.canvas)
+
         self.__txt_interest.observe(self.__on_widgets_change, "value")
         self.__txt_inflation.observe(self.__on_widgets_change, "value")
 
@@ -106,7 +123,10 @@ class UI:
         for col, color in cols2colors.items():
             plt.plot(df.index, df[col], drawstyle="steps-post", color=color, label=col)
 
-        plt.legend(loc="best", borderaxespad=0.1)
+        # Only draw the legend when labelled artists exist, else matplotlib
+        # warns "No artists with labels found to put in legend."
+        if plt.gca().get_legend_handles_labels()[0]:
+            plt.legend(loc="best", borderaxespad=0.1)
 
     @staticmethod
     def __display_summary(df: pd.DataFrame) -> None:
