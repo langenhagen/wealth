@@ -111,9 +111,11 @@ def __assert_df_integrity(df: pd.DataFrame) -> None:
             f'Column "date" looks like:\n{df["date"]}'
         )
     if not df["date"].is_monotonic_increasing:
+        bad_mask = df["date"].diff().lt(pd.Timedelta(0))
+        first_bad_pos = int(bad_mask.to_numpy().argmax())
         raise AssertionError(
             'Column "date" must be monotonic increasing. '
-            f'Column "date" looks like:\n{df["date"]}'
+            f"First broken line (CSV line {first_bad_pos + 2})"
         )
     if not ptypes.is_numeric_dtype(df["price"]):
         raise AssertionError(
