@@ -86,4 +86,4 @@ pip freeze > "${workspace_dir}/requirements.txt"
 deactivate
 
 # copy folders into workspace directory
-cp --recursive "${repo_root}/prototype"/* "$workspace_dir"
+cp -r "${repo_root}/prototype"/* "$workspace_dir"
